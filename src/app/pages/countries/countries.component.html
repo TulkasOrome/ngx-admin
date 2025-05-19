@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header>
+        <h5>Available Countries</h5>
+      </nb-card-header>
+      <nb-card-body>
+        <p>
+          Select from our available countries below to perform identity verification. Each country has different
+          data sources, update frequencies, and record counts.
+        </p>
+        
+        <div class="row">
+          <div class="col-md-4 mb-4" *ngFor="let country of countries">
+            <nb-card [status]="country.availability ? 'success' : 'basic'">
+              <nb-card-header>
+                <div class="d-flex align-items-center">
+                  <span class="country-icon mr-2">{{ country.icon }}</span>
+                  <span>{{ country.name }}</span>
+                  <span class="ml-auto">
+                    <nb-icon *ngIf="country.availability" icon="checkmark-circle-2-outline" status="success"></nb-icon>
+                    <nb-icon *ngIf="!country.availability" icon="clock-outline" status="warning"></nb-icon>
+                  </span>
+                </div>
+              </nb-card-header>
+              <nb-card-body>
+                <div class="country-info">
+                  <div class="info-item">
+                    <strong>Records:</strong> {{ country.records }}
+                  </div>
+                  <div class="info-item">
+                    <strong>Updates:</strong> {{ country.updateFrequency }}
+                  </div>
+                  <div class="info-item">
+                    <strong>Status:</strong> {{ country.availability ? 'Available' : 'Coming Soon' }}
+                  </div>
+                </div>
+              </nb-card-body>
+              <nb-card-footer *ngIf="country.availability">
+                <button nbButton fullWidth status="primary" [routerLink]="['/pages/identity/manual-lookup']" [queryParams]="{country: country.code}">
+                  <nb-icon icon="search-outline"></nb-icon>
+                  Verify Identity
+                </button>
+              </nb-card-footer>
+              <nb-card-footer *ngIf="!country.availability">
+                <button nbButton fullWidth status="basic" disabled>
+                  <nb-icon icon="alert-triangle-outline"></nb-icon>
+                  Coming Soon
+                </button>
+              </nb-card-footer>
+            </nb-card>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

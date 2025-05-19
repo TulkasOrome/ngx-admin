@@ -1,0 +1,131 @@
+<div class="row">
+  <div class="col-12 col-md-6">
+    <nb-card>
+      <nb-card-header>
+        <h5>Identity Verification - Manual Lookup</h5>
+      </nb-card-header>
+      <nb-card-body>
+        <form [formGroup]="identityForm" (ngSubmit)="onSubmit()">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">First Name</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="firstName" placeholder="First Name">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Last Name</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="lastName" placeholder="Last Name">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Date of Birth</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="dateOfBirth" placeholder="YYYY-MM-DD">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Country</label>
+            <div class="col-sm-8">
+              <nb-select fullWidth formControlName="country" placeholder="Select Country">
+                <nb-option value="aus">Australia</nb-option>
+                <nb-option value="indo">Indonesia</nb-option>
+                <nb-option value="japan">Japan</nb-option>
+                <nb-option value="malay">Malaysia</nb-option>
+              </nb-select>
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">ID Number</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="identificationNumber" placeholder="Identification Number">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Email</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="email" placeholder="Email">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Phone</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="phone" placeholder="Phone Number">
+            </div>
+          </div>
+          
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Address</label>
+            <div class="col-sm-8">
+              <input nbInput fullWidth formControlName="address" placeholder="Address">
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <button nbButton status="primary" [disabled]="identityForm.invalid || isSubmitting">
+                <nb-icon icon="search-outline"></nb-icon> Verify Identity
+              </button>
+            </div>
+          </div>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  
+  <div class="col-12 col-md-6" *ngIf="result">
+    <nb-card>
+      <nb-card-header>
+        <h5>Verification Results</h5>
+      </nb-card-header>
+      <nb-card-body>
+        <div class="match-result">
+          <h6>Overall Match Confidence</h6>
+          <nb-progress-bar [value]="result.overallMatch" status="primary" [displayValue]="true"></nb-progress-bar>
+        </div>
+        
+        <div class="field-matches mt-4">
+          <h6>Field-level Match Breakdown</h6>
+          
+          <div class="field-match-item">
+            <div class="d-flex justify-content-between">
+              <span>Name</span>
+              <span>{{ result.fieldMatches.name }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.name" size="tiny" status="success"></nb-progress-bar>
+          </div>
+          
+          <div class="field-match-item mt-2">
+            <div class="d-flex justify-content-between">
+              <span>Date of Birth</span>
+              <span>{{ result.fieldMatches.dateOfBirth }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.dateOfBirth" size="tiny" status="success"></nb-progress-bar>
+          </div>
+          
+          <div class="field-match-item mt-2">
+            <div class="d-flex justify-content-between">
+              <span>Address</span>
+              <span>{{ result.fieldMatches.address }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.address" size="tiny" status="warning"></nb-progress-bar>
+          </div>
+          
+          <div class="field-match-item mt-2">
+            <div class="d-flex justify-content-between">
+              <span>Identification</span>
+              <span>{{ result.fieldMatches.identification }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.identification" size="tiny" status="info"></nb-progress-bar>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
