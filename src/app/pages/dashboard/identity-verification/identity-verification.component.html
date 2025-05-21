@@ -1,0 +1,203 @@
+<!-- src/app/pages/dashboard/identity-verification/identity-verification.component.html -->
+<div class="row">
+  <div class="col-xxxl-8 col-xxl-8 col-md-7">
+    <nb-card>
+      <nb-card-header>
+        Identity Verification
+      </nb-card-header>
+      <nb-card-body>
+        <div class="row" *ngIf="!matchResult.submitted">
+          <div class="col-md-12">
+            <form (ngSubmit)="onSubmit()" #verificationForm="ngForm">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="label">Full Name</label>
+                    <input type="text" nbInput fullWidth placeholder="John Smith" 
+                           [(ngModel)]="formData.fullName" name="fullName" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="label">Date of Birth</label>
+                    <input type="date" nbInput fullWidth 
+                           [(ngModel)]="formData.dateOfBirth" name="dateOfBirth" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="label">Email</label>
+                    <input type="email" nbInput fullWidth placeholder="john.smith@example.com" 
+                           [(ngModel)]="formData.email" name="email" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="label">Phone Number</label>
+                    <input type="tel" nbInput fullWidth placeholder="+61 412 345 678" 
+                           [(ngModel)]="formData.phone" name="phone" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class="label">Address</label>
+                    <input type="text" nbInput fullWidth placeholder="123 Main St, Sydney NSW 2000" 
+                           [(ngModel)]="formData.address" name="address" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group text-center mt-4">
+                <button nbButton status="primary" size="medium" type="submit" [disabled]="!verificationForm.valid">
+                  Verify Identity
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Match Result Display when form is submitted -->
+        <div class="row" *ngIf="matchResult.submitted">
+          <div class="col-md-12">
+            <div class="match-result-header mb-4">
+              <h4>Identity Verification Result</h4>
+              <div class="overall-confidence">
+                <span class="confidence-label">Overall Match Confidence:</span>
+                <span class="confidence-value" [ngClass]="{
+                  'high-confidence': matchResult.confidence >= 85,
+                  'medium-confidence': matchResult.confidence >= 70 && matchResult.confidence < 85,
+                  'low-confidence': matchResult.confidence < 70
+                }">
+                  {{ matchResult.confidence }}%
+                </span>
+              </div>
+            </div>
+
+            <table class="table field-matches-table">
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Value Provided</th>
+                  <th>Matched Value</th>
+                  <th>Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Full Name</td>
+                  <td>{{ formData.fullName }}</td>
+                  <td>{{ matchResult.fieldMatches.name.value }}</td>
+                  <td>
+                    <nb-badge 
+                      [text]="matchResult.fieldMatches.name.confidence + '%'"
+                      [status]="matchResult.fieldMatches.name.confidence >= 85 ? 'success' : 
+                              (matchResult.fieldMatches.name.confidence >= 70 ? 'warning' : 'danger')">
+                    </nb-badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Date of Birth</td>
+                  <td>{{ formData.dateOfBirth }}</td>
+                  <td>{{ matchResult.fieldMatches.dob.value }}</td>
+                  <td>
+                    <nb-badge 
+                      [text]="matchResult.fieldMatches.dob.confidence + '%'"
+                      [status]="matchResult.fieldMatches.dob.confidence >= 85 ? 'success' : 
+                              (matchResult.fieldMatches.dob.confidence >= 70 ? 'warning' : 'danger')">
+                    </nb-badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>{{ formData.address }}</td>
+                  <td>{{ matchResult.fieldMatches.address.value }}</td>
+                  <td>
+                    <nb-badge 
+                      [text]="matchResult.fieldMatches.address.confidence + '%'"
+                      [status]="matchResult.fieldMatches.address.confidence >= 85 ? 'success' : 
+                              (matchResult.fieldMatches.address.confidence >= 70 ? 'warning' : 'danger')">
+                    </nb-badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td>{{ formData.email }}</td>
+                  <td>{{ matchResult.fieldMatches.email.value }}</td>
+                  <td>
+                    <nb-badge 
+                      [text]="matchResult.fieldMatches.email.confidence + '%'"
+                      [status]="matchResult.fieldMatches.email.confidence >= 85 ? 'success' : 
+                              (matchResult.fieldMatches.email.confidence >= 70 ? 'warning' : 'danger')">
+                    </nb-badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+              <button nbButton status="basic" size="medium" (click)="matchResult.submitted = false">
+                New Verification
+              </button>
+            </div>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-xxxl-4 col-xxl-4 col-md-5">
+    <!-- We'll use the Solar component to display match confidence -->
+    <nb-card size="medium">
+      <nb-card-header>Match Confidence Visualization</nb-card-header>
+      <nb-card-body class="d-flex flex-column align-items-center justify-content-center">
+        <ngx-match-confidence [confidence]="matchResult.confidence"></ngx-match-confidence>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Country Selector -->
+    <nb-card size="medium">
+      <nb-card-header>Select Country</nb-card-header>
+      <nb-card-body>
+        <ngx-country-selector 
+          [countries]="countries" 
+          [selectedCountry]="selectedCountry"
+          (countrySelected)="onCountrySelected($event)">
+        </ngx-country-selector>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xxxl-6 col-xxl-6 col-md-6">
+    <!-- Client Logos -->
+    <ngx-client-logos></ngx-client-logos>
+  </div>
+
+  <div class="col-xxxl-6 col-xxl-6 col-md-6">
+    <!-- Data Update Frequency -->
+    <ngx-data-update-frequency [selectedCountry]="selectedCountry"></ngx-data-update-frequency>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xxxl-7 col-xxl-7 col-md-7">
+    <!-- Compliance Status -->
+    <ngx-compliance-status [selectedCountry]="selectedCountry"></ngx-compliance-status>
+  </div>
+  
+  <div class="col-xxxl-5 col-xxl-5 col-md-5">
+    <!-- Pricing Snapshot -->
+    <ngx-pricing-snapshot></ngx-pricing-snapshot>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xxxl-12 col-xxl-12 col-md-12">
+    <!-- Differentiators -->
+    <ngx-differentiators></ngx-differentiators>
+  </div>
+</div>

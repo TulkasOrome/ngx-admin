@@ -1,0 +1,21 @@
+<!-- src/app/pages/dashboard/identity-verification/differentiators/differentiators.component.html -->
+<nb-card>
+  <nb-card-header>
+    Why Our Data is Different
+  </nb-card-header>
+  <nb-card-body>
+    <div class="differentiators-grid">
+      <nb-card class="differentiator-card" *ngFor="let diff of differentiators">
+        <nb-card-body>
+          <div class="differentiator-icon">
+            <nb-icon [icon]="diff.icon" pack="eva"></nb-icon>
+          </div>
+          <div class="differentiator-content">
+            <h5 class="differentiator-title">{{ diff.title }}</h5>
+            <p class="differentiator-description">{{ diff.description }}</p>
+          </div>
+        </nb-card-body>
+      </nb-card>
+    </div>
+  </nb-card-body>
+</nb-card>

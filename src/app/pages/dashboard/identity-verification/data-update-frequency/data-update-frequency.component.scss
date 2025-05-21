@@ -1,0 +1,43 @@
+// src/app/pages/dashboard/identity-verification/data-update-frequency/data-update-frequency.component.scss
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .data-freshness-wrapper {
+    height: 300px; // adjust based on your needs
+  }
+
+  nb-card-footer {
+    padding: 1rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  .status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+
+    &.high {
+      background-color: nb-theme(color-success-default);
+    }
+
+    &.medium {
+      background-color: nb-theme(color-warning-default);
+    }
+
+    &.low {
+      background-color: nb-theme(color-danger-default);
+    }
+  }
+}

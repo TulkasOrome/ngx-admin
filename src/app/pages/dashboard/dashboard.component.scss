@@ -1,3 +1,4 @@
+// src/app/pages/dashboard/dashboard.component.scss
 @import '../../@theme/styles/themes';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
@@ -8,9 +9,36 @@
     padding-bottom: 0;
   }
 
+  .dashboard-tabs {
+    display: flex;
+    gap: 1rem;
+    
+    button {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  // Status card styles specifically for Identity Pulse dashboard
+  ngx-status-card nb-icon {
+    font-size: 2.5rem;
+  }
+
   @include media-breakpoint-down(sm) {
     ngx-traffic {
       display: none;
+    }
+  }
+
+  // Responsive adjustments for the tabs
+  @include media-breakpoint-down(md) {
+    .dashboard-tabs {
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      button {
+        width: 100%;
+      }
     }
   }
 }

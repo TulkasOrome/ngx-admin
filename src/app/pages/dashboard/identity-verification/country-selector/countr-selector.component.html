@@ -1,0 +1,32 @@
+<!-- src/app/pages/dashboard/identity-verification/country-selector/country-selector.component.html -->
+<div class="country-selector">
+  <div class="available-countries">
+    <h6 class="section-title">Available Countries</h6>
+    <div class="country-grid">
+      <div class="country-item" 
+           *ngFor="let country of availableCountries"
+           [class.selected]="selectedCountry === country.id"
+           (click)="onCountrySelect(country.id)">
+        <div class="country-flag">
+          <img [src]="'assets/images/flags/' + country.code.toLowerCase() + '.png'" [alt]="country.name">
+        </div>
+        <div class="country-name">{{ country.name }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="unavailable-countries" *ngIf="unavailableCountries.length > 0">
+    <h6 class="section-title">Coming Soon</h6>
+    <div class="country-grid">
+      <div class="country-item disabled" *ngFor="let country of unavailableCountries">
+        <div class="country-flag">
+          <img [src]="'assets/images/flags/' + country.code.toLowerCase() + '.png'" [alt]="country.name">
+        </div>
+        <div class="country-name">{{ country.name }}</div>
+        <div class="coming-soon-badge">
+          <nb-badge text="Coming Soon" status="basic"></nb-badge>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<!-- src/app/pages/dashboard/identity-verification/data-update-frequency/data-update-frequency.component.html -->
+<nb-card size="medium">
+  <nb-card-header>
+    Data Update Frequency
+  </nb-card-header>
+  <div class="data-freshness-wrapper">
+    <!-- Using the Electricity component to display data freshness -->
+    <ngx-electricity [listData]="listData" [chartData]="chartData"></ngx-electricity>
+  </div>
+
+  <nb-card-footer>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="status high"></div>
+        <span>Daily Updates (95%+ Fresh)</span>
+      </div>
+      <div class="legend-item">
+        <div class="status medium"></div>
+        <span>Weekly Updates (85-95% Fresh)</span>
+      </div>
+      <div class="legend-item">
+        <div class="status low"></div>
+        <span>Monthly Updates (Below 85% Fresh)</span>
+      </div>
+    </div>
+  </nb-card-footer>
+</nb-card>

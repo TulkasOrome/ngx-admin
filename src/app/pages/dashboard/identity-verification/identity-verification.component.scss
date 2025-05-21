@@ -1,0 +1,59 @@
+// src/app/pages/dashboard/identity-verification/identity-verification.component.scss
+@import '../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .match-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid nb-theme(divider-color);
+    padding-bottom: 1rem;
+  }
+
+  .overall-confidence {
+    display: flex;
+    align-items: center;
+
+    .confidence-label {
+      margin-right: 0.5rem;
+    }
+
+    .confidence-value {
+      font-weight: 600;
+      font-size: 1.2rem;
+
+      &.high-confidence {
+        color: nb-theme(color-success-default);
+      }
+
+      &.medium-confidence {
+        color: nb-theme(color-warning-default);
+      }
+
+      &.low-confidence {
+        color: nb-theme(color-danger-default);
+      }
+    }
+  }
+
+  .field-matches-table {
+    th, td {
+      padding: 0.75rem;
+      vertical-align: middle;
+    }
+
+    nb-badge {
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}

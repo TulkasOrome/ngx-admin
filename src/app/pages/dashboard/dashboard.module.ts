@@ -1,3 +1,4 @@
+// src/app/pages/dashboard/dashboard.module.ts
 import { NgModule } from '@angular/core';
 import {
   NbActionsModule,
@@ -9,6 +10,8 @@ import {
   NbSelectModule,
   NbListModule,
   NbIconModule,
+  NbInputModule,
+  NbBadgeModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -30,6 +33,14 @@ import { PlayerComponent } from './rooms/player/player.component';
 import { TrafficComponent } from './traffic/traffic.component';
 import { TrafficChartComponent } from './traffic/traffic-chart.component';
 import { FormsModule } from '@angular/forms';
+import { IdentityVerificationComponent } from './identity-verification/identity-verification.component';
+import { MatchConfidenceComponent } from './identity-verification/match-confidence/match-confidence.component';
+import { CountrySelectorComponent } from './identity-verification/country-selector/country-selector.component';
+import { ComplianceStatusComponent } from './identity-verification/compliance-status/compliance-status.component';
+import { ClientLogosComponent } from './identity-verification/client-logos/client-logos.component';
+import { DataUpdateFrequencyComponent } from './identity-verification/data-update-frequency/data-update-frequency.component';
+import { PricingSnapshotComponent } from './identity-verification/pricing-snapshot/pricing-snapshot.component';
+import { DifferentiatorsComponent } from './identity-verification/differentiators/differentiators.component';
 
 @NgModule({
   imports: [
@@ -45,6 +56,8 @@ import { FormsModule } from '@angular/forms';
     NbListModule,
     NbIconModule,
     NbButtonModule,
+    NbInputModule,
+    NbBadgeModule,
     NgxEchartsModule,
   ],
   declarations: [
@@ -64,6 +77,14 @@ import { FormsModule } from '@angular/forms';
     SolarComponent,
     TrafficComponent,
     TrafficChartComponent,
+    IdentityVerificationComponent,
+    MatchConfidenceComponent,
+    CountrySelectorComponent,
+    ComplianceStatusComponent,
+    ClientLogosComponent,
+    DataUpdateFrequencyComponent,
+    PricingSnapshotComponent,
+    DifferentiatorsComponent,
   ],
 })
 export class DashboardModule { }

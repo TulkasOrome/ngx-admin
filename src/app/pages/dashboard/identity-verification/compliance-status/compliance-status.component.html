@@ -1,0 +1,97 @@
+<!-- src/app/pages/dashboard/identity-verification/compliance-status/compliance-status.component.html -->
+<nb-card size="large">
+  <nb-card-header>
+    Compliance Status
+
+    <button class="single-view-button ml-auto"
+            nbButton
+            size="small"
+            [appearance]="isSingleView ? 'filled' : 'outline'"
+            (click)="isSingleView = true">
+      <i class="nb-square"></i>
+    </button>
+    <button class="grid-view-button"
+            nbButton
+            size="small"
+            [appearance]="isSingleView ? 'outline' : 'filled'"
+            (click)="isSingleView = false">
+      <nb-icon icon="grid" pack="eva"></nb-icon>
+    </button>
+  </nb-card-header>
+
+  <div class="grid-container">
+    <div class="single-view" *ngIf="isSingleView">
+      <div class="compliance-country">
+        <div class="country-header">
+          <img [src]="'assets/images/flags/' + selectedCompliance.countryCode + '.png'" 
+               [alt]="selectedCompliance.country"
+               class="country-flag">
+          <h5>{{ selectedCompliance.country }}</h5>
+        </div>
+        
+        <div class="compliance-details">
+          <div class="jurisdiction-item" *ngFor="let jurisdiction of selectedCompliance.jurisdictions">
+            <div class="jurisdiction-header">
+              <div class="jurisdiction-name">{{ jurisdiction.name }}</div>
+              <div class="jurisdiction-status" [ngClass]="getStatusClass(jurisdiction.status)">
+                {{ getStatusText(jurisdiction.status) }}
+              </div>
+            </div>
+            <div class="jurisdiction-details">
+              {{ jurisdiction.details }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-view" *ngIf="!isSingleView">
+      <div class="compliance-country-card"
+           *ngFor="let compliance of complianceData"
+           (click)="selectCompliance(compliance)">
+        <div class="country-header">
+          <img [src]="'assets/images/flags/' + compliance.countryCode + '.png'" 
+               [alt]="compliance.country"
+               class="country-flag">
+          <h6>{{ compliance.country }}</h6>
+        </div>
+        <div class="jurisdiction-summary">
+          <div class="jurisdiction-count">
+            <span>{{ compliance.jurisdictions.length }}</span> regulations
+          </div>
+          <div class="status-summary">
+            <div class="status-pill status-success" 
+                 *ngIf="compliance.jurisdictions.some(j => j.status === 'compliant')">
+              {{ compliance.jurisdictions.filter(j => j.status === 'compliant').length }}
+            </div>
+            <div class="status-pill status-warning" 
+                 *ngIf="compliance.jurisdictions.some(j => j.status === 'partial')">
+              {{ compliance.jurisdictions.filter(j => j.status === 'partial').length }}
+            </div>
+            <div class="status-pill status-danger" 
+                 *ngIf="compliance.jurisdictions.some(j => j.status === 'non-compliant')">
+              {{ compliance.jurisdictions.filter(j => j.status === 'non-compliant').length }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nb-card-footer>
+    <nb-actions size="medium" fullWidth>
+      <nb-action>
+        <nb-icon icon="file-text-outline" pack="eva"></nb-icon>
+        Compliance Report
+      </nb-action>
+      <nb-action>
+        <nb-icon icon="download-outline" pack="eva"></nb-icon>
+        Export
+      </nb-action>
+      <nb-action>
+        <nb-icon icon="settings-2-outline" pack="eva"></nb-icon>
+        Settings
+      </nb-action>
+    </nb-actions>
+  </nb-card-footer>
+</nb-card>

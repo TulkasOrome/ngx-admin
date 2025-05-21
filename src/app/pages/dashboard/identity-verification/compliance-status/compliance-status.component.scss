@@ -1,0 +1,199 @@
+// src/app/pages/dashboard/identity-verification/compliance-status/compliance-status.component.scss
+@import '../../../../@theme/styles/themes';
+@import '@nebular/theme/styles/global/breakpoints';
+@import 'bootstrap/scss/mixins/breakpoints';
+
+@include nb-install-component() {
+  nb-card-header {
+    display: flex;
+    align-items: center;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .single-view-button {
+    .nb-square {
+      font-size: 1.25rem;
+    }
+
+    @include nb-ltr {
+      margin-left: auto;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    @include nb-rtl {
+      margin-right: auto;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  .grid-view-button {
+    ::ng-deep svg {
+      vertical-align: top;
+    }
+
+    @include nb-ltr {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    @include nb-rtl {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  .grid-container {
+    height: 100%;
+    display: flex;
+    overflow: auto;
+  }
+
+  .single-view,
+  .grid-view {
+    flex: 1 0 100%;
+    padding: 1rem;
+  }
+
+  .grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .country-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    .country-flag {
+      width: 32px;
+      height: 24px;
+      margin-right: 0.75rem;
+      border-radius: 2px;
+    }
+
+    h5, h6 {
+      margin: 0;
+    }
+  }
+
+  .compliance-country {
+    padding: 0 1rem;
+  }
+
+  .compliance-details {
+    margin-top: 1.5rem;
+  }
+
+  .jurisdiction-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid nb-theme(divider-color);
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  .jurisdiction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .jurisdiction-name {
+    font-weight: 500;
+  }
+
+  .jurisdiction-status {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    
+    &.status-success {
+      background-color: nb-theme(color-success-transparent-100);
+      color: nb-theme(color-success-default);
+    }
+    
+    &.status-warning {
+      background-color: nb-theme(color-warning-transparent-100);
+      color: nb-theme(color-warning-default);
+    }
+    
+    &.status-danger {
+      background-color: nb-theme(color-danger-transparent-100);
+      color: nb-theme(color-danger-default);
+    }
+  }
+
+  .jurisdiction-details {
+    font-size: 0.875rem;
+    color: nb-theme(text-hint-color);
+  }
+
+  .compliance-country-card {
+    background-color: nb-theme(background-basic-color-1);
+    border-radius: nb-theme(card-border-radius);
+    padding: 1rem;
+    box-shadow: nb-theme(shadow);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: nb-theme(shadow-hover);
+    }
+  }
+
+  .jurisdiction-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+  }
+
+  .jurisdiction-count {
+    font-size: 0.875rem;
+    color: nb-theme(text-hint-color);
+    
+    span {
+      font-weight: 600;
+      color: nb-theme(text-basic-color);
+    }
+  }
+
+  .status-summary {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .status-pill {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    
+    &.status-success {
+      background-color: nb-theme(color-success-default);
+      color: white;
+    }
+    
+    &.status-warning {
+      background-color: nb-theme(color-warning-default);
+      color: white;
+    }
+    
+    &.status-danger {
+      background-color: nb-theme(color-danger-default);
+      color: white;
+    }
+  }
+}

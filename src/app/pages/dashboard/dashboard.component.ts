@@ -1,3 +1,4 @@
+// src/app/pages/dashboard/dashboard.component.ts
 import {Component, OnDestroy} from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators' ;
@@ -18,7 +19,13 @@ export class DashboardComponent implements OnDestroy {
 
   private alive = true;
 
+  // Tab settings
+  activeTab = 'iot-dashboard';  // Default to IoT Dashboard, can be 'identity-pulse' for Identity Pulse
+
+  // Solar component data
   solarValue: number;
+  
+  // Status cards for IoT Dashboard
   lightCard: CardSettings = {
     title: 'Light',
     iconClass: 'nb-lightbulb',
@@ -78,6 +85,34 @@ export class DashboardComponent implements OnDestroy {
     dark: this.commonStatusCardsSet,
   };
 
+  // Status cards for Identity Pulse Dashboard
+  identityStatusCards = [
+    {
+      title: 'Total Verifications',
+      iconClass: 'search-outline',
+      value: '3,254',
+      type: 'primary',
+    },
+    {
+      title: 'Success Rate',
+      iconClass: 'checkmark-circle-outline',
+      value: '92%',
+      type: 'success',
+    },
+    {
+      title: 'Countries',
+      iconClass: 'globe-outline',
+      value: '14',
+      type: 'info',
+    },
+    {
+      title: 'Active Users',
+      iconClass: 'people-outline',
+      value: '47',
+      type: 'warning',
+    },
+  ];
+
   constructor(private themeService: NbThemeService,
               private solarService: SolarData) {
     this.themeService.getJsTheme()
@@ -91,6 +126,10 @@ export class DashboardComponent implements OnDestroy {
       .subscribe((data) => {
         this.solarValue = data;
       });
+  }
+
+  switchTab(tabName: string) {
+    this.activeTab = tabName;
   }
 
   ngOnDestroy() {

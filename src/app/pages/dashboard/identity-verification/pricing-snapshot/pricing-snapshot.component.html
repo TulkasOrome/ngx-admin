@@ -1,0 +1,43 @@
+<!-- src/app/pages/dashboard/identity-verification/pricing-snapshot/pricing-snapshot.component.html -->
+<nb-card>
+  <nb-card-header>
+    Pricing Snapshot by Region
+  </nb-card-header>
+  <nb-card-body>
+    <div class="pricing-container">
+      <nb-tabset class="pricing-tabs">
+        <nb-tab *ngFor="let region of regions" [tabTitle]="region.name">
+          <div class="pricing-details">
+            <div class="pricing-header">
+              <div class="price">
+                {{ region.currency }} {{ region.priceRange }}
+                <span class="per-verification">per verification</span>
+              </div>
+            </div>
+            
+            <div class="countries-list">
+              <div class="countries-header">
+                Available Countries
+              </div>
+              <div class="countries-grid">
+                <div class="country-item" *ngFor="let country of region.countries">
+                  <img [src]="'assets/images/flags/' + country.code.toLowerCase() + '.png'" 
+                       [alt]="country.name"
+                       class="country-flag">
+                  <span class="country-name" [class.unavailable]="!country.available">
+                    {{ country.name }}
+                    <small *ngIf="!country.available">(Coming Soon)</small>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pricing-footer">
+              <button nbButton outline status="primary">Request Custom Quote</button>
+            </div>
+          </div>
+        </nb-tab>
+      </nb-tabset>
+    </div>
+  </nb-card-body>
+</nb-card>

@@ -1,0 +1,56 @@
+// src/app/pages/dashboard/identity-verification/differentiators/differentiators.component.scss
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .differentiators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .differentiator-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 0;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: nb-theme(shadow-hover);
+    }
+  }
+
+  nb-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .differentiator-icon {
+    background-color: nb-theme(color-primary-transparent-100);
+    color: nb-theme(color-primary-default);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    
+    nb-icon {
+      font-size: 2rem;
+    }
+  }
+
+  .differentiator-content {
+    flex: 1;
+  }
+
+  .differentiator-title {
+    margin-bottom: 0.75rem;
+  }
+
+  .differentiator-description {
+    color: nb-theme(text-hint-color);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+}
