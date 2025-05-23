@@ -6,7 +6,7 @@ import { NbThemeService } from '@nebular/theme';
   styleUrls: ['./footer.component.scss'],
   template: `
     <span class="created-by">
-      Created with ♥ by <b><a href="https://marketsoft.com.au" target="_blank">Marketsoft</a></b> 2025
+      Powered by <b><a href="https://marketsoft.com.au" target="_blank">IdentityPulse</a></b> © 2025
     </span>
     <div class="socials">
       <a href="#" target="_blank" class="ion ion-social-github"></a>

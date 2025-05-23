@@ -9,7 +9,8 @@ import {
   NbSelectModule, 
   NbSpinnerModule, 
   NbProgressBarModule,
-  NbIconModule 
+  NbIconModule,
+  NbListModule
 } from '@nebular/theme';
 import { ManualLookupComponent } from './manual-lookup/manual-lookup.component';
 import { ResultsHistoryComponent } from './results-history/results-history.component';
@@ -34,7 +35,8 @@ import { ResultsHistoryComponent } from './results-history/results-history.compo
     NbSelectModule,
     NbSpinnerModule,
     NbProgressBarModule,
-    NbIconModule
+    NbIconModule,
+    NbListModule
   ],
   declarations: [
     ManualLookupComponent,
