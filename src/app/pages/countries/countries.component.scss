@@ -73,6 +73,40 @@
       }
     }
 
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem;
+      background: nb-theme(background-basic-color-2);
+      border-radius: nb-theme(card-border-radius);
+
+      .status-label {
+        font-size: 0.875rem;
+        color: nb-theme(text-hint-color);
+      }
+
+      .status-value {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-weight: 600;
+
+        nb-icon {
+          font-size: 1.25rem;
+        }
+
+        &.online {
+          color: nb-theme(color-success-default);
+        }
+
+        &.coming-soon {
+          color: nb-theme(color-warning-default);
+        }
+      }
+    }
+
     .features,
     .regulations {
       margin-bottom: 1.5rem;

@@ -5,7 +5,8 @@
       <nb-option value="all">All Regions</nb-option>
       <nb-option value="apac">APAC</nb-option>
       <nb-option value="mena">MENA</nb-option>
-      <nb-option value="europe">Europe</nb-option>
+      <nb-option value="americas">Americas</nb-option>
+      <nb-option value="north-asia">North Asia</nb-option>
     </nb-select>
   </nb-card-header>
   
@@ -15,19 +16,29 @@
         <div class="country-header">
           <div class="country-info">
             <h6 class="country-name">{{ country.name }}</h6>
-            <nb-icon 
-              [icon]="getStatusIcon(country.status)" 
-              [status]="getStatusColor(country.status)"
-              pack="eva">
-            </nb-icon>
+            <div class="status-indicators">
+              <nb-icon 
+                [icon]="getStatusIcon(country.status)" 
+                [status]="getStatusColor(country.status)"
+                pack="eva"
+                title="{{ country.status }}">
+              </nb-icon>
+              <nb-icon 
+                *ngIf="country.online !== undefined"
+                [icon]="getOnlineStatusIcon(country.online)" 
+                [status]="getOnlineStatusColor(country.online)"
+                pack="eva"
+                title="{{ country.online ? 'Online' : 'Offline' }}">
+              </nb-icon>
+            </div>
           </div>
           <div class="country-stats">
             <span class="records">{{ country.records }} records</span>
-            <span class="update-freq">{{ country.updateFrequency }} updates</span>
+            <span class="update-freq">{{ country.updateFrequency }}</span>
           </div>
         </div>
         
-        <div class="coverage-section">
+        <div class="coverage-section" *ngIf="country.status === 'active'">
           <div class="coverage-header">
             <span class="coverage-label">Coverage</span>
             <span class="coverage-value">{{ country.coverage }}%</span>
