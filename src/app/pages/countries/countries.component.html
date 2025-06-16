@@ -5,7 +5,7 @@
         <h5>Supported Countries & Regions</h5>
       </nb-card-header>
       <nb-card-body>
-        <p class="subtitle">IdentityPulse provides comprehensive identity verification coverage across Asia-Pacific and expanding into the Middle East.</p>
+        <p class="subtitle">IdentityPulse provides comprehensive coverage across The Asia Pacific and Middle East and North Africa Regions and expanding into the Americas and North Asia.</p>
       </nb-card-body>
     </nb-card>
   </div>
@@ -30,11 +30,11 @@
         <div class="country-stats">
           <div class="stat">
             <span class="label">Coverage</span>
-            <span class="value">{{ country.coverage }}%</span>
+            <span class="value">{{ country.adultPopulationCoverage }}</span>
           </div>
           <div class="stat">
-            <span class="label">Population</span>
-            <span class="value">{{ country.population }}</span>
+            <span class="label">Records</span>
+            <span class="value">{{ country.recordCount }}</span>
           </div>
           <div class="stat">
             <span class="label">Databases</span>
@@ -44,6 +44,14 @@
             <span class="label">Updates</span>
             <span class="value">{{ country.updateFrequency }}</span>
           </div>
+        </div>
+        
+        <div class="status-indicator">
+          <span class="status-label">Status:</span>
+          <span class="status-value online">
+            <nb-icon icon="checkmark-circle-2-outline" pack="eva"></nb-icon>
+            Online
+          </span>
         </div>
         
         <div class="features">
@@ -92,6 +100,18 @@
             <span class="label">Population</span>
             <span class="value">{{ country.population }}</span>
           </div>
+          <div class="stat" *ngIf="country.recordCount !== 'Coming Soon'">
+            <span class="label">Expected Records</span>
+            <span class="value">{{ country.recordCount }}</span>
+          </div>
+        </div>
+        
+        <div class="status-indicator">
+          <span class="status-label">Status:</span>
+          <span class="status-value coming-soon">
+            <nb-icon icon="sync-outline" pack="eva"></nb-icon>
+            Coming Soon
+          </span>
         </div>
         
         <div class="features">
