@@ -1,7 +1,9 @@
-import { Component, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { Router } from '@angular/router';
 import { takeWhile } from 'rxjs/operators';
+import { ElasticsearchService, ServerHealthResponse } from '../../../@core/services/elasticsearch.service';
+import { interval } from 'rxjs';
 
 declare const L: any;
 
@@ -10,25 +12,66 @@ interface DataCenter {
   country: string;
   city: string;
   coordinates: [number, number];
-  status: 'online' | 'coming-soon' | 'offline';
+  status: 'online' | 'coming-soon' | 'offline' | 'maintenance';
   databases: number;
   responseTime: number;
   coverage: string;
   adultPopulationCoverage: string;
+  isElasticsearch?: boolean;
 }
 
 @Component({
   selector: 'ngx-data-centers-map',
   styleUrls: ['./data-centers-map.component.scss'],
-  templateUrl: './data-centers-map.component.html',
+  template: `
+    <nb-card>
+      <nb-card-header>
+        <div class="header-container">
+          <h6>Global Identity Verification Coverage</h6>
+          <div class="legend">
+            <span class="legend-item">
+              <span class="dot online"></span>
+              Online
+            </span>
+            <span class="legend-item">
+              <span class="dot maintenance"></span>
+              Maintenance
+            </span>
+            <span class="legend-item">
+              <span class="dot offline"></span>
+              Offline
+            </span>
+          </div>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div id="map" class="map-container"></div>
+        <div class="map-stats">
+          <div class="stat">
+            <nb-icon icon="globe-2-outline" pack="eva"></nb-icon>
+            <span>{{ getCountryCount() }} Countries</span>
+          </div>
+          <div class="stat">
+            <nb-icon icon="hard-drive-outline" pack="eva"></nb-icon>
+            <span>{{ getTotalDatabases() }} Databases</span>
+          </div>
+          <div class="stat">
+            <nb-icon icon="activity-outline" pack="eva"></nb-icon>
+            <span>{{ getOnlineCount() }} Online</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  `,
 })
-export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
+export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private alive = true;
   private map: any;
+  private markers: Map<string, any> = new Map();
 
   dataCenters: DataCenter[] = [
-    // Live countries (green)
+    // Live Elasticsearch servers
     {
       name: 'Australia DC',
       country: 'Australia',
@@ -36,9 +79,10 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
       coordinates: [-33.8688, 151.2093],
       status: 'online',
       databases: 3,
-      responseTime: 45,
+      responseTime: 0,
       coverage: '11.5M',
-      adultPopulationCoverage: '75%'
+      adultPopulationCoverage: '75%',
+      isElasticsearch: true
     },
     {
       name: 'Indonesia DC',
@@ -47,9 +91,10 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
       coordinates: [-6.2088, 106.8456],
       status: 'online',
       databases: 4,
-      responseTime: 78,
+      responseTime: 0,
       coverage: '180M+',
-      adultPopulationCoverage: '82%'
+      adultPopulationCoverage: '82%',
+      isElasticsearch: true
     },
     {
       name: 'Malaysia DC',
@@ -58,9 +103,10 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
       coordinates: [3.1390, 101.6869],
       status: 'online',
       databases: 2,
-      responseTime: 65,
+      responseTime: 0,
       coverage: '24M',
-      adultPopulationCoverage: '85%'
+      adultPopulationCoverage: '85%',
+      isElasticsearch: true
     },
     {
       name: 'Japan DC',
@@ -69,9 +115,10 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
       coordinates: [35.6762, 139.6503],
       status: 'online',
       databases: 3,
-      responseTime: 89,
+      responseTime: 0,
       coverage: '58M',
-      adultPopulationCoverage: '88%'
+      adultPopulationCoverage: '88%',
+      isElasticsearch: true
     },
     // Coming soon countries (orange)
     {
@@ -309,14 +356,52 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private theme: NbThemeService,
-    private router: Router
+    private router: Router,
+    private elasticsearchService: ElasticsearchService
   ) {}
+
+  ngOnInit() {
+    // Check server health immediately
+    this.checkServerHealth();
+    
+    // Check server health every 30 seconds
+    interval(30000)
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(() => this.checkServerHealth());
+  }
 
   ngAfterViewInit() {
     // Wait for the view to be fully initialized
     setTimeout(() => {
       this.initMap();
     }, 100);
+  }
+
+  checkServerHealth() {
+    this.elasticsearchService.checkAllServersHealth().subscribe(
+      (healthMap: Map<string, ServerHealthResponse>) => {
+        // Update data centers with real-time health status
+        this.dataCenters.forEach(dc => {
+          if (dc.isElasticsearch) {
+            const health = healthMap.get(dc.country);
+            if (health) {
+              dc.status = health.status;
+              dc.responseTime = health.responseTime;
+              
+              // Update marker if map is initialized
+              if (this.map && this.markers.has(dc.name)) {
+                const marker = this.markers.get(dc.name);
+                const icon = this.createCustomIcon(dc.status);
+                marker.setIcon(icon);
+                
+                // Update popup content
+                marker.setPopupContent(this.createPopupContent(dc));
+              }
+            }
+          }
+        });
+      }
+    );
   }
 
   initMap() {
@@ -347,9 +432,12 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
         .addTo(this.map)
         .bindPopup(this.createPopupContent(dc));
 
+      // Store marker reference
+      this.markers.set(dc.name, marker);
+
       // Add click event to navigate to identity lookup
       marker.on('click', () => {
-        if (dc.status === 'online') {
+        if (dc.status === 'online' || dc.status === 'maintenance') {
           setTimeout(() => {
             this.router.navigate(['/pages/identity/manual-lookup'], {
               queryParams: { country: dc.country.toLowerCase() }
@@ -368,12 +456,13 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
     const colors = {
       online: '#00d68f',
       'coming-soon': '#ffaa00',
-      offline: '#ff3d71'
+      offline: '#ff3d71',
+      maintenance: '#ffaa00'
     };
 
     const html = `
       <div style="
-        background-color: ${colors[status]};
+        background-color: ${colors[status] || colors['offline']};
         width: 24px;
         height: 24px;
         border-radius: 50%;
@@ -394,22 +483,25 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
     const statusColors = {
       online: '#00d68f',
       'coming-soon': '#ffaa00',
-      offline: '#ff3d71'
+      offline: '#ff3d71',
+      maintenance: '#ffaa00'
     };
 
-    const statusText = dc.status === 'coming-soon' ? 'Coming Soon' : dc.status;
+    const statusText = dc.status === 'coming-soon' ? 'Coming Soon' : 
+                      dc.status === 'maintenance' ? 'Maintenance' : dc.status;
 
     return `
       <div style="padding: 10px; min-width: 200px;">
         <h6 style="margin: 0 0 10px 0; font-weight: 600;">${dc.country}</h6>
         <div style="font-size: 14px; line-height: 1.6;">
-          <div><strong>Status:</strong> <span style="color: ${statusColors[dc.status]}; font-weight: 600;">${statusText}</span></div>
+          <div><strong>Status:</strong> <span style="color: ${statusColors[dc.status] || statusColors['offline']}; font-weight: 600;">${statusText}</span></div>
           <div><strong>Coverage:</strong> ${dc.coverage}</div>
           ${dc.adultPopulationCoverage !== 'TBD' ? `<div><strong>Adult Population:</strong> ${dc.adultPopulationCoverage}</div>` : ''}
           ${dc.databases > 0 ? `<div><strong>Databases:</strong> ${dc.databases}</div>` : ''}
           ${dc.responseTime > 0 ? `<div><strong>Response Time:</strong> ${dc.responseTime}ms</div>` : ''}
+          ${dc.isElasticsearch ? `<div><strong>Server Type:</strong> Elasticsearch</div>` : ''}
         </div>
-        ${dc.status === 'online' ? `
+        ${(dc.status === 'online' || dc.status === 'maintenance') ? `
           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e4e9f2; text-align: center;">
             <span style="color: #0095ff; font-size: 12px; cursor: pointer;">
               <strong>Click to query this region →</strong>
@@ -442,6 +534,8 @@ export class DataCentersMapComponent implements AfterViewInit, OnDestroy {
         return '#ffaa00';
       case 'offline':
         return '#ff3d71';
+      case 'maintenance':
+        return '#ffaa00';
       default:
         return '#8f9bb3';
     }
