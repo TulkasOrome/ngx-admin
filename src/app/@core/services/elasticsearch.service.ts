@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError, forkJoin } from 'rxjs';
-import { map, catchError, timeout } from 'rxjs/operators';
+import { map, catchError, timeout, switchMap } from 'rxjs/operators';
 
 export interface ElasticsearchServer {
   name: string;
@@ -214,23 +214,86 @@ export class ElasticsearchService {
 
     const startTime = Date.now();
     
-    // Build Elasticsearch query
-    const query = this.buildIdentityQuery(request);
-    
-    return this.http.post(`${server.url}/identity-${request.country.toLowerCase()}/_search`, query, {
+    // First, try to find the appropriate index
+    return this.findIdentityIndex(server, request.country).pipe(
+      switchMap(indexName => {
+        if (!indexName) {
+          return throwError('No identity index found for ' + request.country);
+        }
+        
+        // Build Elasticsearch query
+        const query = this.buildIdentityQuery(request);
+        
+        return this.http.post(`${server.url}/${indexName}/_search`, query, {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json'
+          })
+        }).pipe(
+          timeout(10000),
+          map((response: any) => {
+            const searchTime = Date.now() - startTime;
+            return this.processSearchResponse(response, request, server.name, searchTime);
+          }),
+          catchError(error => {
+            console.error('Elasticsearch search error:', error);
+            return throwError('Failed to search identity records: ' + error.message);
+          })
+        );
+      })
+    );
+  }
+
+  /**
+   * Find the appropriate identity index for a country
+   */
+  private findIdentityIndex(server: ElasticsearchServer, country: string): Observable<string> {
+    return this.http.get(`${server.url}/_cat/indices?format=json`, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     }).pipe(
-      timeout(10000),
-      map((response: any) => {
-        const searchTime = Date.now() - startTime;
-        return this.processSearchResponse(response, request, server.name, searchTime);
+      map((indices: any[]) => {
+        // Look for identity-related indices
+        const identityIndices = indices.filter(idx => 
+          idx.index.includes('identity') || 
+          idx.index.includes('person') || 
+          idx.index.includes('individual') ||
+          idx.index.includes(country.toLowerCase())
+        );
+        
+        // If we found identity indices, use the one with most documents
+        if (identityIndices.length > 0) {
+          const primaryIndex = identityIndices.sort((a, b) => 
+            parseInt(b['docs.count']) - parseInt(a['docs.count'])
+          )[0];
+          return primaryIndex.index;
+        }
+        
+        // Otherwise, try standard naming patterns
+        const standardNames = [
+          `identity-${country.toLowerCase()}`,
+          `persons-${country.toLowerCase()}`,
+          `individuals-${country.toLowerCase()}`,
+          country.toLowerCase()
+        ];
+        
+        for (const name of standardNames) {
+          const found = indices.find(idx => idx.index === name);
+          if (found) return found.index;
+        }
+        
+        // Last resort: use the index with most documents
+        if (indices.length > 0) {
+          const largest = indices.sort((a, b) => 
+            parseInt(b['docs.count']) - parseInt(a['docs.count'])
+          )[0];
+          console.warn(`Using largest index ${largest.index} for ${country}`);
+          return largest.index;
+        }
+        
+        return null;
       }),
-      catchError(error => {
-        console.error('Elasticsearch search error:', error);
-        return throwError('Failed to search identity records');
-      })
+      catchError(() => of(null))
     );
   }
 
@@ -255,12 +318,15 @@ export class ElasticsearchService {
     const must = [];
     const should = [];
 
+    // Determine field names based on country
+    const fieldMappings = this.getFieldMappings(request.country);
+
     // Name matching with fuzzy search
     if (request.firstName) {
       must.push({
         multi_match: {
           query: request.firstName,
-          fields: ['firstName^3', 'firstName.phonetic^2', 'firstName.fuzzy'],
+          fields: fieldMappings.firstNameFields,
           type: 'best_fields',
           fuzziness: 'AUTO'
         }
@@ -271,7 +337,7 @@ export class ElasticsearchService {
       must.push({
         multi_match: {
           query: request.lastName,
-          fields: ['lastName^3', 'lastName.phonetic^2', 'lastName.fuzzy'],
+          fields: fieldMappings.lastNameFields,
           type: 'best_fields',
           fuzziness: 'AUTO'
         }
@@ -280,56 +346,86 @@ export class ElasticsearchService {
 
     // Date of birth matching
     if (request.dateOfBirth) {
-      must.push({
-        term: {
-          dateOfBirth: request.dateOfBirth
-        }
-      });
+      const dobField = fieldMappings.dobField;
+      const dobValue = this.formatDateForCountry(request.dateOfBirth, request.country);
+      
+      if (request.country === 'Australia') {
+        // Australia stores DOB as numeric
+        should.push({
+          term: { [dobField]: parseInt(dobValue) }
+        });
+      } else {
+        should.push({
+          term: { [dobField]: dobValue }
+        });
+      }
     }
 
     // Optional fields with boost
     if (request.identificationNumber) {
-      should.push({
-        term: {
-          'identificationNumber.keyword': {
-            value: request.identificationNumber,
-            boost: 2.0
+      const idField = fieldMappings.idField;
+      if (idField) {
+        should.push({
+          term: {
+            [idField]: {
+              value: request.identificationNumber,
+              boost: 2.0
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     if (request.email) {
-      should.push({
-        term: {
-          'email.keyword': {
-            value: request.email.toLowerCase(),
-            boost: 1.5
+      const emailField = fieldMappings.emailField;
+      if (emailField) {
+        should.push({
+          term: {
+            [emailField]: {
+              value: request.email.toLowerCase(),
+              boost: 1.5
+            }
           }
-        }
-      });
+        });
+      }
     }
 
-    if (request.phone) {
-      should.push({
-        match: {
-          phone: {
-            query: request.phone,
-            fuzziness: '1'
-          }
+    if (request.phone || request.mobile) {
+      const phoneValue = request.mobile || request.phone;
+      const phoneField = fieldMappings.phoneField;
+      
+      if (phoneField && phoneValue) {
+        if (request.country === 'Australia') {
+          // Australia stores phone as numeric, remove leading 0
+          const numericPhone = phoneValue.replace(/\D/g, '').replace(/^0+/, '');
+          should.push({
+            term: { [phoneField]: parseFloat(numericPhone) }
+          });
+        } else {
+          should.push({
+            match: {
+              [phoneField]: {
+                query: phoneValue,
+                fuzziness: '1'
+              }
+            }
+          });
         }
-      });
+      }
     }
 
     if (request.address) {
-      should.push({
-        match: {
-          address: {
-            query: request.address,
-            fuzziness: 'AUTO'
+      const addressField = fieldMappings.addressField;
+      if (addressField) {
+        should.push({
+          match: {
+            [addressField]: {
+              query: request.address,
+              fuzziness: 'AUTO'
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     return {
@@ -344,6 +440,76 @@ export class ElasticsearchService {
       _source: true,
       explain: true
     };
+  }
+
+  /**
+   * Get field mappings for each country
+   */
+  private getFieldMappings(country: string): any {
+    const mappings = {
+      'Australia': {
+        firstNameFields: ['PER_First_Name^3'],
+        lastNameFields: ['PER_Last_Name^3'],
+        dobField: 'PER_DOB',
+        emailField: 'PER_Email',
+        phoneField: 'PER_Mobile',
+        addressField: 'ADDR_Address',
+        idField: null
+      },
+      'Indonesia': {
+        firstNameFields: ['Given_Name1^3', 'Given_Name2^2', 'Given_Name3', 'FULL_NAME'],
+        lastNameFields: ['FULL_NAME'],
+        dobField: 'DOB',
+        emailField: null,
+        phoneField: null,
+        addressField: 'INDO_Address1b',
+        idField: 'DriverLicenseNumber'
+      },
+      'Malaysia': {
+        firstNameFields: ['given_name_1^3', 'given_name_2^2', 'given_name_3', 'full_name'],
+        lastNameFields: ['full_name'],
+        dobField: 'dob_yyyymmdd',
+        emailField: 'email',
+        phoneField: null,
+        addressField: 'full_address',
+        idField: 'National_ID'
+      },
+      'Japan': {
+        firstNameFields: ['given_name_romaji^3', 'given_name^3', 'full_name'],
+        lastNameFields: ['Surname_romaji^3', 'full_name'],
+        dobField: 'birthday',
+        emailField: 'email',
+        phoneField: null,
+        addressField: 'address',
+        idField: null
+      }
+    };
+
+    return mappings[country] || mappings['Australia'];
+  }
+
+  /**
+   * Format date for country-specific storage
+   */
+  private formatDateForCountry(date: string, country: string): string {
+    // Remove any hyphens or slashes
+    const cleanDate = date.replace(/[-\/]/g, '');
+    
+    // Ensure YYYYMMDD format
+    if (cleanDate.length === 8) {
+      return cleanDate;
+    }
+    
+    // Try to parse and reformat
+    const parsed = new Date(date);
+    if (!isNaN(parsed.getTime())) {
+      const year = parsed.getFullYear();
+      const month = String(parsed.getMonth() + 1).padStart(2, '0');
+      const day = String(parsed.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+    
+    return cleanDate;
   }
 
   /**
