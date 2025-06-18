@@ -24,11 +24,53 @@ import {
   MsalGuard, 
   MsalInterceptor, 
   MsalBroadcastService,
-  MsalRedirectComponent 
+  MsalRedirectComponent,
+  MSAL_INSTANCE,
+  MSAL_GUARD_CONFIG,
+  MSAL_INTERCEPTOR_CONFIG,
+  MsalInterceptorConfiguration,
+  MsalGuardConfiguration
 } from '@azure/msal-angular';
-import { InteractionType } from '@azure/msal-browser';
-import { MSALInstanceFactory, msalConfig } from './auth/azure-auth-config';
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { environment } from '../environments/environment';
+
+// MSAL Instance Factory
+export function MSALInstanceFactory(): PublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: environment.azure.clientId,
+      authority: `https://login.microsoftonline.com/${environment.azure.tenantId}`,
+      redirectUri: environment.azure.redirectUri,
+      postLogoutRedirectUri: environment.azure.postLogoutRedirectUri
+    },
+    cache: {
+      cacheLocation: 'localStorage',
+      storeAuthStateInCookie: false
+    }
+  });
+}
+
+// MSAL Guard Configuration
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: environment.azure.scopes
+    }
+  };
+}
+
+// MSAL Interceptor Configuration
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', environment.azure.scopes);
+  protectedResourceMap.set(environment.identityPulseApi.baseUrl + '/*', environment.azure.scopes);
+  
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
 
 @NgModule({
   declarations: [AppComponent],
@@ -48,15 +90,21 @@ import { environment } from '../environments/environment';
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
-    MsalModule.forRoot(MSALInstanceFactory(), msalConfig, {
-      interactionType: InteractionType.Redirect,
-      protectedResourceMap: new Map([
-        ['https://graph.microsoft.com/v1.0/me', environment.azure.scopes],
-        [environment.identityPulseApi.baseUrl + '/*', environment.azure.scopes]
-      ])
-    })
+    MsalModule
   ],
   providers: [
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,

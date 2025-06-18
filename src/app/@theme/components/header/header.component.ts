@@ -1,7 +1,7 @@
 // src/app/@theme/components/header/header.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
-import { AzureAuthService } from '../../../auth/azure-auth.service';
+import { AuthService } from '../../../auth/auth.service';
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil, filter } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
@@ -23,13 +23,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { title: 'Log out' } 
   ];
 
-  public constructor(
+  constructor(
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
     private themeService: NbThemeService,
     private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService,
-    private authService: AzureAuthService,
+    private authService: AuthService,
   ) {
     this.materialTheme$ = this.themeService.onThemeChange()
       .pipe(map(theme => {
@@ -50,29 +50,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe((isLessThanXl: boolean) => this.userPictureOnly = isLessThanXl);
 
-    // Get user from Azure AD
-    const azureUser = this.authService.getUser();
-    if (azureUser) {
-      this.user = {
-        name: azureUser.displayName || azureUser.email,
-        picture: null
-      };
-    }
-
-    // Also try to get user profile from Graph API
-    this.authService.getUserProfile()
+    // Subscribe to user changes
+    this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        profile => {
+      .subscribe(user => {
+        if (user) {
           this.user = {
-            name: profile.displayName || profile.mail || profile.userPrincipalName,
+            name: user.displayName,
             picture: null
           };
-        },
-        error => {
-          console.log('Could not fetch user profile from Graph API:', error);
         }
-      );
+      });
 
     // Handle menu clicks
     this.menuService.onItemClick()
@@ -95,7 +83,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleSidebar(): boolean {
     this.sidebarService.toggle(true, 'menu-sidebar');
     this.layoutService.changeLayoutSize();
-
     return false;
   }
 
