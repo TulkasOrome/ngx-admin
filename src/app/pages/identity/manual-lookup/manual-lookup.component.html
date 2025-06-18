@@ -92,6 +92,22 @@
             
             <div class="col-md-6">
               <div class="form-group">
+                <label for="matchStrictness" class="label">Match Strictness</label>
+                <nb-select fullWidth 
+                           id="matchStrictness"
+                           formControlName="matchStrictness">
+                  <nb-option value="strict">Strict - Exact matches only</nb-option>
+                  <nb-option value="normal">Normal - Balanced matching</nb-option>
+                  <nb-option value="loose">Loose - Fuzzy matching</nb-option>
+                </nb-select>
+                <span class="hint-text">Controls how flexibly identity matching is performed</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
                 <label for="email" class="label">Email</label>
                 <input nbInput 
                        fullWidth 
@@ -105,12 +121,10 @@
                 </span>
               </div>
             </div>
-          </div>
-          
-          <div class="row">
+            
             <div class="col-md-6">
               <div class="form-group">
-                <label for="phone" class="label">Phone Number</label>
+                <label for="phone" class="label">Phone/Mobile</label>
                 <input nbInput 
                        fullWidth 
                        id="phone"
@@ -119,8 +133,10 @@
                        status="basic">
               </div>
             </div>
-            
-            <div class="col-md-6">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12">
               <div class="form-group">
                 <label for="address" class="label">Address</label>
                 <input nbInput 
@@ -128,6 +144,42 @@
                        id="address"
                        formControlName="address" 
                        placeholder="Enter address"
+                       status="basic">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="city" class="label">City</label>
+                <input nbInput 
+                       fullWidth 
+                       id="city"
+                       formControlName="city" 
+                       placeholder="City"
+                       status="basic">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="state" class="label">State</label>
+                <input nbInput 
+                       fullWidth 
+                       id="state"
+                       formControlName="state" 
+                       placeholder="State"
+                       status="basic">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="postCode" class="label">Post Code</label>
+                <input nbInput 
+                       fullWidth 
+                       id="postCode"
+                       formControlName="postCode" 
+                       placeholder="Post Code"
                        status="basic">
               </div>
             </div>
@@ -170,13 +222,22 @@
           </nb-list-item>
           <nb-list-item>
             <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
-            <span>Include middle names if available</span>
+            <span>For Indonesia: Single names are supported</span>
           </nb-list-item>
           <nb-list-item>
             <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
-            <span>Double-check spelling and formatting</span>
+            <span>Mobile numbers can include country codes</span>
           </nb-list-item>
         </nb-list>
+        
+        <div class="mt-3">
+          <h6>Match Strictness Guide:</h6>
+          <ul class="strictness-guide">
+            <li><strong>Strict:</strong> Requires exact matches, no fuzzy matching</li>
+            <li><strong>Normal:</strong> Balanced approach, handles minor variations</li>
+            <li><strong>Loose:</strong> Maximum flexibility for problematic data</li>
+          </ul>
+        </div>
       </nb-card-body>
     </nb-card>
 
@@ -192,12 +253,18 @@
                           [displayValue]="true"
                           size="large">
           </nb-progress-bar>
+          <div class="confidence-level mt-2">
+            <span class="badge badge-{{ getMatchStatus(result.overallMatch) }}">
+              {{ result.confidenceLevel }}
+            </span>
+            <span class="match-tier">{{ result.matchTier }}</span>
+          </div>
         </div>
         
         <div class="field-matches mt-4">
           <h6>Field-level Match Breakdown</h6>
           
-          <div class="field-match-item">
+          <div class="field-match-item" *ngIf="result.fieldMatches.name > 0">
             <div class="match-header">
               <span>Name</span>
               <span class="match-value">{{ result.fieldMatches.name }}%</span>
@@ -208,7 +275,7 @@
             </nb-progress-bar>
           </div>
           
-          <div class="field-match-item">
+          <div class="field-match-item" *ngIf="result.fieldMatches.dateOfBirth > 0">
             <div class="match-header">
               <span>Date of Birth</span>
               <span class="match-value">{{ result.fieldMatches.dateOfBirth }}%</span>
@@ -219,7 +286,7 @@
             </nb-progress-bar>
           </div>
           
-          <div class="field-match-item">
+          <div class="field-match-item" *ngIf="result.fieldMatches.address > 0">
             <div class="match-header">
               <span>Address</span>
               <span class="match-value">{{ result.fieldMatches.address }}%</span>
@@ -230,7 +297,7 @@
             </nb-progress-bar>
           </div>
           
-          <div class="field-match-item">
+          <div class="field-match-item" *ngIf="result.fieldMatches.identification > 0">
             <div class="match-header">
               <span>Identification</span>
               <span class="match-value">{{ result.fieldMatches.identification }}%</span>
@@ -240,10 +307,37 @@
                             [status]="getMatchStatus(result.fieldMatches.identification)">
             </nb-progress-bar>
           </div>
+          
+          <div class="field-match-item" *ngIf="result.fieldMatches.email > 0">
+            <div class="match-header">
+              <span>Email</span>
+              <span class="match-value">{{ result.fieldMatches.email }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.email" 
+                            size="tiny" 
+                            [status]="getMatchStatus(result.fieldMatches.email)">
+            </nb-progress-bar>
+          </div>
+          
+          <div class="field-match-item" *ngIf="result.fieldMatches.phone > 0">
+            <div class="match-header">
+              <span>Phone</span>
+              <span class="match-value">{{ result.fieldMatches.phone }}%</span>
+            </div>
+            <nb-progress-bar [value]="result.fieldMatches.phone" 
+                            size="tiny" 
+                            [status]="getMatchStatus(result.fieldMatches.phone)">
+            </nb-progress-bar>
+          </div>
+        </div>
+
+        <div class="warning-section" *ngIf="result.warningMessage">
+          <nb-icon icon="alert-triangle-outline" status="warning"></nb-icon>
+          <span>{{ result.warningMessage }}</span>
         </div>
 
         <div class="action-buttons">
-          <button nbButton fullWidth status="info" size="medium">
+          <button nbButton fullWidth status="info" size="medium" (click)="downloadReport()">
             <nb-icon icon="download-outline"></nb-icon>
             Download Report
           </button>

@@ -51,6 +51,22 @@
         line-height: 1.5;
       }
     }
+
+    .strictness-guide {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0 0;
+
+      li {
+        font-size: 0.75rem;
+        color: nb-theme(text-hint-color);
+        margin-bottom: 0.5rem;
+
+        strong {
+          color: nb-theme(text-basic-color);
+        }
+      }
+    }
   }
 
   .result-card {
@@ -64,6 +80,40 @@
         margin: 0 0 1rem 0;
         font-weight: 600;
         color: nb-theme(text-basic-color);
+      }
+
+      .confidence-level {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .badge {
+          padding: 0.4rem 0.8rem;
+          border-radius: nb-theme(border-radius);
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+
+          &.badge-success {
+            background-color: nb-theme(color-success-default);
+            color: white;
+          }
+
+          &.badge-warning {
+            background-color: nb-theme(color-warning-default);
+            color: white;
+          }
+
+          &.badge-danger {
+            background-color: nb-theme(color-danger-default);
+            color: white;
+          }
+        }
+
+        .match-tier {
+          font-size: 0.875rem;
+          color: nb-theme(text-hint-color);
+        }
       }
     }
 
@@ -93,6 +143,28 @@
             color: nb-theme(text-basic-color);
           }
         }
+      }
+    }
+
+    .warning-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      background: nb-theme(color-warning-transparent-100);
+      border-radius: nb-theme(border-radius);
+
+      nb-icon {
+        flex-shrink: 0;
+        font-size: 1.25rem;
+        color: nb-theme(color-warning-default);
+      }
+
+      span {
+        font-size: 0.875rem;
+        color: nb-theme(text-basic-color);
+        line-height: 1.4;
       }
     }
 

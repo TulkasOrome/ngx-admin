@@ -22,6 +22,7 @@ export interface IdentitySearchRequest {
   identificationNumber?: string;
   email?: string;
   phone?: string;
+  mobile?: string;  // ADD THIS LINE
   address?: string;
 }
 

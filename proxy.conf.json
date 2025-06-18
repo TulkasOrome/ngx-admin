@@ -1,0 +1,12 @@
+
+{
+  "/api/*": {
+    "target": "https://identitypulse-api20.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "headers": {
+      "Origin": "https://identitypulse-api20.azurewebsites.net"
+    }
+  }
+}
