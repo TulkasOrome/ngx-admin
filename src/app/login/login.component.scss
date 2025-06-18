@@ -1,0 +1,139 @@
+@import '../@theme/styles/themes';
+@import 'bootstrap/scss/mixins/breakpoints';
+@import '@nebular/theme/styles/global/breakpoints';
+
+@include nb-install-component() {
+  .auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: nb-theme(background-basic-color-1);
+    padding: 2rem;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 450px;
+
+    nb-card {
+      border: none;
+      box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    nb-card-body {
+      padding: 2.5rem;
+    }
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      color: nb-theme(color-primary-default);
+    }
+
+    .sub-title {
+      font-size: 0.875rem;
+      color: nb-theme(text-hint-color);
+      margin-top: 0.5rem;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    .label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: nb-theme(text-basic-color);
+    }
+
+    &.remember-me {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      padding-right: 3rem;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      padding: 0.5rem;
+      
+      nb-icon {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .error-message {
+    color: nb-theme(color-danger-default);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+  }
+
+  .forgot-password {
+    color: nb-theme(color-primary-default);
+    font-size: 0.875rem;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .demo-info {
+    margin: 1.5rem 0;
+
+    nb-alert {
+      font-size: 0.875rem;
+    }
+  }
+
+  .links {
+    margin-top: 2rem;
+
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: nb-theme(text-hint-color);
+
+      a {
+        color: nb-theme(color-primary-default);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-down(sm) {
+    .auth-card {
+      nb-card-body {
+        padding: 1.5rem;
+      }
+    }
+  }
+}

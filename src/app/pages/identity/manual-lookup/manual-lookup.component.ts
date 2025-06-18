@@ -66,38 +66,76 @@ export class ManualLookupComponent implements OnInit {
             const response = responses[0]; // Take the first/best match
             this.rawResponse = response;
             
-            // Process response for display
-            this.result = {
-              overallMatch: this.identityPulseService.getOverallMatchPercentage(response),
-              fieldMatches: this.identityPulseService.getFieldMatches(response),
-              confidenceLevel: response.ConfidenceLevel,
-              matchTier: response.MatchTier,
-              warningMessage: response.WarningMessage
-            };
-            
-            // Show appropriate toast message
-            if (response.ConfidenceLevel === 'VERY_HIGH' || response.ConfidenceLevel === 'CONFIRMED_MATCH') {
-              this.toastr.success(
-                `Identity verified with ${response.ConfidenceLevel} confidence`, 
-                'Verification Successful'
-              );
-            } else if (response.ConfidenceLevel === 'HIGH' || response.ConfidenceLevel === 'MEDIUM') {
-              this.toastr.warning(
-                `Partial match found with ${response.ConfidenceLevel} confidence`, 
-                'Partial Match'
-              );
+            // Check if it's a no match response
+            if (response.TotalScore === '0.00' || response.ConfidenceLevel === 'NO_MATCH') {
+              this.result = {
+                overallMatch: 0,
+                fieldMatches: {
+                  name: 0,
+                  dateOfBirth: 0,
+                  address: 0,
+                  identification: 0,
+                  email: 0,
+                  phone: 0
+                },
+                confidenceLevel: 'NO_MATCH',
+                matchTier: 'No Match Found',
+                warningMessage: response.WarningMessage || 'No matching records found in the database'
+              };
+              this.toastr.danger('No matching records found', 'No Match');
             } else {
-              this.toastr.danger(
-                'Low confidence match. Manual review recommended.', 
-                'Low Confidence'
-              );
+              // Process response for display
+              this.result = {
+                overallMatch: this.identityPulseService.getOverallMatchPercentage(response),
+                fieldMatches: this.identityPulseService.getFieldMatches(response),
+                confidenceLevel: response.ConfidenceLevel,
+                matchTier: response.MatchTier,
+                warningMessage: response.WarningMessage
+              };
+              
+              // Show appropriate toast message
+              if (response.ConfidenceLevel === 'VERY_HIGH' || response.ConfidenceLevel === 'CONFIRMED_MATCH') {
+                this.toastr.success(
+                  `Identity verified with ${response.ConfidenceLevel} confidence`, 
+                  'Verification Successful'
+                );
+              } else if (response.ConfidenceLevel === 'HIGH' || response.ConfidenceLevel === 'MEDIUM') {
+                this.toastr.warning(
+                  `Partial match found with ${response.ConfidenceLevel} confidence`, 
+                  'Partial Match'
+                );
+              } else {
+                this.toastr.danger(
+                  'Low confidence match. Manual review recommended.', 
+                  'Low Confidence'
+                );
+              }
             }
+            
+            // Store result in history
+            this.storeVerificationResult(apiRequest, this.result);
           } else {
+            // No results returned at all
+            this.result = {
+              overallMatch: 0,
+              fieldMatches: {
+                name: 0,
+                dateOfBirth: 0,
+                address: 0,
+                identification: 0,
+                email: 0,
+                phone: 0
+              },
+              confidenceLevel: 'NO_MATCH',
+              matchTier: 'No Match Found',
+              warningMessage: 'No matching records found in the database'
+            };
             this.toastr.danger('No matching records found', 'No Match');
           }
         },
         error => {
           this.isSubmitting = false;
+          console.error('API Error:', error);
           this.toastr.danger(error || 'Failed to verify identity', 'Verification Error');
         }
       );
@@ -138,6 +176,40 @@ export class ManualLookupComponent implements OnInit {
       link.download = `identity-verification-${Date.now()}.json`;
       link.click();
       window.URL.revokeObjectURL(url);
+    }
+  }
+
+  private storeVerificationResult(request: any, result: any) {
+    try {
+      // Get existing history from localStorage
+      const historyStr = localStorage.getItem('verificationHistory');
+      const history = historyStr ? JSON.parse(historyStr) : [];
+      
+      // Add new result
+      const newEntry = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        country: request.Country,
+        name: `${request.FirstName} ${request.LastName}`.trim(),
+        matchScore: result.overallMatch,
+        confidenceLevel: result.confidenceLevel,
+        matchTier: result.matchTier,
+        request: request,
+        response: this.rawResponse
+      };
+      
+      // Add to beginning of array
+      history.unshift(newEntry);
+      
+      // Keep only last 100 entries
+      if (history.length > 100) {
+        history.splice(100);
+      }
+      
+      // Save back to localStorage
+      localStorage.setItem('verificationHistory', JSON.stringify(history));
+    } catch (error) {
+      console.error('Error storing verification result:', error);
     }
   }
 }

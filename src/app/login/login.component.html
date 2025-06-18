@@ -1,0 +1,87 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <nb-card>
+      <nb-card-body>
+        <div class="logo-container">
+          <h2 class="title">IdentityPulse</h2>
+          <p class="sub-title">Identity Verification Platform</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="email" class="label">Email address</label>
+            <input 
+              nbInput 
+              fullWidth 
+              type="email" 
+              id="email" 
+              placeholder="Email address"
+              formControlName="email"
+              [status]="email.invalid && email.touched ? 'danger' : 'basic'"
+              autocomplete="email">
+            <p class="error-message" *ngIf="email.invalid && email.touched">
+              Please enter a valid email address
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="label">Password</label>
+            <div class="password-input-wrapper">
+              <input 
+                nbInput 
+                fullWidth 
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password" 
+                placeholder="Password"
+                formControlName="password"
+                [status]="password.invalid && password.touched ? 'danger' : 'basic'"
+                autocomplete="current-password">
+              <button 
+                nbButton 
+                ghost 
+                type="button"
+                class="password-toggle"
+                (click)="toggleShowPassword()">
+                <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'"></nb-icon>
+              </button>
+            </div>
+            <p class="error-message" *ngIf="password.invalid && password.touched">
+              Password is required
+            </p>
+          </div>
+
+          <div class="form-group remember-me">
+            <nb-checkbox formControlName="rememberMe">Remember me</nb-checkbox>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+          </div>
+
+          <button 
+            nbButton 
+            fullWidth 
+            status="primary" 
+            size="large"
+            [disabled]="loading || loginForm.invalid"
+            [nbSpinner]="loading"
+            nbSpinnerStatus="primary"
+            nbSpinnerSize="small">
+            {{ loading ? 'Signing in...' : 'Sign In' }}
+          </button>
+        </form>
+
+        <div class="demo-info">
+          <nb-alert status="info" closable="false">
+            <strong>Demo Credentials:</strong><br>
+            Email: admin@identitypulse.com<br>
+            Password: admin123
+          </nb-alert>
+        </div>
+
+        <div class="links">
+          <p class="text-center">
+            Don't have an account? <a href="#"><strong>Sign Up</strong></a>
+          </p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

@@ -2,7 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators';
 import { ElasticsearchService } from '../../@core/services/elasticsearch.service';
+import { IdentityPulseService } from '../../@core/services/identitypulse.service';
 import { interval } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface CardSettings {
   title: string;
@@ -79,7 +81,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private themeService: NbThemeService,
-    private elasticsearchService: ElasticsearchService
+    private elasticsearchService: ElasticsearchService,
+    private identityPulseService: IdentityPulseService
   ) {
     this.themeService.getJsTheme()
       .pipe(takeWhile(() => this.alive))
@@ -89,6 +92,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Load initial metrics from localStorage
+    this.loadStoredMetrics();
+    
     // Update metrics immediately
     this.updateMetrics();
     
@@ -97,61 +103,101 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeWhile(() => this.alive))
       .subscribe(() => this.updateMetrics());
       
-    // Simulate real-time verification updates
-    this.simulateVerifications();
+    // Update real-time metrics every 5 seconds
+    interval(5000)
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(() => this.updateRealtimeMetrics());
+  }
+
+  loadStoredMetrics() {
+    // Load verification history to calculate metrics
+    const historyStr = localStorage.getItem('verificationHistory');
+    if (historyStr) {
+      try {
+        const history = JSON.parse(historyStr);
+        
+        // Calculate today's verifications
+        const today = new Date().toDateString();
+        const todaysVerifications = history.filter((v: any) => 
+          new Date(v.timestamp).toDateString() === today
+        );
+        
+        this.verificationCard.value = todaysVerifications.length.toString();
+        
+        // Calculate average match rate
+        if (history.length > 0) {
+          const avgMatch = history.reduce((sum: number, v: any) => sum + (v.matchScore || 0), 0) / history.length;
+          this.matchRateCard.value = avgMatch.toFixed(1);
+        }
+      } catch (error) {
+        console.error('Error loading stored metrics:', error);
+      }
+    }
+  }
+
+  updateRealtimeMetrics() {
+    // Update from localStorage for real-time changes
+    this.loadStoredMetrics();
   }
 
   updateMetrics() {
-    // Check all servers health and calculate average response time
-    this.elasticsearchService.checkAllServersHealth().subscribe(
-      (healthMap) => {
-        let totalResponseTime = 0;
-        let onlineServers = 0;
-        
-        healthMap.forEach((health) => {
-          if (health.status === 'online' && health.responseTime > 0) {
-            totalResponseTime += health.responseTime;
-            onlineServers++;
+    // Test API response times for each active country
+    const apiConfig = environment.identityPulseApi;
+    const testRequests = [
+      { country: 'AU', name: 'Australia' },
+      { country: 'ID', name: 'Indonesia' },
+      { country: 'MY', name: 'Malaysia' },
+      { country: 'JP', name: 'Japan' }
+    ];
+    
+    let totalResponseTime = 0;
+    let successfulTests = 0;
+    let completedTests = 0;
+    
+    testRequests.forEach(test => {
+      const startTime = Date.now();
+      const testData = {
+        FirstName: 'Test',
+        LastName: 'User',
+        DateOfBirth: '19900101',
+        Country: test.country,
+        MatchStrictness: 'strict' as 'strict' | 'normal' | 'loose'
+      };
+      
+      this.identityPulseService.verifyIdentity(testData).subscribe(
+        (response) => {
+          const responseTime = Date.now() - startTime;
+          totalResponseTime += responseTime;
+          successfulTests++;
+          completedTests++;
+          
+          if (completedTests === testRequests.length) {
+            this.finalizeMetrics(successfulTests, totalResponseTime);
           }
-        });
-        
-        // Update active countries count
-        this.countriesCard.value = onlineServers.toString();
-        
-        // Update average response time
-        if (onlineServers > 0) {
-          const avgResponseTime = Math.round(totalResponseTime / onlineServers);
-          this.apiResponseCard.value = avgResponseTime.toString();
+        },
+        (error) => {
+          completedTests++;
+          console.warn(`API test failed for ${test.name}:`, error);
+          
+          if (completedTests === testRequests.length) {
+            this.finalizeMetrics(successfulTests, totalResponseTime);
+          }
         }
-      }
-    );
+      );
+    });
   }
 
-  simulateVerifications() {
-    // Simulate verification count increasing
-    let verificationCount = parseInt(localStorage.getItem('verificationCount') || '1247', 10);
-    let totalMatchScore = parseFloat(localStorage.getItem('totalMatchScore') || '87.3');
-    let verificationsSinceLastAvg = parseInt(localStorage.getItem('verificationsSinceLastAvg') || '1', 10);
+  private finalizeMetrics(onlineServers: number, totalResponseTime: number) {
+    // Update active countries count
+    this.countriesCard.value = onlineServers.toString();
     
-    interval(5000 + Math.random() * 10000) // Random interval between 5-15 seconds
-      .pipe(takeWhile(() => this.alive))
-      .subscribe(() => {
-        // Increment verification count
-        verificationCount++;
-        this.verificationCard.value = verificationCount.toString();
-        
-        // Update average match rate with realistic variation
-        const newMatchScore = 75 + Math.random() * 20; // Between 75-95%
-        totalMatchScore = ((totalMatchScore * verificationsSinceLastAvg) + newMatchScore) / (verificationsSinceLastAvg + 1);
-        verificationsSinceLastAvg++;
-        
-        this.matchRateCard.value = totalMatchScore.toFixed(1);
-        
-        // Store in localStorage for persistence
-        localStorage.setItem('verificationCount', verificationCount.toString());
-        localStorage.setItem('totalMatchScore', totalMatchScore.toString());
-        localStorage.setItem('verificationsSinceLastAvg', verificationsSinceLastAvg.toString());
-      });
+    // Update average response time
+    if (onlineServers > 0) {
+      const avgResponseTime = Math.round(totalResponseTime / onlineServers);
+      this.apiResponseCard.value = avgResponseTime.toString();
+    } else {
+      this.apiResponseCard.value = '---';
+    }
   }
 
   ngOnDestroy() {
