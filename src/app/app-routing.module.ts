@@ -1,12 +1,12 @@
 // src/app/app-routing.module.ts
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { AzureAuthGuard } from './auth/azure-auth.guard';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'pages',
-    canActivate: [AzureAuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: () => import('./pages/pages.module')
       .then(m => m.PagesModule),
   },
