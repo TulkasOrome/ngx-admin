@@ -1,3 +1,4 @@
+<!-- src/app/login/login.component.html -->
 <div class="auth-container">
   <div class="auth-card">
     <nb-card>
@@ -68,7 +69,30 @@
           </button>
         </form>
 
-        <div class="demo-info">
+        <!-- Social login buttons for production -->
+        <div class="social-login" *ngIf="!isDevelopment">
+          <div class="divider">
+            <span>OR</span>
+          </div>
+          
+          <div class="social-buttons">
+            <button nbButton fullWidth status="basic" size="medium" (click)="loginWithProvider('github')">
+              <nb-icon icon="github"></nb-icon>
+              Continue with GitHub
+            </button>
+            <button nbButton fullWidth status="basic" size="medium" (click)="loginWithProvider('aad')">
+              <nb-icon icon="briefcase-outline"></nb-icon>
+              Continue with Microsoft
+            </button>
+            <button nbButton fullWidth status="basic" size="medium" (click)="loginWithProvider('google')">
+              <nb-icon icon="google"></nb-icon>
+              Continue with Google
+            </button>
+          </div>
+        </div>
+
+        <!-- Demo info only in development -->
+        <div class="demo-info" *ngIf="isDevelopment">
           <nb-alert status="info" closable="false">
             <strong>Demo Credentials:</strong><br>
             Email: admin@identitypulse.com<br>

@@ -1,7 +1,8 @@
+// src/app/login/login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SimpleAuthService } from '../simple-auth.service';
+import { AzureAuthService } from '../@core/services/azure-auth.service';
 import { NbToastrService } from '@nebular/theme';
 
 @Component({
@@ -14,15 +15,17 @@ export class LoginComponent implements OnInit {
   loading = false;
   returnUrl: string;
   showPassword = false;
+  isDevelopment = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: SimpleAuthService,
+    private authService: AzureAuthService,
     private toastr: NbToastrService
   ) {
-    // Redirect to dashboard if already logged in
+    this.isDevelopment = window.location.hostname === 'localhost';
+    
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/pages/dashboard']);
     }
@@ -35,7 +38,6 @@ export class LoginComponent implements OnInit {
       rememberMe: [true]
     });
 
-    // Get return url from route parameters or default to dashboard
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pages/dashboard';
   }
 
@@ -52,18 +54,29 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authService.login(this.email.value, this.password.value)
-      .subscribe(
-        success => {
-          if (success) {
-            this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
-            this.router.navigate([this.returnUrl]);
+    
+    if (this.isDevelopment) {
+      // Development mode - use simple auth
+      this.authService.devLogin(this.email.value, this.password.value)
+        .subscribe(
+          success => {
+            if (success) {
+              this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
+              this.router.navigate([this.returnUrl]);
+            }
+          },
+          error => {
+            this.toastr.danger('Invalid email or password', 'Login Failed');
+            this.loading = false;
           }
-        },
-        error => {
-          this.toastr.danger('Invalid email or password', 'Login Failed');
-          this.loading = false;
-        }
-      );
+        );
+    } else {
+      // Production - redirect to Azure auth
+      this.loginWithProvider('github');
+    }
+  }
+
+  loginWithProvider(provider: 'github' | 'aad' | 'google') {
+    this.authService.login(provider);
   }
 }

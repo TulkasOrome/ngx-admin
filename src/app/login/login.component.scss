@@ -1,3 +1,4 @@
+// src/app/login/login.component.scss
 @import '../@theme/styles/themes';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
@@ -99,6 +100,51 @@
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  .social-login {
+    margin-top: 2rem;
+
+    .divider {
+      position: relative;
+      text-align: center;
+      margin: 1.5rem 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: nb-theme(border-basic-color-3);
+      }
+
+      span {
+        position: relative;
+        padding: 0 1rem;
+        background: nb-theme(card-background-color);
+        color: nb-theme(text-hint-color);
+        font-size: 0.875rem;
+      }
+    }
+
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        nb-icon {
+          font-size: 1.25rem;
+        }
+      }
     }
   }
 

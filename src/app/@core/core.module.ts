@@ -1,6 +1,6 @@
+// src/app/@core/core.module.ts
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
@@ -53,26 +53,9 @@ import { VisitorsAnalyticsService } from './mock/visitors-analytics.service';
 import { SecurityCamerasService } from './mock/security-cameras.service';
 import { MockDataModule } from './mock/mock-data.module';
 
-// Import the IdentityPulseService
+// Import the services
 import { IdentityPulseService } from './services/identitypulse.service';
-
-const socialLinks = [
-  {
-    url: 'https://github.com/akveo/nebular',
-    target: '_blank',
-    icon: 'github',
-  },
-  {
-    url: 'https://www.facebook.com/akveo/',
-    target: '_blank',
-    icon: 'facebook',
-  },
-  {
-    url: 'https://twitter.com/akveo_inc',
-    target: '_blank',
-    icon: 'twitter',
-  },
-];
+import { AzureAuthService } from '../auth/azure-auth.service';
 
 const DATA_SERVICES = [
   { provide: UserData, useClass: UserService },
@@ -106,24 +89,7 @@ export class NbSimpleRoleProvider extends NbRoleProvider {
 export const NB_CORE_PROVIDERS = [
   ...MockDataModule.forRoot().providers,
   ...DATA_SERVICES,
-  ...NbAuthModule.forRoot({
-
-    strategies: [
-      NbDummyAuthStrategy.setup({
-        name: 'email',
-        delay: 3000,
-      }),
-    ],
-    forms: {
-      login: {
-        socialLinks: socialLinks,
-      },
-      register: {
-        socialLinks: socialLinks,
-      },
-    },
-  }).providers,
-
+  
   NbSecurityModule.forRoot({
     accessControl: {
       guest: {
@@ -146,16 +112,15 @@ export const NB_CORE_PROVIDERS = [
   PlayerService,
   SeoService,
   StateService,
-  IdentityPulseService, // Add the IdentityPulseService here
+  IdentityPulseService,
+  AzureAuthService,
 ];
 
 @NgModule({
   imports: [
     CommonModule,
   ],
-  exports: [
-    NbAuthModule,
-  ],
+  exports: [],
   declarations: [],
 })
 export class CoreModule {
