@@ -3,7 +3,10 @@ import { NbThemeService } from '@nebular/theme';
 import { Router } from '@angular/router';
 import { takeWhile } from 'rxjs/operators';
 import { ElasticsearchService, ServerHealthResponse } from '../../../@core/services/elasticsearch.service';
-import { interval } from 'rxjs';
+import { interval, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { timeout, catchError } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 declare const L: any;
 
@@ -357,7 +360,8 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
   constructor(
     private theme: NbThemeService,
     private router: Router,
-    private elasticsearchService: ElasticsearchService
+    private elasticsearchService: ElasticsearchService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -378,30 +382,105 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
   }
 
   checkServerHealth() {
-    this.elasticsearchService.checkAllServersHealth().subscribe(
-      (healthMap: Map<string, ServerHealthResponse>) => {
-        // Update data centers with real-time health status
-        this.dataCenters.forEach(dc => {
-          if (dc.isElasticsearch) {
-            const health = healthMap.get(dc.country);
-            if (health) {
-              dc.status = health.status;
-              dc.responseTime = health.responseTime;
-              
-              // Update marker if map is initialized
-              if (this.map && this.markers.has(dc.name)) {
-                const marker = this.markers.get(dc.name);
-                const icon = this.createCustomIcon(dc.status);
-                marker.setIcon(icon);
-                
-                // Update popup content
-                marker.setPopupContent(this.createPopupContent(dc));
-              }
-            }
-          }
-        });
+    const apiConfig = environment.identityPulseApi;
+    const isDevelopment = !environment.production;
+    const baseUrl = isDevelopment ? '' : apiConfig.baseUrl;
+    
+    const testData = {
+      AU: {
+        FirstName: 'Test',
+        LastName: 'User',
+        DateOfBirth: '19900101',
+        Country: 'AU',
+        MatchStrictness: 'normal'
+      },
+      ID: {
+        FirstName: 'Test',
+        LastName: 'User',
+        DateOfBirth: '19900101',
+        Country: 'ID',
+        MatchStrictness: 'normal'
+      },
+      MY: {
+        FirstName: 'Test',
+        LastName: 'User',
+        DateOfBirth: '19900101',
+        Country: 'MY',
+        MatchStrictness: 'normal'
+      },
+      JP: {
+        FirstName: 'Test',
+        LastName: 'User',
+        DateOfBirth: '19900101',
+        Country: 'JP',
+        MatchStrictness: 'normal'
       }
-    );
+    };
+
+    // Test each region
+    this.dataCenters.forEach(dc => {
+      if (dc.isElasticsearch) {
+        const countryCode = this.getCountryCode(dc.country);
+        const apiKey = this.getApiKeyForCountry(countryCode);
+        
+        // Make a lightweight test call to check if the API is responding
+        const url = `${baseUrl}${apiConfig.endpoint}?code=${apiConfig.functionCode}`;
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+        });
+
+        const startTime = Date.now();
+        
+        this.http.post(url, testData[countryCode], { headers })
+          .pipe(
+            timeout(5000),
+            catchError(() => of({ error: true }))
+          )
+          .subscribe(response => {
+            const responseTime = Date.now() - startTime;
+            
+            if (!response['error']) {
+              dc.status = 'online';
+              dc.responseTime = responseTime;
+            } else {
+              dc.status = 'offline';
+              dc.responseTime = 0;
+            }
+            
+            // Update marker if map is initialized
+            if (this.map && this.markers.has(dc.name)) {
+              const marker = this.markers.get(dc.name);
+              const icon = this.createCustomIcon(dc.status);
+              marker.setIcon(icon);
+              
+              // Update popup content
+              marker.setPopupContent(this.createPopupContent(dc));
+            }
+          });
+      }
+    });
+  }
+
+  private getCountryCode(country: string): string {
+    const countryMap = {
+      'Australia': 'AU',
+      'Indonesia': 'ID',
+      'Malaysia': 'MY',
+      'Japan': 'JP'
+    };
+    return countryMap[country] || 'AU';
+  }
+
+  private getApiKeyForCountry(countryCode: string): string {
+    const apiConfig = environment.identityPulseApi;
+    const keyMap = {
+      'AU': apiConfig.apiKeys.australia,
+      'ID': apiConfig.apiKeys.indonesia,
+      'MY': apiConfig.apiKeys.malaysia,
+      'JP': apiConfig.apiKeys.japan
+    };
+    return keyMap[countryCode] || apiConfig.apiKeys.multiRegion;
   }
 
   initMap() {

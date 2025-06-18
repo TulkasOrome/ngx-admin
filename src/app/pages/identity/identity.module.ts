@@ -12,10 +12,12 @@ import {
   NbProgressBarModule,
   NbIconModule,
   NbListModule,
-  NbToastrModule
+  NbToastrModule,
+  NbAlertModule
 } from '@nebular/theme';
 import { ManualLookupComponent } from './manual-lookup/manual-lookup.component';
 import { ResultsHistoryComponent } from './results-history/results-history.component';
+import { ApiTestComponent } from './api-test/api-test.component';
 
 @NgModule({
   imports: [
@@ -31,6 +33,10 @@ import { ResultsHistoryComponent } from './results-history/results-history.compo
         path: 'results-history',
         component: ResultsHistoryComponent,
       },
+      {
+        path: 'api-test',
+        component: ApiTestComponent,
+      },
     ]),
     NbCardModule,
     NbButtonModule,
@@ -40,11 +46,13 @@ import { ResultsHistoryComponent } from './results-history/results-history.compo
     NbProgressBarModule,
     NbIconModule,
     NbListModule,
+    NbAlertModule,
     NbToastrModule.forRoot()
   ],
   declarations: [
     ManualLookupComponent,
     ResultsHistoryComponent,
+    ApiTestComponent,
   ],
 })
 export class IdentityModule { }

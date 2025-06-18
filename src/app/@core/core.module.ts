@@ -53,6 +53,9 @@ import { VisitorsAnalyticsService } from './mock/visitors-analytics.service';
 import { SecurityCamerasService } from './mock/security-cameras.service';
 import { MockDataModule } from './mock/mock-data.module';
 
+// Import the IdentityPulseService
+import { IdentityPulseService } from './services/identitypulse.service';
+
 const socialLinks = [
   {
     url: 'https://github.com/akveo/nebular',
@@ -143,6 +146,7 @@ export const NB_CORE_PROVIDERS = [
   PlayerService,
   SeoService,
   StateService,
+  IdentityPulseService, // Add the IdentityPulseService here
 ];
 
 @NgModule({

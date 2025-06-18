@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ElasticsearchService, IdentitySearchResponse } from '../../../@core/services/elasticsearch.service';
+import { IdentityPulseService, IdentityVerificationResponse } from '../../../@core/services/identitypulse.service';
 import { NbToastrService } from '@nebular/theme';
 
 @Component({
@@ -12,12 +12,13 @@ import { NbToastrService } from '@nebular/theme';
 export class ManualLookupComponent implements OnInit {
   identityForm: FormGroup;
   isSubmitting = false;
-  result: IdentitySearchResponse | null = null;
+  result: any = null;
+  rawResponse: IdentityVerificationResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private elasticsearchService: ElasticsearchService,
+    private identityPulseService: IdentityPulseService,
     private toastr: NbToastrService
   ) {
     this.identityForm = this.fb.group({
@@ -28,7 +29,12 @@ export class ManualLookupComponent implements OnInit {
       identificationNumber: [''],
       email: ['', Validators.email],
       phone: [''],
+      mobile: [''],
       address: [''],
+      city: [''],
+      state: [''],
+      postCode: [''],
+      matchStrictness: ['normal']
     });
   }
 
@@ -47,25 +53,52 @@ export class ManualLookupComponent implements OnInit {
     if (this.identityForm.valid) {
       this.isSubmitting = true;
       this.result = null;
+      this.rawResponse = null;
       
-      const searchRequest = this.identityForm.value;
+      // Format request for API
+      const apiRequest = this.identityPulseService.formatRequest(this.identityForm.value);
       
-      this.elasticsearchService.searchIdentity(searchRequest).subscribe(
-        (response: IdentitySearchResponse) => {
+      this.identityPulseService.verifyIdentity(apiRequest).subscribe(
+        (responses: IdentityVerificationResponse[]) => {
           this.isSubmitting = false;
-          this.result = response;
           
-          if (response.overallMatch >= 80) {
-            this.toastr.success(`Identity verified with ${response.overallMatch}% confidence`, 'Verification Successful');
-          } else if (response.overallMatch >= 60) {
-            this.toastr.warning(`Partial match found with ${response.overallMatch}% confidence`, 'Partial Match');
+          if (responses && responses.length > 0) {
+            const response = responses[0]; // Take the first/best match
+            this.rawResponse = response;
+            
+            // Process response for display
+            this.result = {
+              overallMatch: this.identityPulseService.getOverallMatchPercentage(response),
+              fieldMatches: this.identityPulseService.getFieldMatches(response),
+              confidenceLevel: response.ConfidenceLevel,
+              matchTier: response.MatchTier,
+              warningMessage: response.WarningMessage
+            };
+            
+            // Show appropriate toast message
+            if (response.ConfidenceLevel === 'VERY_HIGH' || response.ConfidenceLevel === 'CONFIRMED_MATCH') {
+              this.toastr.success(
+                `Identity verified with ${response.ConfidenceLevel} confidence`, 
+                'Verification Successful'
+              );
+            } else if (response.ConfidenceLevel === 'HIGH' || response.ConfidenceLevel === 'MEDIUM') {
+              this.toastr.warning(
+                `Partial match found with ${response.ConfidenceLevel} confidence`, 
+                'Partial Match'
+              );
+            } else {
+              this.toastr.danger(
+                'Low confidence match. Manual review recommended.', 
+                'Low Confidence'
+              );
+            }
           } else {
             this.toastr.danger('No matching records found', 'No Match');
           }
         },
         error => {
           this.isSubmitting = false;
-          this.toastr.danger(error || 'Failed to search identity records', 'Search Error');
+          this.toastr.danger(error || 'Failed to verify identity', 'Verification Error');
         }
       );
     } else {
@@ -77,13 +110,34 @@ export class ManualLookupComponent implements OnInit {
   }
 
   resetForm() {
-    this.identityForm.reset();
+    this.identityForm.reset({
+      matchStrictness: 'normal'
+    });
     this.result = null;
+    this.rawResponse = null;
   }
 
   getMatchStatus(score: number): string {
     if (score >= 80) return 'success';
     if (score >= 60) return 'warning';
     return 'danger';
+  }
+
+  downloadReport() {
+    if (this.rawResponse) {
+      const report = {
+        timestamp: new Date().toISOString(),
+        request: this.identityForm.value,
+        response: this.rawResponse
+      };
+      
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `identity-verification-${Date.now()}.json`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    }
   }
 }
