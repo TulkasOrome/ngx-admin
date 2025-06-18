@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { 
   NbCardModule, 
   NbButtonModule, 
@@ -10,7 +11,8 @@ import {
   NbSpinnerModule, 
   NbProgressBarModule,
   NbIconModule,
-  NbListModule
+  NbListModule,
+  NbToastrModule
 } from '@nebular/theme';
 import { ManualLookupComponent } from './manual-lookup/manual-lookup.component';
 import { ResultsHistoryComponent } from './results-history/results-history.component';
@@ -19,6 +21,7 @@ import { ResultsHistoryComponent } from './results-history/results-history.compo
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    HttpClientModule,
     RouterModule.forChild([
       {
         path: 'manual-lookup',
@@ -36,7 +39,8 @@ import { ResultsHistoryComponent } from './results-history/results-history.compo
     NbSpinnerModule,
     NbProgressBarModule,
     NbIconModule,
-    NbListModule
+    NbListModule,
+    NbToastrModule.forRoot()
   ],
   declarations: [
     ManualLookupComponent,
