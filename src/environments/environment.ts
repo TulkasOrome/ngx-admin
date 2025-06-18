@@ -1,8 +1,4 @@
-/**
- * @license
- * Copyright Akveo. All Rights Reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- */
+// src/environments/environment.ts
 export const environment = {
   production: false,
   identityPulseApi: {
@@ -16,5 +12,12 @@ export const environment = {
       japan: 'datazoo-japan-Xk7mP3nQ9RtL5WsYhG8zAe',
       multiRegion: 'datazoo-multi-all-regions-Yt2vF7wEaQx6LpH3mR9jH'
     }
+  },
+  azure: {
+    clientId: 'YOUR_CLIENT_ID_FROM_SCRIPT', // Update after running 1-register-azure-app.ps1
+    tenantId: '8bdc18c6-bf77-4267-adea-209af623f4fb',
+    redirectUri: 'http://localhost:4200',
+    postLogoutRedirectUri: 'http://localhost:4200',
+    scopes: ['user.read']
   }
 };

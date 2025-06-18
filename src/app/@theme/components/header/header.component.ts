@@ -1,9 +1,9 @@
+// src/app/@theme/components/header/header.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
-
-import { UserData } from '../../../@core/data/users';
+import { AzureAuthService } from '../../../auth/azure-auth.service';
 import { LayoutService } from '../../../@core/utils';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil, filter } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 
 @Component({
@@ -18,15 +18,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userPictureOnly: boolean = false;
   user: any;
 
-  userMenu = [ { title: 'Profile' }, { title: 'Log out' } ];
+  userMenu = [ 
+    { title: 'Profile' }, 
+    { title: 'Log out' } 
+  ];
 
   public constructor(
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
     private themeService: NbThemeService,
-    private userService: UserData,
     private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService,
+    private authService: AzureAuthService,
   ) {
     this.materialTheme$ = this.themeService.onThemeChange()
       .pipe(map(theme => {
@@ -47,9 +50,41 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe((isLessThanXl: boolean) => this.userPictureOnly = isLessThanXl);
 
-    this.userService.getUsers()
+    // Get user from Azure AD
+    const azureUser = this.authService.getUser();
+    if (azureUser) {
+      this.user = {
+        name: azureUser.displayName || azureUser.email,
+        picture: null
+      };
+    }
+
+    // Also try to get user profile from Graph API
+    this.authService.getUserProfile()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => this.user = users.nick);
+      .subscribe(
+        profile => {
+          this.user = {
+            name: profile.displayName || profile.mail || profile.userPrincipalName,
+            picture: null
+          };
+        },
+        error => {
+          console.log('Could not fetch user profile from Graph API:', error);
+        }
+      );
+
+    // Handle menu clicks
+    this.menuService.onItemClick()
+      .pipe(
+        filter(({ tag }) => tag === 'user-context-menu'),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(({ item }: { item: any }) => {
+        if (item.title === 'Log out') {
+          this.authService.logout();
+        }
+      });
   }
 
   ngOnDestroy() {
