@@ -42,9 +42,10 @@ export class AzureAuthService {
   }
 
   loadUser(): void {
+    console.log('Loading user...');
+    
     // Check if we're in development mode
     if (this.isDevelopment()) {
-      // In development, use mock auth
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         this.currentUserSubject.next(JSON.parse(storedUser));
@@ -52,35 +53,65 @@ export class AzureAuthService {
       return;
     }
 
-    // In production, use Azure auth
-    this.http.get<AzureUser>('/.auth/me')
+    // In production, check for Azure Static Web Apps authentication
+    this.http.get<any>('/.auth/me')
       .pipe(
-        map(response => this.mapAzureUserToUser(response)),
-        catchError(() => of(null))
+        tap(response => console.log('Auth response:', response)),
+        map(response => {
+          // Azure SWA returns an array with the user info
+          if (response && Array.isArray(response) && response.length > 0) {
+            return this.mapAzureUserToUser({ clientPrincipal: response[0] });
+          } else if (response && response.clientPrincipal) {
+            return this.mapAzureUserToUser(response);
+          }
+          return null;
+        }),
+        catchError((error) => {
+          console.log('Auth check failed:', error);
+          return of(null);
+        })
       )
       .subscribe(user => {
+        console.log('Mapped user:', user);
         this.currentUserSubject.next(user);
+        
+        // If we have a user and we're on the login page, redirect to dashboard
+        if (user && window.location.pathname === '/login') {
+          const redirectUrl = localStorage.getItem('redirectUrl') || '/pages/dashboard';
+          localStorage.removeItem('redirectUrl');
+          this.router.navigate([redirectUrl]);
+        }
       });
   }
 
-  private mapAzureUserToUser(azureUser: AzureUser): User | null {
-    if (!azureUser?.clientPrincipal) return null;
+  private mapAzureUserToUser(response: any): User | null {
+    const principal = response.clientPrincipal;
+    if (!principal || !principal.userId) return null;
 
-    const emailClaim = azureUser.clientPrincipal.claims?.find(
-      c => c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+    console.log('Mapping principal:', principal);
+
+    // Find email from claims
+    const emailClaim = principal.claims?.find(
+      (c: any) => c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
+                  c.typ === 'emails' ||
+                  c.typ === 'email'
+    );
+
+    const nameClaim = principal.claims?.find(
+      (c: any) => c.typ === 'name' ||
+                  c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
     );
 
     return {
-      email: emailClaim?.val || azureUser.clientPrincipal.userDetails || 'user@example.com',
-      name: azureUser.clientPrincipal.userDetails || 'User',
-      role: azureUser.clientPrincipal.userRoles[0] || 'authenticated',
-      provider: azureUser.clientPrincipal.identityProvider
+      email: emailClaim?.val || principal.userDetails || 'user@example.com',
+      name: nameClaim?.val || principal.userDetails || 'User',
+      role: principal.userRoles?.[0] || 'authenticated',
+      provider: principal.identityProvider
     };
   }
 
-  login(provider: 'github' | 'aad' | 'google' | 'twitter' = 'github'): void {
+  login(provider: 'github' | 'aad' | 'google' | 'twitter' = 'aad'): void {
     if (this.isDevelopment()) {
-      // Mock login for development
       const mockUser: User = {
         email: 'admin@identitypulse.com',
         name: 'Admin User',
@@ -90,24 +121,37 @@ export class AzureAuthService {
       this.currentUserSubject.next(mockUser);
       this.router.navigate(['/pages/dashboard']);
     } else {
+      // Store current location for redirect after login
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login') {
+        localStorage.setItem('redirectUrl', currentPath);
+      }
+      
       // Azure SWA login
-      window.location.href = `/.auth/login/${provider}?post_login_redirect_uri=/pages/dashboard`;
+      window.location.href = `/.auth/login/${provider}`;
     }
   }
 
-  // For development - simple email/password login
   devLogin(email: string, password: string): Observable<boolean> {
     return new Observable(observer => {
       setTimeout(() => {
-        // Simple validation for demo
-        if (email === 'admin@identitypulse.com' && password === 'admin123') {
-          const user: User = {
-            email: email,
-            name: 'Admin User',
+        const allowedUsers = [
+          { email: 'admin@identitypulse.com', password: 'admin123', name: 'Admin User' },
+          { email: 'test@identitypulse.com', password: 'test123', name: 'Test User' }
+        ];
+        
+        const user = allowedUsers.find(u => 
+          u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        );
+        
+        if (user) {
+          const authUser: User = {
+            email: user.email,
+            name: user.name,
             role: 'authenticated'
           };
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
+          localStorage.setItem('currentUser', JSON.stringify(authUser));
+          this.currentUserSubject.next(authUser);
           observer.next(true);
         } else {
           observer.next(false);
@@ -118,12 +162,14 @@ export class AzureAuthService {
   }
 
   logout(): void {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('redirectUrl');
+    this.currentUserSubject.next(null);
+    
     if (this.isDevelopment()) {
-      localStorage.removeItem('currentUser');
-      this.currentUserSubject.next(null);
       this.router.navigate(['/login']);
     } else {
-      window.location.href = '/.auth/logout?post_logout_redirect_uri=/';
+      window.location.href = '/.auth/logout';
     }
   }
 
@@ -131,7 +177,6 @@ export class AzureAuthService {
     return !!this.currentUserValue;
   }
 
-  // Make this public instead of private
   public isDevelopment(): boolean {
     return window.location.hostname === 'localhost' || 
            window.location.hostname === '127.0.0.1';

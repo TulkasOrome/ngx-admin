@@ -1,7 +1,7 @@
 // src/app/@theme/components/header/header.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
-import { AuthService } from '../../../auth/auth.service';
+import { AzureAuthService } from '../../../@core/services/azure-auth.service';
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil, filter } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
@@ -29,7 +29,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService,
-    private authService: AuthService,
+    private authService: AzureAuthService,
   ) {
     this.materialTheme$ = this.themeService.onThemeChange()
       .pipe(map(theme => {
@@ -51,12 +51,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((isLessThanXl: boolean) => this.userPictureOnly = isLessThanXl);
 
     // Subscribe to user changes
-    this.authService.currentUser$
+    this.authService.currentUser
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         if (user) {
           this.user = {
-            name: user.displayName,
+            name: user.name,
             picture: null
           };
         }

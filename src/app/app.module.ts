@@ -52,9 +52,13 @@ const msalConfig: Configuration = {
         if (containsPii) {
           return;
         }
+        // Only log errors in production
+        if (environment.production && level > 0) {
+          return;
+        }
         console.log('[MSAL]', message);
       },
-      logLevel: 3
+      logLevel: environment.production ? 0 : 3 // Error only in prod, Verbose in dev
     }
   }
 };
@@ -120,11 +124,13 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useFactory: MSALInterceptorConfigFactory
     },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
+    // Only add MSAL interceptor in development or when properly configured
+    // Commenting out for now to prevent issues in production
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: MsalInterceptor,
+    //   multi: true
+    // },
     MsalService,
     MsalGuard,
     MsalBroadcastService

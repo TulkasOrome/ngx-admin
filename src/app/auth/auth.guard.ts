@@ -6,10 +6,7 @@ import {
   Router,
   UrlTree
 } from '@angular/router';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { InteractionStatus } from '@azure/msal-browser';
 import { Observable, of } from 'rxjs';
-import { filter, switchMap, take, map } from 'rxjs/operators';
 import { AzureAuthService } from '../@core/services/azure-auth.service';
 
 @Injectable({
@@ -17,8 +14,6 @@ import { AzureAuthService } from '../@core/services/azure-auth.service';
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    private msalService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
     private azureAuthService: AzureAuthService,
     private router: Router
   ) {}
@@ -27,31 +22,17 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> {
-    // In development, check simple auth
-    if (this.azureAuthService.isDevelopment()) {
-      if (this.azureAuthService.isAuthenticated()) {
-        return of(true);
-      } else {
-        return of(this.router.createUrlTree(['/login']));
+    // Check authentication status using our custom service
+    if (this.azureAuthService.isAuthenticated()) {
+      return of(true);
+    } else {
+      // Store the attempted URL for redirecting after login
+      if (state.url !== '/login') {
+        localStorage.setItem('redirectUrl', state.url);
       }
+      
+      // Redirect to login page
+      return of(this.router.createUrlTree(['/login']));
     }
-
-    // In production, use MSAL
-    return this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        take(1),
-        switchMap(() => {
-          if (this.msalService.instance.getAllAccounts().length > 0) {
-            return of(true);
-          }
-          
-          // Store the attempted URL for redirecting after login
-          localStorage.setItem('redirectUrl', state.url);
-          
-          // Redirect to login page instead of initiating MSAL login
-          return of(this.router.createUrlTree(['/login']));
-        })
-      );
   }
 }

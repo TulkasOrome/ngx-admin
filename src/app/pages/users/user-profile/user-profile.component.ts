@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NbToastrService } from '@nebular/theme';
 import { UserManagementService } from '../../../@core/services/user-management.service';
-import { AuthService } from '../../../auth/auth.service';
+import { AzureAuthService } from '../../../@core/services/azure-auth.service';
 import { AzureUser } from '../../../@core/models/user.model';
 
 @Component({
@@ -24,7 +24,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private userService: UserManagementService,
-    private authService: AuthService,
+    private authService: AzureAuthService,
     private toastr: NbToastrService
   ) {
     this.profileForm = this.fb.group({
