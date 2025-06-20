@@ -14,8 +14,8 @@ export const routes: Routes = [
     loadChildren: () => import('./pages/pages.module')
       .then(m => m.PagesModule),
   },
-  { path: '', redirectTo: 'pages', pathMatch: 'full' },
-  { path: '**', redirectTo: 'pages' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }, // Changed to login
+  { path: '**', redirectTo: 'login' }, // Changed to login
 ];
 
 const config: ExtraOptions = {

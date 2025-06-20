@@ -41,6 +41,11 @@ export class AuthService implements OnDestroy {
   }
 
   private initializeAuth(): void {
+    // Only initialize MSAL in development or when we have a proper Azure AD setup
+    if (this.isDevelopment()) {
+      return; // Skip MSAL initialization in development
+    }
+
     // Listen for login success
     this.msalBroadcastService.msalSubject$
       .pipe(
@@ -76,7 +81,16 @@ export class AuthService implements OnDestroy {
     this.checkAndSetActiveAccount();
   }
 
+  private isDevelopment(): boolean {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1';
+  }
+
   private checkAndSetActiveAccount(): void {
+    if (this.isDevelopment()) {
+      return;
+    }
+
     const activeAccount = this.msalService.instance.getActiveAccount();
     
     if (!activeAccount && this.msalService.instance.getAllAccounts().length > 0) {
@@ -104,6 +118,10 @@ export class AuthService implements OnDestroy {
   }
 
   private loadUserProfile(): void {
+    if (this.isDevelopment()) {
+      return;
+    }
+
     this.getGraphProfile().subscribe(
       profile => {
         const currentUser = this.currentUserSubject.value;
@@ -125,18 +143,26 @@ export class AuthService implements OnDestroy {
   }
 
   login(): void {
-    this.msalService.loginRedirect({
-      scopes: [...environment.azure.scopes, 'User.Read', 'User.ReadBasic.All']
-    });
+    if (!this.isDevelopment()) {
+      this.msalService.loginRedirect({
+        scopes: [...environment.azure.scopes, 'User.Read', 'User.ReadBasic.All']
+      });
+    }
   }
 
   logout(): void {
-    this.msalService.logoutRedirect({
-      postLogoutRedirectUri: environment.azure.postLogoutRedirectUri
-    });
+    if (!this.isDevelopment()) {
+      this.msalService.logoutRedirect({
+        postLogoutRedirectUri: environment.azure.postLogoutRedirectUri
+      });
+    }
   }
 
   isAuthenticated(): Observable<boolean> {
+    if (this.isDevelopment()) {
+      return of(false); // Let AzureAuthService handle dev auth
+    }
+
     return this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
@@ -151,6 +177,10 @@ export class AuthService implements OnDestroy {
   }
 
   getAccessToken(scopes?: string[]): Observable<string> {
+    if (this.isDevelopment()) {
+      return of('');
+    }
+
     const account = this.msalService.instance.getActiveAccount();
     if (!account) {
       return of('');
