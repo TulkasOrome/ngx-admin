@@ -1,0 +1,195 @@
+<!-- src/app/pages/users/user-detail/user-detail.component.html -->
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header>
+        <div class="header-container">
+          <button nbButton ghost size="small" (click)="goBack()">
+            <nb-icon icon="arrow-back-outline"></nb-icon>
+            Back
+          </button>
+          <h5>User Details</h5>
+        </div>
+      </nb-card-header>
+      
+      <nb-card-body>
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="loading">
+          <nb-spinner status="primary" size="large"></nb-spinner>
+          <p>Loading user details...</p>
+        </div>
+
+        <!-- User Content -->
+        <div *ngIf="!loading && user">
+          <!-- User Header -->
+          <div class="user-header">
+            <div class="user-avatar">
+              {{ getInitials(user.displayName) }}
+            </div>
+            <div class="user-info">
+              <h4>{{ user.displayName }}</h4>
+              <p class="user-email">{{ user.mail || user.userPrincipalName }}</p>
+              <div class="user-status">
+                <nb-badge 
+                  [status]="user.accountEnabled ? 'success' : 'danger'"
+                  position="top right">
+                  {{ user.accountEnabled ? 'Active' : 'Inactive' }}
+                </nb-badge>
+                <div class="user-roles" *ngIf="user.roles && user.roles.length > 0">
+                  <nb-tag 
+                    *ngFor="let role of user.roles" 
+                    [status]="getRoleColor(role)"
+                    appearance="filled">
+                    {{ role }}
+                  </nb-tag>
+                </div>
+              </div>
+            </div>
+            <div class="user-actions">
+              <button 
+                nbButton 
+                [status]="user.accountEnabled ? 'danger' : 'success'"
+                size="small"
+                (click)="toggleUserStatus()">
+                <nb-icon [icon]="user.accountEnabled ? 'slash-outline' : 'checkmark-circle-outline'"></nb-icon>
+                {{ user.accountEnabled ? 'Disable User' : 'Enable User' }}
+              </button>
+              <button nbButton status="warning" size="small" (click)="resetPassword()">
+                <nb-icon icon="lock-outline"></nb-icon>
+                Reset Password
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <nb-tabset [(selected)]="activeTab">
+            <!-- Profile Tab -->
+            <nb-tab tabTitle="Profile" tabIcon="person-outline" responsive>
+              <div class="profile-grid">
+                <div class="profile-section">
+                  <h6>Personal Information</h6>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="label">First Name</span>
+                      <span class="value">{{ user.givenName || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Last Name</span>
+                      <span class="value">{{ user.surname || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Email</span>
+                      <span class="value">{{ user.mail || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">User Principal Name</span>
+                      <span class="value">{{ user.userPrincipalName }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-section">
+                  <h6>Work Information</h6>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="label">Job Title</span>
+                      <span class="value">{{ user.jobTitle || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Department</span>
+                      <span class="value">{{ user.department || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Office Location</span>
+                      <span class="value">{{ user.officeLocation || '-' }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Mobile Phone</span>
+                      <span class="value">{{ user.mobilePhone || '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-section">
+                  <h6>Account Information</h6>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="label">User ID</span>
+                      <span class="value code">{{ user.id }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Account Status</span>
+                      <span class="value">
+                        <nb-badge 
+                          [status]="user.accountEnabled ? 'success' : 'danger'"
+                          position="top right">
+                          {{ user.accountEnabled ? 'Active' : 'Inactive' }}
+                        </nb-badge>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nb-tab>
+
+            <!-- Activity Tab -->
+            <nb-tab tabTitle="Activity" tabIcon="activity-outline" responsive>
+              <div class="activity-container">
+                <div class="loading-container" *ngIf="loadingActivities">
+                  <nb-spinner status="primary" size="medium"></nb-spinner>
+                  <p>Loading activities...</p>
+                </div>
+                
+                <nb-list *ngIf="!loadingActivities">
+                  <nb-list-item *ngFor="let activity of activities">
+                    <div class="activity-item">
+                      <nb-icon 
+                        icon="radio-button-on-outline" 
+                        status="primary"
+                        class="activity-icon">
+                      </nb-icon>
+                      <div class="activity-content">
+                        <p class="activity-action">{{ activity.action }}</p>
+                        <p class="activity-details" *ngIf="activity.details">
+                          {{ activity.details | json }}
+                        </p>
+                        <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                  <nb-list-item *ngIf="activities.length === 0">
+                    <p class="no-activities">No activities recorded</p>
+                  </nb-list-item>
+                </nb-list>
+              </div>
+            </nb-tab>
+
+            <!-- Permissions Tab -->
+            <nb-tab tabTitle="Permissions" tabIcon="shield-outline" responsive>
+              <div class="permissions-container">
+                <nb-alert status="info" closable="false">
+                  <strong>Azure AD Integration</strong><br>
+                  User permissions and roles are managed through Azure Active Directory. 
+                  To modify permissions, please use the Azure Portal or Microsoft 365 Admin Center.
+                </nb-alert>
+                
+                <div class="roles-section" *ngIf="user.roles && user.roles.length > 0">
+                  <h6>Assigned Roles</h6>
+                  <div class="roles-list">
+                    <nb-tag 
+                      *ngFor="let role of user.roles" 
+                      [status]="getRoleColor(role)"
+                      appearance="filled"
+                      size="medium">
+                      {{ role }}
+                    </nb-tag>
+                  </div>
+                </div>
+              </div>
+            </nb-tab>
+          </nb-tabset>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

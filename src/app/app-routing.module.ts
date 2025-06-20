@@ -1,9 +1,13 @@
-// src/app/app-routing.module.ts
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { AuthGuard } from './auth/auth.guard';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
   {
     path: 'pages',
     canActivate: [AuthGuard],

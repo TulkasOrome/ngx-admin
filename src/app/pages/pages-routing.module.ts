@@ -1,3 +1,4 @@
+// src/app/pages/pages-routing.module.ts
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 
@@ -17,6 +18,11 @@ const routes: Routes = [{
       path: 'identity',
       loadChildren: () => import('./identity/identity.module')
         .then(m => m.IdentityModule),
+    },
+    {
+      path: 'users',
+      loadChildren: () => import('./users/users.module')
+        .then(m => m.UsersModule),
     },
     {
       path: 'countries',

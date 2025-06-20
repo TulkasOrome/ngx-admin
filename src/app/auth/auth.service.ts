@@ -6,7 +6,8 @@ import {
   InteractionStatus, 
   EventType,
   AccountInfo,
-  InteractionRequiredAuthError
+  InteractionRequiredAuthError,
+  SilentRequest
 } from '@azure/msal-browser';
 import { Observable, Subject, BehaviorSubject, of, from } from 'rxjs';
 import { filter, takeUntil, map, catchError, tap, switchMap } from 'rxjs/operators';
@@ -106,7 +107,7 @@ export class AuthService implements OnDestroy {
     this.getGraphProfile().subscribe(
       profile => {
         const currentUser = this.currentUserSubject.value;
-        if (currentUser) {
+        if (currentUser && profile) {
           const updatedUser: User = {
             ...currentUser,
             displayName: profile.displayName || currentUser.displayName,
@@ -125,7 +126,7 @@ export class AuthService implements OnDestroy {
 
   login(): void {
     this.msalService.loginRedirect({
-      scopes: environment.azure.scopes
+      scopes: [...environment.azure.scopes, 'User.Read', 'User.ReadBasic.All']
     });
   }
 
@@ -149,25 +150,25 @@ export class AuthService implements OnDestroy {
     return this.currentUserSubject.value;
   }
 
-  getAccessToken(): Observable<string> {
+  getAccessToken(scopes?: string[]): Observable<string> {
     const account = this.msalService.instance.getActiveAccount();
     if (!account) {
       return of('');
     }
 
+    const request: SilentRequest = {
+      scopes: scopes || [...environment.azure.scopes, 'User.Read', 'User.ReadBasic.All'],
+      account: account
+    };
+
     return from(
-      this.msalService.acquireTokenSilent({
-        scopes: environment.azure.scopes,
-        account: account
-      })
+      this.msalService.acquireTokenSilent(request)
     ).pipe(
       map((response: AuthenticationResult) => response.accessToken),
       catchError((error) => {
         if (error instanceof InteractionRequiredAuthError) {
           // Fallback to interaction when silent call fails
-          this.msalService.acquireTokenRedirect({
-            scopes: environment.azure.scopes
-          });
+          this.msalService.acquireTokenRedirect(request);
         }
         return of('');
       })
@@ -175,7 +176,7 @@ export class AuthService implements OnDestroy {
   }
 
   private getGraphProfile(): Observable<any> {
-    return this.getAccessToken().pipe(
+    return this.getAccessToken(['User.Read']).pipe(
       filter(token => !!token),
       map(token => ({ 
         headers: { Authorization: `Bearer ${token}` } 

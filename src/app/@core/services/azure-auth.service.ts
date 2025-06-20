@@ -1,4 +1,3 @@
-// src/app/@core/services/azure-auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -100,14 +99,19 @@ export class AzureAuthService {
   devLogin(email: string, password: string): Observable<boolean> {
     return new Observable(observer => {
       setTimeout(() => {
-        const user: User = {
-          email: email,
-          name: email.split('@')[0],
-          role: 'authenticated'
-        };
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
-        observer.next(true);
+        // Simple validation for demo
+        if (email === 'admin@identitypulse.com' && password === 'admin123') {
+          const user: User = {
+            email: email,
+            name: 'Admin User',
+            role: 'authenticated'
+          };
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          observer.next(true);
+        } else {
+          observer.next(false);
+        }
         observer.complete();
       }, 1000);
     });
@@ -127,7 +131,8 @@ export class AzureAuthService {
     return !!this.currentUserValue;
   }
 
-  private isDevelopment(): boolean {
+  // Make this public instead of private
+  public isDevelopment(): boolean {
     return window.location.hostname === 'localhost' || 
            window.location.hostname === '127.0.0.1';
   }

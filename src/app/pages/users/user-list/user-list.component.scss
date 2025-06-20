@@ -1,0 +1,144 @@
+// src/app/pages/users/user-list/user-list.component.scss
+@import '../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    h5 {
+      margin: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  .search-stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .search-box {
+      position: relative;
+      
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.25rem;
+        color: nb-theme(text-hint-color);
+      }
+
+      input {
+        padding-left: 3rem;
+      }
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+
+      .stat-card {
+        padding: 1rem;
+        background: nb-theme(background-basic-color-2);
+        border-radius: nb-theme(card-border-radius);
+        text-align: center;
+        border: 1px solid nb-theme(border-basic-color-3);
+
+        &.success {
+          border-color: nb-theme(color-success-transparent-default);
+          background: nb-theme(color-success-transparent-100);
+        }
+
+        &.danger {
+          border-color: nb-theme(color-danger-transparent-default);
+          background: nb-theme(color-danger-transparent-100);
+        }
+
+        .stat-value {
+          display: block;
+          font-size: 2rem;
+          font-weight: 600;
+          color: nb-theme(text-basic-color);
+          margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+          font-size: 0.875rem;
+          color: nb-theme(text-hint-color);
+        }
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    
+    p {
+      margin-top: 1rem;
+      color: nb-theme(text-hint-color);
+    }
+  }
+
+  .users-table {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        font-weight: 600;
+        color: nb-theme(text-hint-color);
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 2px solid nb-theme(border-basic-color-3);
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid nb-theme(border-basic-color-3);
+      }
+
+      .user-row {
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: nb-theme(background-basic-color-2);
+        }
+      }
+
+      .no-results {
+        padding: 2rem;
+        color: nb-theme(text-hint-color);
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid nb-theme(border-basic-color-3);
+
+    .page-info {
+      color: nb-theme(text-hint-color);
+      font-size: 0.875rem;
+    }
+  }
+}

@@ -1,4 +1,3 @@
-// src/app/login/login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -24,6 +23,7 @@ export class LoginComponent implements OnInit {
     private authService: AzureAuthService,
     private toastr: NbToastrService
   ) {
+    console.log('LoginComponent constructor called'); // Debug log
     this.isDevelopment = window.location.hostname === 'localhost';
     
     if (this.authService.isAuthenticated()) {
@@ -32,6 +32,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('LoginComponent ngOnInit called'); // Debug log
+    
+    // Hide the spinner once component loads
+    const spinnerElement = document.getElementById('nb-global-spinner');
+    if (spinnerElement) {
+      spinnerElement.style.display = 'none';
+    }
+    
     this.loginForm = this.formBuilder.group({
       email: ['admin@identitypulse.com', [Validators.required, Validators.email]],
       password: ['admin123', Validators.required],
@@ -49,6 +57,8 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log('Login form submitted'); // Debug log
+    
     if (this.loginForm.invalid) {
       return;
     }
@@ -63,6 +73,9 @@ export class LoginComponent implements OnInit {
             if (success) {
               this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
               this.router.navigate([this.returnUrl]);
+            } else {
+              this.toastr.danger('Invalid email or password', 'Login Failed');
+              this.loading = false;
             }
           },
           error => {

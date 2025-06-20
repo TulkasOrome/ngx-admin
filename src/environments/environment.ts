@@ -1,4 +1,3 @@
-// src/environments/environment.ts
 export const environment = {
   production: false,
   identityPulseApi: {
@@ -14,10 +13,10 @@ export const environment = {
     }
   },
   azure: {
-    clientId: 'YOUR_CLIENT_ID_FROM_SCRIPT', // Update after running 1-register-azure-app.ps1
+    clientId: '23c5ab21-6d6d-47a2-abed-87dc774329b6',
     tenantId: '8bdc18c6-bf77-4267-adea-209af623f4fb',
     redirectUri: 'http://localhost:4200',
     postLogoutRedirectUri: 'http://localhost:4200',
-    scopes: ['user.read']
+    scopes: ['user.read', 'User.ReadBasic.All', 'Directory.Read.All']
   }
 };
