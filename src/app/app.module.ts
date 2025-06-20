@@ -1,4 +1,3 @@
-// src/app/app.module.ts
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -7,6 +6,7 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { LoginModule } from './login/login.module';
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -24,30 +24,44 @@ import {
   MsalGuard, 
   MsalInterceptor, 
   MsalBroadcastService,
-  MsalRedirectComponent,
   MSAL_INSTANCE,
   MSAL_GUARD_CONFIG,
   MSAL_INTERCEPTOR_CONFIG,
   MsalInterceptorConfiguration,
   MsalGuardConfiguration
 } from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { InteractionType, PublicClientApplication, Configuration } from '@azure/msal-browser';
 import { environment } from '../environments/environment';
+
+// MSAL Configuration
+const msalConfig: Configuration = {
+  auth: {
+    clientId: environment.azure.clientId,
+    authority: `https://login.microsoftonline.com/${environment.azure.tenantId}`,
+    redirectUri: environment.azure.redirectUri,
+    postLogoutRedirectUri: environment.azure.postLogoutRedirectUri,
+    navigateToLoginRequestUrl: true
+  },
+  cache: {
+    cacheLocation: 'localStorage',
+    storeAuthStateInCookie: false
+  },
+  system: {
+    loggerOptions: {
+      loggerCallback: (level, message, containsPii) => {
+        if (containsPii) {
+          return;
+        }
+        console.log('[MSAL]', message);
+      },
+      logLevel: 3
+    }
+  }
+};
 
 // MSAL Instance Factory
 export function MSALInstanceFactory(): PublicClientApplication {
-  return new PublicClientApplication({
-    auth: {
-      clientId: environment.azure.clientId,
-      authority: `https://login.microsoftonline.com/${environment.azure.tenantId}`,
-      redirectUri: environment.azure.redirectUri,
-      postLogoutRedirectUri: environment.azure.postLogoutRedirectUri
-    },
-    cache: {
-      cacheLocation: 'localStorage',
-      storeAuthStateInCookie: false
-    }
-  });
+  return new PublicClientApplication(msalConfig);
 }
 
 // MSAL Guard Configuration
@@ -79,6 +93,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+    LoginModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),
@@ -114,7 +129,6 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     MsalGuard,
     MsalBroadcastService
   ],
-  bootstrap: [AppComponent, MsalRedirectComponent],
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule { }

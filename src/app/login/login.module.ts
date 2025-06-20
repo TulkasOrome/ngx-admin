@@ -9,7 +9,9 @@ import {
   NbCheckboxModule,
   NbAlertModule,
   NbIconModule,
-  NbSpinnerModule
+  NbSpinnerModule,
+  NbLayoutModule,  // Add this
+  NbToastrModule   // Add this
 } from '@nebular/theme';
 import { LoginComponent } from './login.component';
 
@@ -29,7 +31,9 @@ import { LoginComponent } from './login.component';
     NbCheckboxModule,
     NbAlertModule,
     NbIconModule,
-    NbSpinnerModule
+    NbSpinnerModule,
+    NbLayoutModule,  // Add this
+    NbToastrModule   // Add this
   ],
   declarations: [LoginComponent],
 })

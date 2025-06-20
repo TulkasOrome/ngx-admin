@@ -1,4 +1,3 @@
-// src/app/auth/auth.guard.ts
 import { Injectable } from '@angular/core';
 import { 
   CanActivate, 
@@ -11,6 +10,7 @@ import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { InteractionStatus } from '@azure/msal-browser';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap, take, map } from 'rxjs/operators';
+import { AzureAuthService } from '../@core/services/azure-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private msalService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
+    private azureAuthService: AzureAuthService,
     private router: Router
   ) {}
 
@@ -26,6 +27,16 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> {
+    // In development, check simple auth
+    if (this.azureAuthService.isDevelopment()) {
+      if (this.azureAuthService.isAuthenticated()) {
+        return of(true);
+      } else {
+        return of(this.router.createUrlTree(['/login']));
+      }
+    }
+
+    // In production, use MSAL
     return this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
@@ -38,9 +49,8 @@ export class AuthGuard implements CanActivate {
           // Store the attempted URL for redirecting after login
           localStorage.setItem('redirectUrl', state.url);
           
-          // Initiate login
-          this.msalService.loginRedirect();
-          return of(false);
+          // Redirect to login page instead of initiating MSAL login
+          return of(this.router.createUrlTree(['/login']));
         })
       );
   }

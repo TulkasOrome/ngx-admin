@@ -1,3 +1,4 @@
+// src/app/pages/pages-menu.ts
 import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS: NbMenuItem[] = [
@@ -18,6 +19,20 @@ export const MENU_ITEMS: NbMenuItem[] = [
       {
         title: 'Results History',
         link: '/pages/identity/results-history',
+      },
+    ],
+  },
+  {
+    title: 'Users',
+    icon: 'people-outline',
+    children: [
+      {
+        title: 'User List',
+        link: '/pages/users/list',
+      },
+      {
+        title: 'My Profile',
+        link: '/pages/users/profile',
       },
     ],
   },

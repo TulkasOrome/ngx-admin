@@ -1,0 +1,179 @@
+<!-- src/app/pages/users/user-profile/user-profile.component.html -->
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <nb-card>
+      <nb-card-header>
+        <h5>My Profile</h5>
+      </nb-card-header>
+      
+      <nb-card-body>
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="loading">
+          <nb-spinner status="primary" size="large"></nb-spinner>
+          <p>Loading profile...</p>
+        </div>
+
+        <!-- Profile Form -->
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="!loading && user">
+          <div class="profile-header">
+            <div class="avatar">
+              {{ getInitials(user.displayName) }}
+            </div>
+            <div class="user-basic-info">
+              <h4>{{ user.displayName }}</h4>
+              <p>{{ user.mail || user.userPrincipalName }}</p>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h6>Personal Information</h6>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="displayName" class="label">Display Name *</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="displayName"
+                    formControlName="displayName" 
+                    placeholder="Enter display name"
+                    [status]="profileForm.get('displayName').invalid && profileForm.get('displayName').touched ? 'danger' : 'basic'">
+                  <span class="error-message" *ngIf="profileForm.get('displayName').invalid && profileForm.get('displayName').touched">
+                    Display name is required
+                  </span>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="givenName" class="label">First Name</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="givenName"
+                    formControlName="givenName" 
+                    placeholder="Enter first name">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="surname" class="label">Last Name</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="surname"
+                    formControlName="surname" 
+                    placeholder="Enter last name">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h6>Work Information</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="jobTitle" class="label">Job Title</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="jobTitle"
+                    formControlName="jobTitle" 
+                    placeholder="Enter job title">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="department" class="label">Department</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="department"
+                    formControlName="department" 
+                    placeholder="Enter department">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="officeLocation" class="label">Office Location</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="officeLocation"
+                    formControlName="officeLocation" 
+                    placeholder="Enter office location">
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mobilePhone" class="label">Mobile Phone</label>
+                  <input 
+                    nbInput 
+                    fullWidth 
+                    id="mobilePhone"
+                    formControlName="mobilePhone" 
+                    placeholder="Enter mobile phone">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              nbButton 
+              status="primary" 
+              [disabled]="profileForm.invalid || saving"
+              [nbSpinner]="saving"
+              nbSpinnerStatus="primary"
+              nbSpinnerSize="small">
+              <nb-icon icon="save-outline" *ngIf="!saving"></nb-icon>
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <nb-card>
+      <nb-card-header>
+        <h6>Account Information</h6>
+      </nb-card-header>
+      <nb-card-body *ngIf="user">
+        <div class="info-list">
+          <div class="info-item">
+            <span class="label">User ID</span>
+            <span class="value code">{{ user.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email</span>
+            <span class="value">{{ user.mail || user.userPrincipalName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Account Type</span>
+            <span class="value">Azure AD</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card>
+      <nb-card-header>
+        <h6>Security</h6>
+      </nb-card-header>
+      <nb-card-body>
+        <nb-alert status="info" closable="false">
+          <strong>Password Management</strong><br>
+          Your password is managed through Azure Active Directory. 
+          To change your password, please use your organization's password management portal.
+        </nb-alert>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

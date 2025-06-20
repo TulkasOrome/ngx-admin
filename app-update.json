@@ -1,0 +1,8 @@
+{
+  "spa": {
+    "redirectUris": [
+      "http://localhost:4200",
+      "https://identitypulse.azurestaticapps.net"
+    ]
+  }
+}

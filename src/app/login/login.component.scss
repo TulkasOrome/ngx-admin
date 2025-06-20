@@ -1,18 +1,18 @@
-// src/app/login/login.component.scss
 @import '../@theme/styles/themes';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
+  // Remove the min-height from auth-container since nb-layout handles it
   .auth-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    background: nb-theme(background-basic-color-1);
     padding: 2rem;
+    // Remove min-height: 100vh;
   }
 
+  // The rest of your styles remain the same...
   .auth-card {
     width: 100%;
     max-width: 450px;
@@ -79,9 +79,36 @@
       transform: translateY(-50%);
       border: none;
       padding: 0.5rem;
+      background: transparent;
+      cursor: pointer;
+      z-index: 1;
+      
+      // Fix the button size
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        background: transparent;
+      }
       
       nb-icon {
         font-size: 1.25rem;
+        line-height: 1;
+      }
+      
+      // Override any default button styles
+      ::ng-deep {
+        .eva-hover {
+          display: none;
+        }
+        
+        svg {
+          width: 20px;
+          height: 20px;
+        }
       }
     }
   }

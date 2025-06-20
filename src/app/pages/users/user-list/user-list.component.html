@@ -1,0 +1,137 @@
+<!-- src/app/pages/users/user-list/user-list.component.html -->
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header>
+        <div class="header-container">
+          <h5>User Management</h5>
+          <div class="header-actions">
+            <button nbButton status="primary" size="small" (click)="refresh()">
+              <nb-icon icon="refresh-outline"></nb-icon>
+              Refresh
+            </button>
+            <button nbButton status="info" size="small" (click)="exportUsers()">
+              <nb-icon icon="download-outline"></nb-icon>
+              Export
+            </button>
+          </div>
+        </div>
+      </nb-card-header>
+      
+      <nb-card-body>
+        <!-- Search and Stats -->
+        <div class="search-stats-container">
+          <div class="search-box">
+            <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+            <input 
+              nbInput 
+              fullWidth 
+              placeholder="Search users by name, email, or department"
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchChange($event)"
+              [disabled]="loading">
+          </div>
+          
+          <div class="stats-container">
+            <div class="stat-card">
+              <span class="stat-value">{{ totalUsers }}</span>
+              <span class="stat-label">Total Users</span>
+            </div>
+            <div class="stat-card success">
+              <span class="stat-value">{{ activeUsers }}</span>
+              <span class="stat-label">Active</span>
+            </div>
+            <div class="stat-card danger">
+              <span class="stat-value">{{ inactiveUsers }}</span>
+              <span class="stat-label">Inactive</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="loading">
+          <nb-spinner status="primary" size="large"></nb-spinner>
+          <p>Loading users from Azure AD...</p>
+        </div>
+
+        <!-- User List -->
+        <div class="users-table" *ngIf="!loading">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Job Title</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of paginatedUsers" class="user-row">
+                <td>
+                  <nb-user 
+                    [name]="user.displayName" 
+                    [title]="user.userPrincipalName"
+                    size="medium">
+                  </nb-user>
+                </td>
+                <td>{{ user.mail || user.userPrincipalName }}</td>
+                <td>{{ user.department || '-' }}</td>
+                <td>{{ user.jobTitle || '-' }}</td>
+                <td>
+                  <nb-badge 
+                    [status]="user.accountEnabled !== false ? 'success' : 'danger'"
+                    position="top right">
+                    {{ user.accountEnabled !== false ? 'Active' : 'Inactive' }}
+                  </nb-badge>
+                </td>
+                <td>
+                  <button 
+                    nbButton 
+                    ghost 
+                    size="tiny" 
+                    status="info"
+                    (click)="viewUserDetails(user)"
+                    nbTooltip="View Details">
+                    <nb-icon icon="eye-outline"></nb-icon>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="filteredUsers.length === 0">
+                <td colspan="6" class="text-center">
+                  <p class="no-results">No users found</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="!loading && totalPages > 1">
+          <button 
+            nbButton 
+            ghost 
+            size="small"
+            [disabled]="currentPage === 1"
+            (click)="previousPage()">
+            <nb-icon icon="chevron-left-outline"></nb-icon>
+          </button>
+          
+          <span class="page-info">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+          
+          <button 
+            nbButton 
+            ghost 
+            size="small"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+            <nb-icon icon="chevron-right-outline"></nb-icon>
+          </button>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-// src/environments/environment.prod.ts
 export const environment = {
   production: true,
   identityPulseApi: {
@@ -18,6 +17,6 @@ export const environment = {
     tenantId: '8bdc18c6-bf77-4267-adea-209af623f4fb',
     redirectUri: 'https://identitypulse.azurestaticapps.net',
     postLogoutRedirectUri: 'https://identitypulse.azurestaticapps.net',
-    scopes: ['user.read']
+    scopes: ['user.read', 'User.ReadBasic.All', 'Directory.Read.All']
   }
 };
