@@ -23,36 +23,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
-    title: 'Users',
-    icon: 'people-outline',
-    children: [
-      {
-        title: 'User List',
-        link: '/pages/users/list',
-      },
-      {
-        title: 'My Profile',
-        link: '/pages/users/profile',
-      },
-    ],
-  },
-  {
     title: 'Countries',
     icon: 'globe-outline',
     link: '/pages/countries',
-  },
-  {
-    title: 'Account',
-    icon: 'settings-outline',
-    children: [
-      {
-        title: 'Profile',
-        link: '/pages/account/profile',
-      },
-      {
-        title: 'Settings',
-        link: '/pages/account/settings',
-      },
-    ],
   },
 ];

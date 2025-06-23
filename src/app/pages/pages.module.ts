@@ -6,7 +6,6 @@ import { PagesComponent } from './pages.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 import { PagesRoutingModule } from './pages-routing.module';
-import { AuthDebugComponent } from './auth-debug/auth-debug.component';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
@@ -16,14 +15,12 @@ import { CommonModule } from '@angular/common';
     NbMenuModule,
     DashboardModule,
     MiscellaneousModule,
-    CommonModule,      // Add this
-    NbCardModule,      // Add this
+    CommonModule,
+    NbCardModule,
     NbButtonModule,
   ],
   declarations: [
     PagesComponent,
-    AuthDebugComponent,
   ],
 })
-export class PagesModule {
-}
+export class PagesModule {}

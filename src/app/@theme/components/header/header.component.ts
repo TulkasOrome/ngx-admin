@@ -19,9 +19,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user: any;
 
   userMenu = [ 
-    { title: 'Profile' }, 
-    { title: 'Log out' } 
+    { title: 'Log out', data: { action: 'logout' } } 
   ];
+
+  currentTheme = 'marketsoft';
 
   constructor(
     private sidebarService: NbSidebarService,
@@ -39,8 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Set default theme to marketsoft
-    this.themeService.changeTheme('marketsoft');
+    this.currentTheme = this.themeService.currentTheme;
 
     const { xl } = this.breakpointService.getBreakpointsMap();
     this.themeService.onMediaQueryChange()
@@ -59,17 +59,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
             name: user.name,
             picture: null
           };
+        } else {
+          // Default user for when not authenticated
+          this.user = {
+            name: 'Guest User',
+            picture: null
+          };
         }
       });
 
-    // Handle menu clicks
+    // Handle menu clicks - listen to the menu events
     this.menuService.onItemClick()
       .pipe(
-        filter(({ tag }) => tag === 'user-context-menu'),
         takeUntil(this.destroy$)
       )
-      .subscribe(({ item }: { item: any }) => {
-        if (item.title === 'Log out') {
+      .subscribe((event) => {
+        if (event.item.title === 'Log out' || event.item.data?.action === 'logout') {
+          console.log('Logout clicked');
           this.authService.logout();
         }
       });
@@ -80,9 +86,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  changeTheme(themeName: string) {
+    this.themeService.changeTheme(themeName);
+  }
+
   toggleSidebar(): boolean {
     this.sidebarService.toggle(true, 'menu-sidebar');
     this.layoutService.changeLayoutSize();
+
     return false;
   }
 
