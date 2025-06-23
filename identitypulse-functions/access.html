@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdentityPulse - Request Access</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #D6001C;
+            --primary-dark: #ad0017;
+            --primary-light: #ffe2e5;
+            --text-color: #2a2e40;
+            --text-light: #8f9bb3;
+            --bg-color: #ffffff;
+            --bg-secondary: #f7f9fc;
+            --bg-tertiary: #edf1f7;
+            --border-color: #e4e9f2;
+            --success-color: #00d68f;
+            --error-color: #ff3d71;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: 
+                radial-gradient(circle at 20% 80%, var(--primary-color) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--primary-color) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, var(--primary-color) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(1deg); }
+            66% { transform: translate(-20px, 20px) rotate(-1deg); }
+        }
+
+        /* Floating Data Points */
+        .data-point {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: floatUp 15s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-color);
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: '';
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-50%) scale(0.8); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            animation: fadeInLeft 0.8s ease-out;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Country Coverage Grid */
+        .country-coverage {
+            margin-bottom: 2rem;
+        }
+
+        .coverage-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .country-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .country-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .country-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .country-card.live {
+            border-color: var(--success-color);
+            background: linear-gradient(to bottom, rgba(0, 214, 143, 0.05), var(--bg-color));
+        }
+
+        .country-card.live::before {
+            background: var(--success-color);
+        }
+
+        .country-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .country-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .country-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .country-flag {
+            font-size: 1.5rem;
+        }
+
+        .country-header h4 {
+            flex: 1;
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .status-badge {
+            font-size: 0.625rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.live {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-badge.coming-soon {
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .country-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .update-frequency {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .country-card.coming-soon .update-frequency {
+            display: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Form Section */
+        .form-section {
+            animation: fadeInRight 0.8s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-card {
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .form-header p {
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--bg-color);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 0, 28, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(214, 0, 28, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* OTP Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 0, 28, 0.1);
+        }
+
+        .resend-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .resend-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .resend-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Success State */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            animation: scaleIn 0.5s ease-out;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-color);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: checkmark 0.5s ease-out 0.3s both;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 3;
+        }
+
+        .success-timeline {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-icon.completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .timeline-icon.pending {
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        .timeline-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-color);
+        }
+
+        .timeline-content p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: -20px;
+            width: 2px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+
+        .access-details {
+            background: linear-gradient(135deg, var(--primary-light), var(--bg-secondary));
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .access-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .access-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .access-details li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .access-details li::before {
+            content: '✓';
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-color);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .otp-inputs {
+                gap: 0.25rem;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .country-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .country-card {
+                padding: 1rem;
+            }
+            
+            .country-header h4 {
+                font-size: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-pattern"></div>
+    
+    <!-- Floating Data Points -->
+    <script>
+        // Create floating data points
+        for (let i = 0; i < 20; i++) {
+            const point = document.createElement('div');
+            point.className = 'data-point';
+            point.style.left = Math.random() * 100 + '%';
+            point.style.animationDelay = Math.random() * 15 + 's';
+            point.style.animationDuration = (15 + Math.random() * 10) + 's';
+            document.body.appendChild(point);
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">IdentityPulse</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1 class="hero-title">Transform Your Identity Verification Process</h1>
+                    <p class="hero-subtitle">Experience our cutting-edge identity verification platform with access to hundreds of millions of records across the Asia-Pacific region.</p>
+                    
+                    <!-- Country Coverage Grid -->
+                    <div class="country-coverage">
+                        <h3 class="coverage-title">Regional Coverage</h3>
+                        <div class="country-grid">
+                            <!-- Live Countries -->
+                            <div class="country-card live">
+                                <div class="country-header">
+                                    <span class="country-flag">🇦🇺</span>
+                                    <h4>Australia</h4>
+                                    <span class="status-badge live">Live</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">11.5M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">75%</span>
+                                        <span class="stat-label">coverage</span>
+                                    </div>
+                                </div>
+                                <div class="update-frequency">Daily Updates</div>
+                            </div>
+
+                            <div class="country-card live">
+                                <div class="country-header">
+                                    <span class="country-flag">🇮🇩</span>
+                                    <h4>Indonesia</h4>
+                                    <span class="status-badge live">Live</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">180M+</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">82%</span>
+                                        <span class="stat-label">coverage</span>
+                                    </div>
+                                </div>
+                                <div class="update-frequency">Weekly Updates</div>
+                            </div>
+
+                            <div class="country-card live">
+                                <div class="country-header">
+                                    <span class="country-flag">🇲🇾</span>
+                                    <h4>Malaysia</h4>
+                                    <span class="status-badge live">Live</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">24M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">85%</span>
+                                        <span class="stat-label">coverage</span>
+                                    </div>
+                                </div>
+                                <div class="update-frequency">Weekly Updates</div>
+                            </div>
+
+                            <div class="country-card live">
+                                <div class="country-header">
+                                    <span class="country-flag">🇯🇵</span>
+                                    <h4>Japan</h4>
+                                    <span class="status-badge live">Live</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">58M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number">88%</span>
+                                        <span class="stat-label">coverage</span>
+                                    </div>
+                                </div>
+                                <div class="update-frequency">Daily Updates</div>
+                            </div>
+
+                            <!-- Coming Soon Countries -->
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇸🇦</span>
+                                    <h4>Saudi Arabia</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">27M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇻🇳</span>
+                                    <h4>Vietnam</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">79M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇹🇭</span>
+                                    <h4>Thailand</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">37M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇹🇷</span>
+                                    <h4>Turkey</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">98M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇦🇪</span>
+                                    <h4>UAE</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">9M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="country-card coming-soon">
+                                <div class="country-header">
+                                    <span class="country-flag">🇳🇿</span>
+                                    <h4>New Zealand</h4>
+                                    <span class="status-badge coming-soon">Coming Soon</span>
+                                </div>
+                                <div class="country-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number">2.4M</span>
+                                        <span class="stat-label">records</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-value">99.9%</span>
+                            <span class="stat-label">Uptime SLA</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">450ms</span>
+                            <span class="stat-label">Avg Response</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">750M+</span>
+                            <span class="stat-label">Records</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Section -->
+                <div class="form-section">
+                    <div class="form-card" id="accessForm">
+                        <div class="form-header">
+                            <h2>Request Access</h2>
+                            <p>Get started with IdentityPulse in minutes</p>
+                        </div>
+
+                        <form id="requestForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Work Email *</label>
+                                <input type="email" id="email" name="email" required>
+                                <div class="error-message" id="emailError"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="company">Company *</label>
+                                <input type="text" id="company" name="company" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country *</label>
+                                    <select id="country" name="country" required>
+                                        <option value="">Select Country</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Indonesia">Indonesia</option>
+                                        <option value="Malaysia">Malaysia</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Singapore">Singapore</option>
+                                        <option value="Philippines">Philippines</option>
+                                        <option value="Vietnam">Vietnam</option>
+                                        <option value="Thailand">Thailand</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="useCase">Use Case</label>
+                                <textarea id="useCase" name="useCase" placeholder="Tell us about your identity verification needs..."></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <label for="terms">I agree to receive communications about IdentityPulse products and services</label>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                Request Access
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div class="success-message" id="successMessage">
+                        <div class="success-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2>Welcome to IdentityPulse!</h2>
+                        <p style="font-size: 1.1rem; color: var(--text-color); margin: 1rem 0;">Your access request has been successfully verified.</p>
+                        
+                        <div class="success-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-icon completed">✓</div>
+                                <div class="timeline-line"></div>
+                                <div class="timeline-content">
+                                    <h4>Request Submitted</h4>
+                                    <p>Your information has been received and verified</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-icon pending">2</div>
+                                <div class="timeline-line"></div>
+                                <div class="timeline-content">
+                                    <h4>Account Review</h4>
+                                    <p>Our team will review your request within 24 hours</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-icon pending">3</div>
+                                <div class="timeline-content">
+                                    <h4>Access Granted</h4>
+                                    <p>You'll receive login credentials and API documentation</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="access-details">
+                            <h4>What happens next?</h4>
+                            <ul>
+                                <li>A sales representative will contact you within 24 hours</li>
+                                <li>We'll schedule a personalized demo of the platform</li>
+                                <li>You'll receive sandbox API credentials for testing</li>
+                                <li>Our integration team will assist with your setup</li>
+                            </ul>
+                        </div>
+                        
+                        <p style="margin-top: 2rem; color: var(--text-light); font-size: 0.875rem;">
+                            Check your email for confirmation and further details. If you have any questions, contact us at <strong>support@identitypulse.com</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- OTP Modal -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Verify Your Email</h3>
+                <p>We've sent a 6-digit code to <strong id="emailDisplay"></strong></p>
+            </div>
+            
+            <div class="otp-inputs">
+                <input type="text" class="otp-input" maxlength="1" data-index="0">
+                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                <input type="text" class="otp-input" maxlength="1" data-index="5">
+            </div>
+            
+            <button type="button" class="submit-btn" id="verifyBtn">Verify Code</button>
+            
+            <div class="resend-link">
+                Didn't receive the code? <a href="#" id="resendLink">Resend</a>
+            </div>
+            
+            <div class="error-message" id="otpError"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 IdentityPulse by MarketSoft. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration - Update this after Azure deployment
+        const API_BASE_URL = 'https://YOUR-FUNCTION-APP-NAME.azurewebsites.net/api';
+        
+        // Form handling
+        const form = document.getElementById('requestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const otpModal = document.getElementById('otpModal');
+        const successMessage = document.getElementById('successMessage');
+        const accessForm = document.getElementById('accessForm');
+        const emailDisplay = document.getElementById('emailDisplay');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const resendLink = document.getElementById('resendLink');
+        
+        let formData = {};
+
+        // OTP input handling
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                pastedData.split('').forEach((char, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs
