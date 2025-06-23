@@ -1,40 +1,60 @@
 module.exports = async function (context, req) {
-    // ALWAYS set CORS headers
-    context.res = {
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400'
-        }
+    // Set CORS headers for all responses
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Max-Age': '86400'
     };
 
-    // Handle preflight
+    // Handle preflight OPTIONS requests
     if (req.method === 'OPTIONS') {
-        context.res.status = 204;
+        context.res = {
+            status: 204,
+            headers: corsHeaders
+        };
         return;
     }
 
-    // Just forward to your existing functions
     const endpoint = req.params.endpoint;
     
     try {
+        // Create a temporary context for the child function
+        const childContext = {
+            log: context.log,
+            res: {}
+        };
+
         if (endpoint === 'SendOTP') {
-            // Call your SendOTP function directly
             const sendOTP = require('../SendOTP/index.js');
-            await sendOTP(context, req);
+            await sendOTP(childContext, req);
         } else if (endpoint === 'VerifyOTP') {
-            // Call your VerifyOTP function directly  
             const verifyOTP = require('../VerifyOTP/index.js');
-            await verifyOTP(context, req);
+            await verifyOTP(childContext, req);
         } else {
-            context.res.status = 404;
-            context.res.body = { error: 'Endpoint not found' };
+            context.res = {
+                status: 404,
+                headers: corsHeaders,
+                body: { error: 'Endpoint not found' }
+            };
+            return;
         }
+
+        // Merge the child function's response with CORS headers
+        context.res = {
+            ...childContext.res,
+            headers: {
+                ...childContext.res.headers,
+                ...corsHeaders
+            }
+        };
+
     } catch (error) {
         context.log.error('Proxy error:', error);
-        // Error response already has CORS headers
-        context.res.status = 500;
-        context.res.body = { error: 'Internal server error' };
+        context.res = {
+            status: 500,
+            headers: corsHeaders,
+            body: { error: 'Internal server error', details: error.message }
+        };
     }
 };
