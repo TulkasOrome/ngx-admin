@@ -1201,7 +1201,7 @@
 
     <script>
         // Configuration - Update this after Azure deployment
-        const API_BASE_URL = 'https://YOUR-FUNCTION-APP-NAME.azurewebsites.net/api';
+        const API_BASE_URL = 'https://identitypulse-access.azurewebsites.net/api/proxy';
         
         // Form handling
         const form = document.getElementById('requestForm');
@@ -1235,4 +1235,157 @@
                 const pastedData = e.clipboardData.getData('text').slice(0, 6);
                 pastedData.split('').forEach((char, i) => {
                     if (otpInputs[i]) {
-                        otpInputs
+                        otpInputs[i].value = char;
+                    }
+                });
+                otpInputs[Math.min(pastedData.length - 1, 5)].focus();
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                phone: document.getElementById('phone').value,
+                country: document.getElementById('country').value,
+                useCase: document.getElementById('useCase').value
+            };
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending verification code...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/SendOTP`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Show OTP modal
+                    emailDisplay.textContent = formData.email;
+                    otpModal.classList.add('active');
+                    otpInputs[0].focus();
+                } else {
+                    alert(result.error || 'Failed to send verification code');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to send verification code. Please try again.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Request Access';
+            }
+        });
+
+        // OTP verification
+        verifyBtn.addEventListener('click', async () => {
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (otp.length !== 6) {
+                document.getElementById('otpError').textContent = 'Please enter all 6 digits';
+                document.getElementById('otpError').classList.add('active');
+                return;
+            }
+
+            verifyBtn.classList.add('loading');
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/VerifyOTP`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        otp: otp,
+                        formData: formData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Hide modal and form, show success
+                    otpModal.classList.remove('active');
+                    accessForm.style.display = 'none';
+                    successMessage.classList.add('active');
+                } else {
+                    document.getElementById('otpError').textContent = result.error || 'Invalid verification code';
+                    document.getElementById('otpError').classList.add('active');
+                    
+                    // Clear inputs on error
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('otpError').textContent = 'Failed to verify code. Please try again.';
+                document.getElementById('otpError').classList.add('active');
+            } finally {
+                verifyBtn.classList.remove('loading');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Code';
+            }
+        });
+
+        // Resend OTP
+        resendLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            resendLink.style.pointerEvents = 'none';
+            resendLink.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/SendOTP`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    resendLink.textContent = 'Code sent!';
+                    setTimeout(() => {
+                        resendLink.textContent = 'Resend';
+                        resendLink.style.pointerEvents = 'auto';
+                    }, 3000);
+                } else {
+                    throw new Error('Failed to resend');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resendLink.textContent = 'Failed to resend';
+                setTimeout(() => {
+                    resendLink.textContent = 'Resend';
+                    resendLink.style.pointerEvents = 'auto';
+                }, 3000);
+            }
+        });
+
+        // Close modal on outside click
+        otpModal.addEventListener('click', (e) => {
+            if (e.target === otpModal) {
+                otpModal.classList.remove('active');
+                otpInputs.forEach(input => input.value = '');
+            }
+        });
+    </script>
+</body>
+</html>
