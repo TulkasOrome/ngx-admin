@@ -68,7 +68,7 @@ module.exports = async function (context, req) {
             const salesEmailMessage = {
                 senderAddress: process.env.SENDER_EMAIL,
                 recipients: {
-                    to: [{ address: process.env.SALES_EMAIL }]
+                    to: [{ address: "sales@identitypulse.ai" }]  // Updated email address
                 },
                 content: {
                     subject: `New IdentityPulse Access Request - ${formData.company}`,

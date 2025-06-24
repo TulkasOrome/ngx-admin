@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test IdentityPulse Functions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test IdentityPulse Functions</h1>
+    
+    <div class="test-section">
+        <h2>1. Test SendOTP Function</h2>
+        <button onclick="testSendOTP()">Send Test OTP</button>
+        <div id="sendOtpResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test VerifyOTP Function</h2>
+        <input type="text" id="otpInput" placeholder="Enter OTP" />
+        <button onclick="testVerifyOTP()">Verify OTP</button>
+        <div id="verifyOtpResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://identitypulse-access.azurewebsites.net/api/proxy';
+        const testEmail = 'test@example.com';
+        
+        async function testSendOTP() {
+            const resultDiv = document.getElementById('sendOtpResult');
+            resultDiv.textContent = 'Testing SendOTP...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/SendOTP`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: testEmail,
+                        firstName: 'Test',
+                        lastName: 'User',
+                        company: 'Test Company'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✓ SendOTP Success!</span>\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">✗ SendOTP Failed!</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Network Error!</span>\n${error.message}`;
+            }
+        }
+        
+        async function testVerifyOTP() {
+            const otp = document.getElementById('otpInput').value;
+            const resultDiv = document.getElementById('verifyOtpResult');
+            
+            if (!otp) {
+                resultDiv.innerHTML = '<span class="error">Please enter an OTP</span>';
+                return;
+            }
+            
+            resultDiv.textContent = 'Testing VerifyOTP...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/VerifyOTP`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: testEmail,
+                        otp: otp,
+                        formData: {
+                            email: testEmail,
+                            firstName: 'Test',
+                            lastName: 'User',
+                            company: 'Test Company',
+                            country: 'Australia',
+                            phone: '+61412345678',
+                            useCase: 'Testing the system'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✓ VerifyOTP Success!</span>\n${JSON.stringify(data, null, 2)}\n\nEmail should be sent to: sales@identitypulse.ai`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">✗ VerifyOTP Failed!</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Network Error!</span>\n${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
