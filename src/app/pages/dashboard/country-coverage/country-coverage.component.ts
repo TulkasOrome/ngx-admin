@@ -206,6 +206,15 @@ export class CountryCoverageComponent implements OnDestroy {
       online: true,
       region: 'europe'
     },
+    {
+      name: 'Czech Republic',
+      coverage: 0,
+      records: 'TBD',
+      updateFrequency: 'TBD',
+      status: 'coming-soon',
+      online: false,
+      region: 'europe'
+    },
     // Africa Region
     {
       name: 'South Africa',

@@ -22,7 +22,7 @@ interface Country {
 export class CountriesComponent {
 
   countries: Country[] = [
-    // All countries are now active
+    // All countries are now active except Czech Republic
     {
       name: 'Australia',
       flag: '🇦🇺',
@@ -295,6 +295,19 @@ export class CountriesComponent {
       features: ['Identity Verification', 'Address Validation', 'Business Registry', 'Driver License Check'],
       recordCount: '2.4M',
       adultPopulationCoverage: '88%'
+    },
+    {
+      name: 'Czech Republic',
+      flag: '🇨🇿',
+      status: 'coming-soon',
+      coverage: 0,
+      population: '10.7M',
+      databases: 0,
+      updateFrequency: 'TBD',
+      regulations: ['GDPR', 'AML Directive'],
+      features: ['Identity Verification', 'Address Validation', 'Business Registry', 'EU Compliance'],
+      recordCount: 'Coming Soon',
+      adultPopulationCoverage: 'TBD'
     }
   ];
 

@@ -15,7 +15,7 @@ interface DataCenter {
   country: string;
   city: string;
   coordinates: [number, number];
-  status: 'online' | 'coming-soon' | 'offline' | 'maintenance';
+  status: 'online' | 'coming-soon' | 'offline';
   databases: number;
   responseTime: number;
   coverage: string;
@@ -37,8 +37,8 @@ interface DataCenter {
               Online
             </span>
             <span class="legend-item">
-              <span class="dot maintenance"></span>
-              Maintenance
+              <span class="dot coming-soon"></span>
+              Coming Soon
             </span>
             <span class="legend-item">
               <span class="dot offline"></span>
@@ -309,6 +309,17 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
       responseTime: 0,
       coverage: '2.4M',
       adultPopulationCoverage: '88%'
+    },
+    {
+      name: 'Czech Republic DC',
+      country: 'Czech Republic',
+      city: 'Prague',
+      coordinates: [50.0755, 14.4378],
+      status: 'coming-soon',
+      databases: 0,
+      responseTime: 0,
+      coverage: 'TBD',
+      adultPopulationCoverage: 'TBD'
     }
   ];
 
@@ -471,7 +482,7 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
 
       // Add click event to navigate to identity lookup
       marker.on('click', () => {
-        if (dc.status === 'online' || dc.status === 'maintenance') {
+        if (dc.status === 'online') {
           setTimeout(() => {
             this.router.navigate(['/pages/identity/manual-lookup'], {
               queryParams: { country: dc.country.toLowerCase() }
@@ -490,8 +501,7 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
     const colors = {
       online: '#00d68f',
       'coming-soon': '#ffaa00',
-      offline: '#ff3d71',
-      maintenance: '#ffaa00'
+      offline: '#ff3d71'
     };
 
     const html = `
@@ -517,12 +527,10 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
     const statusColors = {
       online: '#00d68f',
       'coming-soon': '#ffaa00',
-      offline: '#ff3d71',
-      maintenance: '#ffaa00'
+      offline: '#ff3d71'
     };
 
-    const statusText = dc.status === 'coming-soon' ? 'Coming Soon' : 
-                      dc.status === 'maintenance' ? 'Maintenance' : dc.status;
+    const statusText = dc.status === 'coming-soon' ? 'Coming Soon' : dc.status;
 
     return `
       <div style="padding: 10px; min-width: 200px;">
@@ -535,7 +543,7 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
           ${dc.responseTime > 0 ? `<div><strong>Response Time:</strong> ${dc.responseTime}ms</div>` : ''}
           ${dc.isElasticsearch ? `<div><strong>Server Type:</strong> Elasticsearch</div>` : ''}
         </div>
-        ${(dc.status === 'online' || dc.status === 'maintenance') ? `
+        ${dc.status === 'online' ? `
           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e4e9f2; text-align: center;">
             <span style="color: #0095ff; font-size: 12px; cursor: pointer;">
               <strong>Click to query this region →</strong>
@@ -568,8 +576,6 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
         return '#ffaa00';
       case 'offline':
         return '#ff3d71';
-      case 'maintenance':
-        return '#ffaa00';
       default:
         return '#8f9bb3';
     }
