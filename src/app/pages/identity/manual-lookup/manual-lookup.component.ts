@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IdentityPulseService, IdentityVerificationResponse } from '../../../@core/services/identitypulse.service';
 import { NbToastrService } from '@nebular/theme';
+import { AzureStorageService } from '../../../@core/services/azure-storage.service';
+import { CsvProcessorService, CSVRow } from '../../../@core/services/csv-processor.service';
 
 @Component({
   selector: 'ngx-manual-lookup',
@@ -19,7 +21,9 @@ export class ManualLookupComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private identityPulseService: IdentityPulseService,
-    private toastr: NbToastrService
+    private toastr: NbToastrService,
+    private azureStorage: AzureStorageService,
+    private csvProcessor: CsvProcessorService
   ) {
     this.identityForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -211,5 +215,113 @@ export class ManualLookupComponent implements OnInit {
     } catch (error) {
       console.error('Error storing verification result:', error);
     }
+  }
+
+  // Bulk Upload Methods
+  openBulkUpload() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        this.handleBulkUpload(file);
+      }
+    };
+    input.click();
+  }
+
+  handleBulkUpload(file: File) {
+    if (!file.name.endsWith('.csv')) {
+      this.toastr.error('Please select a CSV file', 'Invalid File');
+      return;
+    }
+
+    // Read file content
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      try {
+        // Parse CSV
+        const csvContent = e.target.result;
+        const data = this.csvProcessor.parseCSV(csvContent);
+        
+        // Validate
+        const validation = this.csvProcessor.validateCSV(data);
+        if (!validation.valid) {
+          this.toastr.error(validation.errors.join('\n'), 'CSV Validation Failed');
+          return;
+        }
+
+        // Show confirmation
+        this.toastr.info(`Found ${data.length} valid rows. Uploading to Azure...`, 'Processing');
+
+        // Upload to Azure
+        this.uploadToAzure(file, data);
+      } catch (error) {
+        this.toastr.error('Failed to parse CSV file', 'Error');
+        console.error('CSV parse error:', error);
+      }
+    };
+    
+    reader.readAsText(file);
+  }
+
+  uploadToAzure(file: File, data: CSVRow[]) {
+    let lastProgress = 0;
+    
+    this.azureStorage.uploadFile(file, (progress) => {
+      // Update progress every 10%
+      if (progress - lastProgress >= 10) {
+        this.toastr.info(`Upload progress: ${progress}%`, 'Uploading', {
+          timeOut: 1000,
+          preventDuplicates: true
+        });
+        lastProgress = progress;
+      }
+    }).subscribe(
+      (url) => {
+        this.toastr.success(`Successfully uploaded ${data.length} records`, 'Upload Complete');
+        
+        // Store upload history
+        this.storeBulkUploadHistory(file.name, data.length, url);
+        
+        // Optional: Process each row through the API
+        // this.processBulkVerifications(data);
+      },
+      (error) => {
+        this.toastr.error('Failed to upload file to Azure', 'Upload Error');
+        console.error('Azure upload error:', error);
+      }
+    );
+  }
+
+  private storeBulkUploadHistory(filename: string, recordCount: number, url: string) {
+    const history = JSON.parse(localStorage.getItem('bulkUploadHistory') || '[]');
+    history.unshift({
+      id: Date.now(),
+      filename,
+      recordCount,
+      url,
+      uploadDate: new Date().toISOString(),
+      status: 'uploaded'
+    });
+    
+    // Keep only last 50 uploads
+    if (history.length > 50) {
+      history.splice(50);
+    }
+    
+    localStorage.setItem('bulkUploadHistory', JSON.stringify(history));
+  }
+
+  downloadSampleCSV() {
+    const csvContent = this.csvProcessor.generateSampleCSV();
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'identitypulse-sample.csv';
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 }

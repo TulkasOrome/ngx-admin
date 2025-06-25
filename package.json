@@ -44,6 +44,7 @@
     "@asymmetrik/ngx-leaflet": "3.0.1",
     "@azure/msal-angular": "^2.5.12",
     "@azure/msal-browser": "^2.38.4",
+    "@azure/storage-blob": "^12.27.0",
     "@nebular/auth": "11.0.1",
     "@nebular/eva-icons": "11.0.1",
     "@nebular/security": "11.0.1",

@@ -150,3 +150,63 @@ $nb-themes: nb-register-theme((
   font-family-primary: 'Roboto, sans-serif',
   font-family-secondary: 'Roboto, sans-serif',
 ), marketsoft, default);
+
+// IdentityPulse theme
+$nb-themes: nb-register-theme((
+  layout-padding-top: 2.25rem,
+
+  menu-item-icon-margin: 0 0.5rem 0 0,
+
+  card-height-tiny: 13.5rem,
+  card-height-small: 21.1875rem,
+  card-height-medium: 28.875rem,
+  card-height-large: 36.5625rem,
+  card-height-giant: 44.25rem,
+  card-margin-bottom: 1.875rem,
+  card-header-with-select-padding-top: 0.5rem,
+  card-header-with-select-padding-bottom: 0.5rem,
+
+  select-min-width: 6rem,
+
+  // IdentityPulse brand colors (adjust these to match your logo)
+  color-primary-100: '#E6F0FF',
+  color-primary-200: '#B3D1FF',
+  color-primary-300: '#80B3FF',
+  color-primary-400: '#4D94FF',
+  color-primary-500: '#0066FF', // Main brand color
+  color-primary-600: '#0052CC',
+  color-primary-700: '#003D99',
+  color-primary-800: '#002966',
+  color-primary-900: '#001433',
+
+  // Custom background
+  background-basic-color-1: #FFFFFF,
+  background-basic-color-2: #F7F9FC,
+  background-basic-color-3: #EDF1F7,
+  background-basic-color-4: #E4E9F2,
+  
+  // Text colors
+  text-basic-color: #222B45,
+  text-primary-color: #0066FF,
+  
+  // Menu customization
+  menu-item-hover-text-color: #0066FF,
+  menu-item-active-text-color: #0066FF,
+  menu-item-active-background-color: #E6F0FF,
+  menu-item-icon-color: #8F9BB3,
+  menu-item-icon-active-color: #0066FF,
+
+  slide-out-background: #FFFFFF,
+  slide-out-shadow-color: 0 4px 14px 0 rgba(0, 102, 255, 0.1),
+  slide-out-shadow-color-rtl: 0 4px 14px 0 rgba(0, 102, 255, 0.1),
+  
+  // Button colors
+  button-filled-primary-background-color: #0066FF,
+  button-filled-primary-border-color: #0066FF,
+  button-filled-primary-hover-background-color: #0052CC,
+  button-filled-primary-hover-border-color: #0052CC,
+  
+  // Typography
+  font-family-primary: 'Inter, sans-serif',
+  font-family-secondary: 'Inter, sans-serif',
+), identitypulse, default);

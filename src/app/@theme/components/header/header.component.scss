@@ -49,6 +49,28 @@
       @include nb-rtl(border-right, 1px solid nb-theme(divider-color));
       white-space: nowrap;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .logo-image {
+        height: 2.0rem;
+        width: auto;
+      }
+      
+      .logo-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .control-item {
+    display: flex;
+    align-items: center;
+    
+    nb-select {
+      min-width: 8rem;
     }
   }
 

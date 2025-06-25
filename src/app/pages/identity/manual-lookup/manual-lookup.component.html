@@ -64,7 +64,6 @@
                            formControlName="country" 
                            placeholder="Select Country"
                            [status]="identityForm.get('country').invalid && identityForm.get('country').touched ? 'danger' : 'basic'">
-                  <nb-option value="australia">Australia</nb-option>
                   <nb-option value="indonesia">Indonesia</nb-option>
                   <nb-option value="japan">Japan</nb-option>
                   <nb-option value="malaysia">Malaysia</nb-option>
@@ -198,6 +197,26 @@
                 <nb-icon icon="search-outline" *ngIf="!isSubmitting"></nb-icon>
                 {{ isSubmitting ? 'Verifying...' : 'Verify Identity' }}
               </button>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="bulk-upload-section">
+                <button nbButton 
+                        fullWidth 
+                        status="info" 
+                        size="large"
+                        type="button"
+                        (click)="openBulkUpload()">
+                  <nb-icon icon="cloud-upload-outline"></nb-icon>
+                  Bulk Upload CSV
+                </button>
+                <p class="bulk-help-text">
+                  Upload a CSV file with multiple identities to verify. 
+                  <a href="#" (click)="downloadSampleCSV(); $event.preventDefault()">Download sample CSV</a>
+                </p>
+              </div>
             </div>
           </div>
         </form>

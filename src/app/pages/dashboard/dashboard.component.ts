@@ -71,12 +71,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     corporate: CardSettings[];
     dark: CardSettings[];
     marketsoft: CardSettings[];
+    identitypulse: CardSettings[];
+    
   } = {
     default: this.commonStatusCardsSet,
     cosmic: this.commonStatusCardsSet,
     corporate: this.commonStatusCardsSet,
     dark: this.commonStatusCardsSet,
     marketsoft: this.commonStatusCardsSet,
+    identitypulse: this.commonStatusCardsSet,
   };
 
   constructor(
