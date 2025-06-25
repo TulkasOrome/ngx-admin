@@ -207,6 +207,14 @@
     }
   }
 
+  .auth-note {
+  font-size: 0.875rem;
+  font-style: italic;
+  color: nb-theme(text-hint-color);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
   @include media-breakpoint-down(sm) {
     .auth-card {
       nb-card-body {
