@@ -23,13 +23,14 @@ export class ManualLookupComponent implements OnInit {
     private toastr: NbToastrService,
     private csvProcessor: CsvProcessorService
   ) {
+    // Initialize form without required validators
     this.identityForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      dateOfBirth: ['', Validators.required],
-      country: ['', Validators.required],
+      firstName: [''],  // Removed Validators.required
+      lastName: [''],   // Removed Validators.required
+      dateOfBirth: [''], // Removed Validators.required
+      country: [''],     // Removed Validators.required
       identificationNumber: [''],
-      email: ['', Validators.email],
+      email: ['', Validators.email], // Keep email validator for format
       phone: [''],
       mobile: [''],
       address: [''],
@@ -52,72 +53,27 @@ export class ManualLookupComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.identityForm.valid) {
-      this.isSubmitting = true;
-      this.result = null;
-      this.rawResponse = null;
-      
-      // Format request for API
-      const apiRequest = this.identityPulseService.formatRequest(this.identityForm.value);
-      
-      this.identityPulseService.verifyIdentity(apiRequest).subscribe(
-        (responses: IdentityVerificationResponse[]) => {
-          this.isSubmitting = false;
+    // Remove the valid check or make it optional
+    // You might want to add custom validation logic here
+    // to ensure at least some fields are filled
+    
+    this.isSubmitting = true;
+    this.result = null;
+    this.rawResponse = null;
+    
+    // Format request for API
+    const apiRequest = this.identityPulseService.formatRequest(this.identityForm.value);
+    
+    this.identityPulseService.verifyIdentity(apiRequest).subscribe(
+      (responses: IdentityVerificationResponse[]) => {
+        this.isSubmitting = false;
+        
+        if (responses && responses.length > 0) {
+          const response = responses[0]; // Take the first/best match
+          this.rawResponse = response;
           
-          if (responses && responses.length > 0) {
-            const response = responses[0]; // Take the first/best match
-            this.rawResponse = response;
-            
-            // Check if it's a no match response
-            if (response.TotalScore === '0.00' || response.ConfidenceLevel === 'NO_MATCH') {
-              this.result = {
-                overallMatch: 0,
-                fieldMatches: {
-                  name: 0,
-                  dateOfBirth: 0,
-                  address: 0,
-                  identification: 0,
-                  email: 0,
-                  phone: 0
-                },
-                confidenceLevel: 'NO_MATCH',
-                matchTier: 'No Match Found',
-                warningMessage: response.WarningMessage || 'No matching records found in the database'
-              };
-              this.toastr.danger('No matching records found', 'No Match');
-            } else {
-              // Process response for display
-              this.result = {
-                overallMatch: this.identityPulseService.getOverallMatchPercentage(response),
-                fieldMatches: this.identityPulseService.getFieldMatches(response),
-                confidenceLevel: response.ConfidenceLevel,
-                matchTier: response.MatchTier,
-                warningMessage: response.WarningMessage
-              };
-              
-              // Show appropriate toast message
-              if (response.ConfidenceLevel === 'VERY_HIGH' || response.ConfidenceLevel === 'CONFIRMED_MATCH') {
-                this.toastr.success(
-                  `Identity verified with ${response.ConfidenceLevel} confidence`, 
-                  'Verification Successful'
-                );
-              } else if (response.ConfidenceLevel === 'HIGH' || response.ConfidenceLevel === 'MEDIUM') {
-                this.toastr.warning(
-                  `Partial match found with ${response.ConfidenceLevel} confidence`, 
-                  'Partial Match'
-                );
-              } else {
-                this.toastr.danger(
-                  'Low confidence match. Manual review recommended.', 
-                  'Low Confidence'
-                );
-              }
-            }
-            
-            // Store result in history
-            this.storeVerificationResult(apiRequest, this.result);
-          } else {
-            // No results returned at all
+          // Check if it's a no match response
+          if (response.TotalScore === '0.00' || response.ConfidenceLevel === 'NO_MATCH') {
             this.result = {
               overallMatch: 0,
               fieldMatches: {
@@ -130,23 +86,65 @@ export class ManualLookupComponent implements OnInit {
               },
               confidenceLevel: 'NO_MATCH',
               matchTier: 'No Match Found',
-              warningMessage: 'No matching records found in the database'
+              warningMessage: response.WarningMessage || 'No matching records found in the database'
             };
             this.toastr.danger('No matching records found', 'No Match');
+          } else {
+            // Process response for display
+            this.result = {
+              overallMatch: this.identityPulseService.getOverallMatchPercentage(response),
+              fieldMatches: this.identityPulseService.getFieldMatches(response),
+              confidenceLevel: response.ConfidenceLevel,
+              matchTier: response.MatchTier,
+              warningMessage: response.WarningMessage
+            };
+            
+            // Show appropriate toast message
+            if (response.ConfidenceLevel === 'VERY_HIGH' || response.ConfidenceLevel === 'CONFIRMED_MATCH') {
+              this.toastr.success(
+                `Identity verified with ${response.ConfidenceLevel} confidence`, 
+                'Verification Successful'
+              );
+            } else if (response.ConfidenceLevel === 'HIGH' || response.ConfidenceLevel === 'MEDIUM') {
+              this.toastr.warning(
+                `Partial match found with ${response.ConfidenceLevel} confidence`, 
+                'Partial Match'
+              );
+            } else {
+              this.toastr.danger(
+                'Low confidence match. Manual review recommended.', 
+                'Low Confidence'
+              );
+            }
           }
-        },
-        error => {
-          this.isSubmitting = false;
-          console.error('API Error:', error);
-          this.toastr.danger(error || 'Failed to verify identity', 'Verification Error');
+          
+          // Store result in history
+          this.storeVerificationResult(apiRequest, this.result);
+        } else {
+          // No results returned at all
+          this.result = {
+            overallMatch: 0,
+            fieldMatches: {
+              name: 0,
+              dateOfBirth: 0,
+              address: 0,
+              identification: 0,
+              email: 0,
+              phone: 0
+            },
+            confidenceLevel: 'NO_MATCH',
+            matchTier: 'No Match Found',
+            warningMessage: 'No matching records found in the database'
+          };
+          this.toastr.danger('No matching records found', 'No Match');
         }
-      );
-    } else {
-      // Mark all fields as touched to show validation errors
-      Object.keys(this.identityForm.controls).forEach(key => {
-        this.identityForm.get(key).markAsTouched();
-      });
-    }
+      },
+      error => {
+        this.isSubmitting = false;
+        console.error('API Error:', error);
+        this.toastr.danger(error || 'Failed to verify identity', 'Verification Error');
+      }
+    );
   }
 
   resetForm() {

@@ -9,32 +9,25 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="firstName" class="label">First Name *</label>
+                <label for="firstName" class="label">First Name</label>
                 <input nbInput 
                        fullWidth 
                        id="firstName"
                        formControlName="firstName" 
                        placeholder="Enter first name"
-                       status="basic"
-                       [status]="identityForm.get('firstName').invalid && identityForm.get('firstName').touched ? 'danger' : 'basic'">
-                <span class="error-message" *ngIf="identityForm.get('firstName').invalid && identityForm.get('firstName').touched">
-                  First name is required
-                </span>
+                       status="basic">
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="form-group">
-                <label for="lastName" class="label">Last Name *</label>
+                <label for="lastName" class="label">Last Name</label>
                 <input nbInput 
                        fullWidth 
                        id="lastName"
                        formControlName="lastName" 
                        placeholder="Enter last name"
-                       [status]="identityForm.get('lastName').invalid && identityForm.get('lastName').touched ? 'danger' : 'basic'">
-                <span class="error-message" *ngIf="identityForm.get('lastName').invalid && identityForm.get('lastName').touched">
-                  Last name is required
-                </span>
+                       status="basic">
               </div>
             </div>
           </div>
@@ -42,28 +35,25 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="dateOfBirth" class="label">Date of Birth *</label>
+                <label for="dateOfBirth" class="label">Date of Birth</label>
                 <input nbInput 
                        fullWidth 
                        id="dateOfBirth"
                        type="date"
                        formControlName="dateOfBirth" 
                        placeholder="YYYY-MM-DD"
-                       [status]="identityForm.get('dateOfBirth').invalid && identityForm.get('dateOfBirth').touched ? 'danger' : 'basic'">
-                <span class="error-message" *ngIf="identityForm.get('dateOfBirth').invalid && identityForm.get('dateOfBirth').touched">
-                  Date of birth is required
-                </span>
+                       status="basic">
               </div>
             </div>
             
             <div class="col-md-6">
               <div class="form-group">
-                <label for="country" class="label">Country *</label>
+                <label for="country" class="label">Country</label>
                 <nb-select fullWidth 
                            id="country"
                            formControlName="country" 
                            placeholder="Select Country"
-                           [status]="identityForm.get('country').invalid && identityForm.get('country').touched ? 'danger' : 'basic'">
+                           status="basic">
                   <nb-option value="australia">Australia</nb-option>
                   <nb-option value="bangladesh">Bangladesh</nb-option>
                   <nb-option value="canada">Canada</nb-option>
@@ -86,9 +76,6 @@
                   <nb-option value="uae">UAE</nb-option>
                   <nb-option value="vietnam">Vietnam</nb-option>
                 </nb-select>
-                <span class="error-message" *ngIf="identityForm.get('country').invalid && identityForm.get('country').touched">
-                  Please select a country
-                </span>
               </div>
             </div>
           </div>
@@ -208,7 +195,7 @@
                       fullWidth 
                       status="primary" 
                       size="large"
-                      [disabled]="identityForm.invalid || isSubmitting"
+                      [disabled]="isSubmitting"
                       [nbSpinner]="isSubmitting"
                       nbSpinnerStatus="primary"
                       nbSpinnerSize="small">
