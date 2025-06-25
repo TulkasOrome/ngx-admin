@@ -68,20 +68,20 @@ module.exports = async function (context, req) {
             content: {
                 subject: "IdentityPulse - Verify Your Email",
                 html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <div style="background: linear-gradient(135deg, #D6001C, #ad0017); padding: 20px; text-align: center;">
+                    <div style="background: linear-gradient(135deg, #4B7BF5, #3B5EDB); padding: 20px; text-align: center;">
                         <h1 style="color: white; margin: 0;">IdentityPulse</h1>
                     </div>
                     <div style="padding: 30px; background: #f7f9fc;">
-                        <h2 style="color: #2a2e40;">Verify Your Email Address</h2>
-                        <p style="color: #8f9bb3; font-size: 16px;">Hi ${firstName},</p>
-                        <p style="color: #8f9bb3; font-size: 16px;">Thank you for requesting access to IdentityPulse. Please use the verification code below to complete your registration:</p>
-                        <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-                            <h1 style="color: #D6001C; letter-spacing: 8px; margin: 0;">${otp}</h1>
+                        <h2 style="color: #1a1a1a;">Verify Your Email Address</h2>
+                        <p style="color: #6b7280; font-size: 16px;">Hi ${firstName},</p>
+                        <p style="color: #6b7280; font-size: 16px;">Thank you for requesting access to IdentityPulse. Please use the verification code below to complete your registration:</p>
+                        <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h1 style="color: #4B7BF5; letter-spacing: 8px; margin: 0; font-size: 36px;">${otp}</h1>
                         </div>
-                        <p style="color: #8f9bb3; font-size: 14px;">This code will expire in 10 minutes.</p>
-                        <p style="color: #8f9bb3; font-size: 14px;">If you didn't request this code, please ignore this email.</p>
-                        <hr style="border: 1px solid #e4e9f2; margin: 30px 0;">
-                        <p style="color: #8f9bb3; font-size: 12px; text-align: center;">© 2025 IdentityPulse by MarketSoft. All rights reserved.</p>
+                        <p style="color: #6b7280; font-size: 14px;">This code will expire in 10 minutes.</p>
+                        <p style="color: #6b7280; font-size: 14px;">If you didn't request this code, please ignore this email.</p>
+                        <hr style="border: 1px solid #e5e7eb; margin: 30px 0;">
+                        <p style="color: #6b7280; font-size: 12px; text-align: center;">© 2025 IdentityPulse. All rights reserved.</p>
                     </div>
                 </div>`
             }

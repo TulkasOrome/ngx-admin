@@ -68,43 +68,50 @@ module.exports = async function (context, req) {
             const salesEmailMessage = {
                 senderAddress: process.env.SENDER_EMAIL,
                 recipients: {
-                    to: [{ address: "sales@identitypulse.ai" }]  // Updated email address
+                    to: [{ address: "sales@identitypulse.ai" }]
                 },
                 content: {
                     subject: `New IdentityPulse Access Request - ${formData.company}`,
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <h2>New Access Request</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Name:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.firstName} ${formData.lastName}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.email}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Company:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.company}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Phone:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.phone || 'Not provided'}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Country:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.country}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;"><strong>Use Case:</strong></td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formData.useCase || 'Not provided'}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px;"><strong>Timestamp:</strong></td>
-                                    <td style="padding: 10px;">${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })}</td>
-                                </tr>
-                            </table>
+                            <div style="background: linear-gradient(135deg, #4B7BF5, #3B5EDB); padding: 20px; text-align: center;">
+                                <h1 style="color: white; margin: 0;">IdentityPulse</h1>
+                            </div>
+                            <div style="padding: 30px; background: #f7f9fc;">
+                                <h2 style="color: #1a1a1a; margin-bottom: 20px;">New Access Request</h2>
+                                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Name:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.firstName} ${formData.lastName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Email:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Company:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.company}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Phone:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.phone || 'Not provided'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Country:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.country}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;"><strong>Use Case:</strong></td>
+                                        <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">${formData.useCase || 'Not provided'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px; background: #f9fafb;"><strong>Timestamp:</strong></td>
+                                        <td style="padding: 15px;">${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })}</td>
+                                    </tr>
+                                </table>
+                                <hr style="border: 1px solid #e5e7eb; margin: 30px 0;">
+                                <p style="color: #6b7280; font-size: 12px; text-align: center;">© 2025 IdentityPulse. All rights reserved.</p>
+                            </div>
                         </div>
                     `
                 }
