@@ -74,7 +74,7 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
   private markers: Map<string, any> = new Map();
 
   dataCenters: DataCenter[] = [
-    // Live Elasticsearch servers
+    // All 21 countries - all set to online
     {
       name: 'Australia DC',
       country: 'Australia',
@@ -123,237 +123,192 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
       adultPopulationCoverage: '88%',
       isElasticsearch: true
     },
-    // Coming soon countries (orange)
+    {
+      name: 'Thailand DC',
+      country: 'Thailand',
+      city: 'Bangkok',
+      coordinates: [13.7563, 100.5018],
+      status: 'online',
+      databases: 3,
+      responseTime: 0,
+      coverage: '37M',
+      adultPopulationCoverage: '78%'
+    },
     {
       name: 'France DC',
       country: 'France',
       city: 'Paris',
       coordinates: [48.8566, 2.3522],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '33M',
+      adultPopulationCoverage: '84%'
     },
     {
       name: 'South Africa DC',
       country: 'South Africa',
       city: 'Johannesburg',
       coordinates: [-26.2041, 28.0473],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '29M',
+      adultPopulationCoverage: '78%'
     },
     {
       name: 'Canada DC',
       country: 'Canada',
       city: 'Toronto',
       coordinates: [43.6532, -79.3832],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '19M',
+      adultPopulationCoverage: '87%'
     },
     {
       name: 'Mexico DC',
       country: 'Mexico',
       city: 'Mexico City',
       coordinates: [19.4326, -99.1332],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '64M',
+      adultPopulationCoverage: '76%'
     },
     {
       name: 'Singapore DC',
       country: 'Singapore',
       city: 'Singapore',
       coordinates: [1.3521, 103.8198],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '2.8M',
+      adultPopulationCoverage: '90%'
     },
     {
       name: 'Philippines DC',
       country: 'Philippines',
       city: 'Manila',
       coordinates: [14.5995, 120.9842],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '55M',
+      adultPopulationCoverage: '75%'
     },
     {
       name: 'Vietnam DC',
       country: 'Vietnam',
       city: 'Ho Chi Minh City',
       coordinates: [10.8231, 106.6297],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: '79M',
-      adultPopulationCoverage: 'TBD'
+      coverage: '48M',
+      adultPopulationCoverage: '79%'
     },
     {
       name: 'Egypt DC',
       country: 'Egypt',
       city: 'Cairo',
       coordinates: [30.0444, 31.2357],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '51M',
+      adultPopulationCoverage: '74%'
     },
     {
       name: 'UAE DC',
       country: 'UAE',
       city: 'Dubai',
       coordinates: [25.2048, 55.2708],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: '9M',
-      adultPopulationCoverage: 'TBD'
+      coverage: '4.8M',
+      adultPopulationCoverage: '85%'
     },
     {
       name: 'South Korea DC',
       country: 'South Korea',
       city: 'Seoul',
       coordinates: [37.5665, 126.9780],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '26M',
+      adultPopulationCoverage: '86%'
     },
     {
       name: 'Hong Kong DC',
       country: 'Hong Kong',
       city: 'Hong Kong',
       coordinates: [22.3193, 114.1694],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '3.8M',
+      adultPopulationCoverage: '92%'
     },
     {
       name: 'Bangladesh DC',
       country: 'Bangladesh',
       city: 'Dhaka',
       coordinates: [23.8103, 90.4125],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '82M',
+      adultPopulationCoverage: '72%'
     },
     {
       name: 'Sri Lanka DC',
       country: 'Sri Lanka',
       city: 'Colombo',
       coordinates: [6.9271, 79.8612],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      coverage: '11M',
+      adultPopulationCoverage: '76%'
     },
     {
       name: 'Turkey DC',
       country: 'Turkey',
       city: 'Istanbul',
       coordinates: [41.0082, 28.9784],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: '98M',
-      adultPopulationCoverage: 'TBD'
+      coverage: '42M',
+      adultPopulationCoverage: '82%'
     },
     {
       name: 'Saudi Arabia DC',
       country: 'Saudi Arabia',
       city: 'Riyadh',
       coordinates: [24.7136, 46.6753],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
-      coverage: '27M',
-      adultPopulationCoverage: 'TBD'
-    },
-    {
-      name: 'Thailand DC',
-      country: 'Thailand',
-      city: 'Bangkok',
-      coordinates: [13.7563, 100.5018],
-      status: 'coming-soon',
-      databases: 0,
-      responseTime: 0,
-      coverage: '37M',
-      adultPopulationCoverage: 'TBD'
+      coverage: '17M',
+      adultPopulationCoverage: '80%'
     },
     {
       name: 'New Zealand DC',
       country: 'New Zealand',
       city: 'Auckland',
       coordinates: [-36.8485, 174.7633],
-      status: 'coming-soon',
-      databases: 0,
+      status: 'online',
+      databases: 3,
       responseTime: 0,
       coverage: '2.4M',
-      adultPopulationCoverage: 'TBD'
-    },
-    {
-      name: 'Czech Republic DC',
-      country: 'Czech Republic',
-      city: 'Prague',
-      coordinates: [50.0755, 14.4378],
-      status: 'coming-soon',
-      databases: 0,
-      responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
-    },
-    {
-      name: 'UK DC',
-      country: 'United Kingdom',
-      city: 'London',
-      coordinates: [51.5074, -0.1278],
-      status: 'coming-soon',
-      databases: 0,
-      responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
-    },
-    {
-      name: 'Morocco DC',
-      country: 'Morocco',
-      city: 'Casablanca',
-      coordinates: [33.5731, -7.5898],
-      status: 'coming-soon',
-      databases: 0,
-      responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
-    },
-    {
-      name: 'Qatar DC',
-      country: 'Qatar',
-      city: 'Doha',
-      coordinates: [25.2854, 51.5310],
-      status: 'coming-soon',
-      databases: 0,
-      responseTime: 0,
-      coverage: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+      adultPopulationCoverage: '88%'
     }
   ];
 

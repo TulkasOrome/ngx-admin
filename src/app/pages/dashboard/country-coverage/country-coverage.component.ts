@@ -9,6 +9,7 @@ interface CountryData {
   updateFrequency: string;
   status: 'active' | 'coming-soon' | 'limited';
   online?: boolean;
+  region: string;
 }
 
 @Component({
@@ -20,14 +21,16 @@ export class CountryCoverageComponent implements OnDestroy {
 
   private alive = true;
 
-  countries: CountryData[] = [
+  allCountries: CountryData[] = [
+    // APAC Region
     {
       name: 'Australia',
       coverage: 75,
       records: '11.5M',
       updateFrequency: 'Daily',
       status: 'active',
-      online: true
+      online: true,
+      region: 'apac'
     },
     {
       name: 'Indonesia',
@@ -35,7 +38,8 @@ export class CountryCoverageComponent implements OnDestroy {
       records: '180M+',
       updateFrequency: 'Weekly',
       status: 'active',
-      online: true
+      online: true,
+      region: 'apac'
     },
     {
       name: 'Malaysia',
@@ -43,7 +47,8 @@ export class CountryCoverageComponent implements OnDestroy {
       records: '24M',
       updateFrequency: 'Weekly',
       status: 'active',
-      online: true
+      online: true,
+      region: 'apac'
     },
     {
       name: 'Japan',
@@ -51,60 +56,170 @@ export class CountryCoverageComponent implements OnDestroy {
       records: '58M',
       updateFrequency: 'Daily',
       status: 'active',
-      online: true
-    },
-    {
-      name: 'Saudi Arabia',
-      coverage: 0,
-      records: '27M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
-    },
-    {
-      name: 'Vietnam',
-      coverage: 0,
-      records: '79M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
+      online: true,
+      region: 'apac'
     },
     {
       name: 'Thailand',
-      coverage: 0,
+      coverage: 78,
       records: '37M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'apac'
     },
     {
-      name: 'Turkey',
-      coverage: 0,
-      records: '98M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
+      name: 'Singapore',
+      coverage: 90,
+      records: '2.8M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'apac'
     },
     {
-      name: 'UAE',
-      coverage: 0,
-      records: '9M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
+      name: 'Philippines',
+      coverage: 75,
+      records: '55M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'apac'
+    },
+    {
+      name: 'Vietnam',
+      coverage: 79,
+      records: '48M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'apac'
+    },
+    {
+      name: 'South Korea',
+      coverage: 86,
+      records: '26M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'apac'
+    },
+    {
+      name: 'Hong Kong',
+      coverage: 92,
+      records: '3.8M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'apac'
+    },
+    {
+      name: 'Bangladesh',
+      coverage: 72,
+      records: '82M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'apac'
+    },
+    {
+      name: 'Sri Lanka',
+      coverage: 76,
+      records: '11M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'apac'
     },
     {
       name: 'New Zealand',
-      coverage: 0,
+      coverage: 88,
       records: '2.4M',
-      updateFrequency: 'Coming Soon',
-      status: 'coming-soon',
-      online: false
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'apac'
     },
+    // MENA Region
+    {
+      name: 'Saudi Arabia',
+      coverage: 80,
+      records: '17M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'mena'
+    },
+    {
+      name: 'Turkey',
+      coverage: 82,
+      records: '42M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'mena'
+    },
+    {
+      name: 'UAE',
+      coverage: 85,
+      records: '4.8M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'mena'
+    },
+    {
+      name: 'Egypt',
+      coverage: 74,
+      records: '51M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'mena'
+    },
+    // Americas Region
+    {
+      name: 'Canada',
+      coverage: 87,
+      records: '19M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'americas'
+    },
+    {
+      name: 'Mexico',
+      coverage: 76,
+      records: '64M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'americas'
+    },
+    // Europe Region
+    {
+      name: 'France',
+      coverage: 84,
+      records: '33M',
+      updateFrequency: 'Daily',
+      status: 'active',
+      online: true,
+      region: 'europe'
+    },
+    // Africa Region
+    {
+      name: 'South Africa',
+      coverage: 78,
+      records: '29M',
+      updateFrequency: 'Weekly',
+      status: 'active',
+      online: true,
+      region: 'africa'
+    }
   ];
 
+  countries: CountryData[] = this.allCountries;
   selectedRegion = 'all';
-  regions = ['all', 'apac', 'mena', 'americas', 'north-asia'];
 
   currentTheme: string;
 
@@ -118,6 +233,14 @@ export class CountryCoverageComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.alive = false;
+  }
+
+  onRegionChange() {
+    if (this.selectedRegion === 'all') {
+      this.countries = this.allCountries;
+    } else {
+      this.countries = this.allCountries.filter(c => c.region === this.selectedRegion);
+    }
   }
 
   getStatusIcon(status: string): string {

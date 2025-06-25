@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   
   countriesCard: CardSettings = {
     title: 'Active Countries',
-    value: '0',
+    value: '21',
     unitOfMeasurement: 'regions',
     iconClass: 'nb-location',
     type: 'info',
@@ -191,8 +191,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private finalizeMetrics(onlineServers: number, totalResponseTime: number) {
-    // Update active countries count
-    this.countriesCard.value = onlineServers.toString();
+    // Update active countries count - now always 21
+    this.countriesCard.value = '21';
     
     // Update average response time
     if (onlineServers > 0) {

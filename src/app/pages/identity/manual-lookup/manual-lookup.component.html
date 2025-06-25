@@ -64,9 +64,27 @@
                            formControlName="country" 
                            placeholder="Select Country"
                            [status]="identityForm.get('country').invalid && identityForm.get('country').touched ? 'danger' : 'basic'">
+                  <nb-option value="australia">Australia</nb-option>
+                  <nb-option value="bangladesh">Bangladesh</nb-option>
+                  <nb-option value="canada">Canada</nb-option>
+                  <nb-option value="egypt">Egypt</nb-option>
+                  <nb-option value="france">France</nb-option>
+                  <nb-option value="hong-kong">Hong Kong</nb-option>
                   <nb-option value="indonesia">Indonesia</nb-option>
                   <nb-option value="japan">Japan</nb-option>
                   <nb-option value="malaysia">Malaysia</nb-option>
+                  <nb-option value="mexico">Mexico</nb-option>
+                  <nb-option value="new-zealand">New Zealand</nb-option>
+                  <nb-option value="philippines">Philippines</nb-option>
+                  <nb-option value="saudi-arabia">Saudi Arabia</nb-option>
+                  <nb-option value="singapore">Singapore</nb-option>
+                  <nb-option value="south-africa">South Africa</nb-option>
+                  <nb-option value="south-korea">South Korea</nb-option>
+                  <nb-option value="sri-lanka">Sri Lanka</nb-option>
+                  <nb-option value="thailand">Thailand</nb-option>
+                  <nb-option value="turkey">Turkey</nb-option>
+                  <nb-option value="uae">UAE</nb-option>
+                  <nb-option value="vietnam">Vietnam</nb-option>
                 </nb-select>
                 <span class="error-message" *ngIf="identityForm.get('country').invalid && identityForm.get('country').touched">
                   Please select a country

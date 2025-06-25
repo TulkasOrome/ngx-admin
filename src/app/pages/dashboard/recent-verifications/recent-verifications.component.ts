@@ -34,7 +34,13 @@ export class RecentVerificationsComponent implements OnInit, OnDestroy {
     'Email Check'
   ];
 
-  countries = ['Australia', 'Indonesia', 'Japan', 'Malaysia'];
+  countries = [
+    'Australia', 'Bangladesh', 'Canada', 'Egypt', 'France', 
+    'Hong Kong', 'Indonesia', 'Japan', 'Malaysia', 'Mexico', 
+    'New Zealand', 'Philippines', 'Saudi Arabia', 'Singapore', 
+    'South Africa', 'South Korea', 'Sri Lanka', 'Thailand', 
+    'Turkey', 'UAE', 'Vietnam'
+  ];
 
   constructor(private themeService: NbThemeService) {}
 
@@ -67,7 +73,11 @@ export class RecentVerificationsComponent implements OnInit, OnDestroy {
       { offset: 600000, score: 92, status: 'verified' },
       { offset: 900000, score: 45, status: 'failed' },
       { offset: 1200000, score: 88, status: 'verified' },
-      { offset: 1500000, score: 91, status: 'verified' }
+      { offset: 1500000, score: 91, status: 'verified' },
+      { offset: 1800000, score: 82, status: 'verified' },
+      { offset: 2100000, score: 73, status: 'partial' },
+      { offset: 2400000, score: 94, status: 'verified' },
+      { offset: 2700000, score: 85, status: 'verified' }
     ];
 
     this.verifications = verificationData.map((data, index) => ({
@@ -153,9 +163,26 @@ export class RecentVerificationsComponent implements OnInit, OnDestroy {
   getCountryFlag(country: string): string {
     const flags = {
       'Australia': '🇦🇺',
+      'Bangladesh': '🇧🇩',
+      'Canada': '🇨🇦',
+      'Egypt': '🇪🇬',
+      'France': '🇫🇷',
+      'Hong Kong': '🇭🇰',
       'Indonesia': '🇮🇩',
+      'Japan': '🇯🇵',
       'Malaysia': '🇲🇾',
-      'Japan': '🇯🇵'
+      'Mexico': '🇲🇽',
+      'New Zealand': '🇳🇿',
+      'Philippines': '🇵🇭',
+      'Saudi Arabia': '🇸🇦',
+      'Singapore': '🇸🇬',
+      'South Africa': '🇿🇦',
+      'South Korea': '🇰🇷',
+      'Sri Lanka': '🇱🇰',
+      'Thailand': '🇹🇭',
+      'Turkey': '🇹🇷',
+      'UAE': '🇦🇪',
+      'Vietnam': '🇻🇳'
     };
     return flags[country] || '🌏';
   }

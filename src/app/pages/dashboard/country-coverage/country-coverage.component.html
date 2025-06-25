@@ -1,12 +1,13 @@
 <nb-card size="large">
   <nb-card-header>
     <span>Country Coverage & Availability</span>
-    <nb-select [(selected)]="selectedRegion" class="region-select">
+    <nb-select [(selected)]="selectedRegion" (selectedChange)="onRegionChange()" class="region-select">
       <nb-option value="all">All Regions</nb-option>
       <nb-option value="apac">APAC</nb-option>
       <nb-option value="mena">MENA</nb-option>
       <nb-option value="americas">Americas</nb-option>
-      <nb-option value="north-asia">North Asia</nb-option>
+      <nb-option value="europe">Europe</nb-option>
+      <nb-option value="africa">Africa</nb-option>
     </nb-select>
   </nb-card-header>
   
