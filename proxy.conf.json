@@ -1,4 +1,3 @@
-
 {
   "/api/*": {
     "target": "https://identitypulse-api20.azurewebsites.net",
@@ -7,6 +6,18 @@
     "logLevel": "debug",
     "headers": {
       "Origin": "https://identitypulse-api20.azurewebsites.net"
+    }
+  },
+  "/azure-storage/*": {
+    "target": "https://stidentitypulsebulk.blob.core.windows.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/azure-storage": ""
+    },
+    "headers": {
+      "Origin": "https://stidentitypulsebulk.blob.core.windows.net"
     }
   }
 }

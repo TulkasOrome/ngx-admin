@@ -19,6 +19,7 @@ import { ManualLookupComponent } from './manual-lookup/manual-lookup.component';
 import { ResultsHistoryComponent } from './results-history/results-history.component';
 import { ApiTestComponent } from './api-test/api-test.component';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -37,6 +38,7 @@ import { ApiTestComponent } from './api-test/api-test.component';
         path: 'api-test',
         component: ApiTestComponent,
       },
+      
     ]),
     NbCardModule,
     NbButtonModule,
@@ -52,7 +54,8 @@ import { ApiTestComponent } from './api-test/api-test.component';
   declarations: [
     ManualLookupComponent,
     ResultsHistoryComponent,
-    ApiTestComponent,
+    ApiTestComponent
+    
   ],
 })
 export class IdentityModule { }

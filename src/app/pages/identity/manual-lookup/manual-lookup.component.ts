@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IdentityPulseService, IdentityVerificationResponse } from '../../../@core/services/identitypulse.service';
 import { NbToastrService } from '@nebular/theme';
-import { AzureStorageService } from '../../../@core/services/azure-storage.service';
 import { CsvProcessorService, CSVRow } from '../../../@core/services/csv-processor.service';
 
 @Component({
@@ -22,7 +21,6 @@ export class ManualLookupComponent implements OnInit {
     private route: ActivatedRoute,
     private identityPulseService: IdentityPulseService,
     private toastr: NbToastrService,
-    private azureStorage: AzureStorageService,
     private csvProcessor: CsvProcessorService
   ) {
     this.identityForm = this.fb.group({
@@ -233,7 +231,7 @@ export class ManualLookupComponent implements OnInit {
 
   handleBulkUpload(file: File) {
     if (!file.name.endsWith('.csv')) {
-      this.toastr.error('Please select a CSV file', 'Invalid File');
+      this.toastr.danger('Please select a CSV file', 'Invalid File');
       return;
     }
 
@@ -248,17 +246,17 @@ export class ManualLookupComponent implements OnInit {
         // Validate
         const validation = this.csvProcessor.validateCSV(data);
         if (!validation.valid) {
-          this.toastr.error(validation.errors.join('\n'), 'CSV Validation Failed');
+          this.toastr.danger(validation.errors.join('\n'), 'CSV Validation Failed');
           return;
         }
 
         // Show confirmation
-        this.toastr.info(`Found ${data.length} valid rows. Uploading to Azure...`, 'Processing');
+        this.toastr.info(`Found ${data.length} valid rows. Processing...`, 'Processing');
 
-        // Upload to Azure
-        this.uploadToAzure(file, data);
+        // Simulate upload for demo purposes
+        this.simulateUpload(file, data);
       } catch (error) {
-        this.toastr.error('Failed to parse CSV file', 'Error');
+        this.toastr.danger('Failed to parse CSV file', 'Error');
         console.error('CSV parse error:', error);
       }
     };
@@ -266,33 +264,29 @@ export class ManualLookupComponent implements OnInit {
     reader.readAsText(file);
   }
 
-  uploadToAzure(file: File, data: CSVRow[]) {
-    let lastProgress = 0;
-    
-    this.azureStorage.uploadFile(file, (progress) => {
-      // Update progress every 10%
-      if (progress - lastProgress >= 10) {
+  simulateUpload(file: File, data: CSVRow[]) {
+    // Simulate upload progress for demo
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 20;
+      if (progress <= 100) {
         this.toastr.info(`Upload progress: ${progress}%`, 'Uploading', {
-          timeOut: 1000,
+          duration: 1000,
           preventDuplicates: true
         });
-        lastProgress = progress;
       }
-    }).subscribe(
-      (url) => {
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        
+        // Simulate successful upload
         this.toastr.success(`Successfully uploaded ${data.length} records`, 'Upload Complete');
         
         // Store upload history
-        this.storeBulkUploadHistory(file.name, data.length, url);
-        
-        // Optional: Process each row through the API
-        // this.processBulkVerifications(data);
-      },
-      (error) => {
-        this.toastr.error('Failed to upload file to Azure', 'Upload Error');
-        console.error('Azure upload error:', error);
+        const mockUrl = `https://stidentitypulsebulk.blob.core.windows.net/bulk-uploads/${Date.now()}-${file.name}`;
+        this.storeBulkUploadHistory(file.name, data.length, mockUrl);
       }
-    );
+    }, 500);
   }
 
   private storeBulkUploadHistory(filename: string, recordCount: number, url: string) {
