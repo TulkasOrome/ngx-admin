@@ -15,6 +15,8 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   showPassword = false;
   isDevelopment = false;
+  allowedDomains: string[] = [];
+  unauthorizedEmail: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -25,10 +27,17 @@ export class LoginComponent implements OnInit {
   ) {
     console.log('LoginComponent constructor called');
     this.isDevelopment = this.authService.isDevelopment();
+    this.allowedDomains = this.authService.getAllowedDomains();
     
     // Check if already authenticated
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/pages/dashboard']);
+    }
+    
+    // Check if there was an unauthorized attempt
+    this.unauthorizedEmail = localStorage.getItem('unauthorizedEmail');
+    if (this.unauthorizedEmail) {
+      localStorage.removeItem('unauthorizedEmail');
     }
   }
 
@@ -43,8 +52,12 @@ export class LoginComponent implements OnInit {
       }
     }, 0);
     
+    // Initialize form without domain validation
     this.loginForm = this.formBuilder.group({
-      email: ['admin@identitypulse.com', [Validators.required, Validators.email]],
+      email: ['admin@identitypulse.com', [
+        Validators.required, 
+        Validators.email
+      ]],
       password: ['admin123', Validators.required],
       rememberMe: [true]
     });
@@ -57,6 +70,31 @@ export class LoginComponent implements OnInit {
     if (storedRedirectUrl) {
       this.returnUrl = storedRedirectUrl;
     }
+    
+    // Show unauthorized message if applicable
+    if (this.unauthorizedEmail) {
+      setTimeout(() => {
+        this.toastr.danger(
+          `Access denied for ${this.unauthorizedEmail}. Only ${this.allowedDomains.join(' or ')} email addresses are allowed.`,
+          'Unauthorized Access',
+          { duration: 5000 }
+        );
+      }, 500);
+    }
+  }
+
+  // Custom validator for email domain
+  domainValidator(control: any) {
+    if (!control.value) return null;
+    
+    const email = control.value.toLowerCase();
+    const domain = email.split('@')[1];
+    
+    if (!domain || !this.allowedDomains.includes(domain)) {
+      return { invalidDomain: true };
+    }
+    
+    return null;
   }
 
   get email() { return this.loginForm.get('email'); }
@@ -79,36 +117,30 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     
-    if (this.isDevelopment) {
-      // Development mode - use simple auth
-      this.authService.devLogin(this.email.value, this.password.value)
-        .subscribe(
-          success => {
-            if (success) {
-              this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
-              
-              // Clear any stored redirect URL
-              localStorage.removeItem('redirectUrl');
-              
-              // Navigate to return URL
-              this.router.navigate([this.returnUrl]);
-            } else {
-              this.toastr.danger('Invalid email or password', 'Login Failed');
-              this.loading = false;
-            }
-          },
-          error => {
-            console.error('Login error:', error);
-            this.toastr.danger('An error occurred during login', 'Login Failed');
+    // Use devLogin for both development and production
+    // This validates against allowed domains/emails internally
+    this.authService.devLogin(this.email.value, this.password.value)
+      .subscribe(
+        success => {
+          if (success) {
+            this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
+            
+            // Clear any stored redirect URL
+            localStorage.removeItem('redirectUrl');
+            
+            // Navigate to return URL
+            this.router.navigate([this.returnUrl]);
+          } else {
+            this.toastr.danger('Invalid email or password', 'Login Failed');
             this.loading = false;
           }
-        );
-    } else {
-      // Production - redirect to Azure auth
-      // For now, show a message that social login is required
-      this.toastr.info('Please use one of the social login options below', 'Social Login Required');
-      this.loading = false;
-    }
+        },
+        error => {
+          console.error('Login error:', error);
+          this.toastr.danger('An error occurred during login', 'Login Failed');
+          this.loading = false;
+        }
+      );
   }
 
   loginWithProvider(provider: 'github' | 'aad' | 'google' | 'twitter') {

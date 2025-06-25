@@ -20,7 +20,10 @@
                 formControlName="email"
                 [status]="email.invalid && email.touched ? 'danger' : 'basic'"
                 autocomplete="email">
-              <p class="error-message" *ngIf="email.invalid && email.touched">
+              <p class="error-message" *ngIf="email.errors?.['required'] && email.touched">
+                Please enter your email address
+              </p>
+              <p class="error-message" *ngIf="email.errors?.['email'] && email.touched">
                 Please enter a valid email address
               </p>
             </div>
@@ -69,8 +72,8 @@
             </button>
           </form>
 
-          <!-- Social login buttons for production -->
-          <div class="social-login" *ngIf="!isDevelopment">
+          <!-- Social login buttons -->
+          <div class="social-login">
             <div class="divider">
               <span>OR</span>
             </div>
@@ -89,7 +92,10 @@
             <nb-alert status="info" closable="false">
               <strong>Demo Credentials:</strong><br>
               Email: admin@identitypulse.com<br>
-              Password: admin123
+              Password: admin123<br><br>
+              <strong>Other test accounts:</strong><br>
+              test@identitypulse.ai / test123<br>
+              demo@identitypulse.ai / demo123
             </nb-alert>
           </div>
 

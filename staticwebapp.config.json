@@ -5,6 +5,11 @@
   },
   "routes": [
     {
+      "route": "/.auth/login/aad",
+      "allowedRoles": ["anonymous"],
+      "rewrite": "/.auth/login/aad?domain_hint=identitypulse.ai"
+    },
+    {
       "route": "/.auth/login/*",
       "allowedRoles": ["anonymous"]
     },
@@ -22,7 +27,11 @@
     },
     {
       "route": "/api/*",
-      "allowedRoles": ["anonymous", "authenticated"]
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/pages/*",
+      "allowedRoles": ["authenticated"]
     },
     {
       "route": "/*",
@@ -33,12 +42,18 @@
     "401": {
       "statusCode": 302,
       "redirect": "/login"
+    },
+    "403": {
+      "statusCode": 302,
+      "redirect": "/login"
     }
   },
   "globalHeaders": {
     "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline' data: blob:; object-src 'none'",
     "x-frame-options": "SAMEORIGIN",
-    "x-content-type-options": "nosniff"
+    "x-content-type-options": "nosniff",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()"
   },
   "mimeTypes": {
     ".json": "application/json",
