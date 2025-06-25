@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { title: 'Log out', data: { action: 'logout' } } 
   ];
 
-  currentTheme = 'marketsoft';
+  currentTheme = 'identitypulse';
 
   constructor(
     private sidebarService: NbSidebarService,
