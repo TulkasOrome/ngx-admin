@@ -1,3 +1,4 @@
+<!-- src/app/login/login.component.html -->
 <nb-layout>
   <nb-layout-column class="auth-container">
     <div class="auth-card">
@@ -5,7 +6,7 @@
         <nb-card-body>
           <div class="logo-container">
             <img src="assets/images/logo-vertical.png" alt="IdentityPulse" class="login-logo">
-            <p ></p>
+            <p></p>
           </div>
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -20,10 +21,7 @@
                 formControlName="email"
                 [status]="email.invalid && email.touched ? 'danger' : 'basic'"
                 autocomplete="email">
-              <p class="error-message" *ngIf="email.errors?.['required'] && email.touched">
-                Please enter your email address
-              </p>
-              <p class="error-message" *ngIf="email.errors?.['email'] && email.touched">
+              <p class="error-message" *ngIf="email.invalid && email.touched">
                 Please enter a valid email address
               </p>
             </div>
@@ -72,8 +70,8 @@
             </button>
           </form>
 
-          <!-- Social login buttons -->
-          <div class="social-login">
+          <!-- Social login buttons - show in production only -->
+          <div class="social-login" *ngIf="isProduction">
             <div class="divider">
               <span>OR</span>
             </div>
@@ -92,16 +90,21 @@
             <nb-alert status="info" closable="false">
               <strong>Demo Credentials:</strong><br>
               Email: admin@identitypulse.com<br>
-              Password: admin123<br><br>
-              <strong>Other test accounts:</strong><br>
-              test@identitypulse.ai / test123<br>
-              demo@identitypulse.ai / demo123
+              Password: admin123
+            </nb-alert>
+          </div>
+
+          <!-- Optional: Production warning message (currently hidden with && false) -->
+          <div class="production-info" *ngIf="isProduction && false">
+            <nb-alert status="warning" closable="false">
+              <strong>Authorized Access Only</strong><br>
+              Please use your assigned credentials or Microsoft login.
             </nb-alert>
           </div>
 
           <div class="links">
             <p class="text-center">
-             Don't have an account? <a href="https://stidentitypulse8565.z8.web.core.windows.net/" target="_blank"><strong>Click here</strong></a>
+              Don't have an account? <a href="https://stidentitypulse8565.z8.web.core.windows.net/" target="_blank"><strong>Click here</strong></a>
             </p>
           </div>
         </nb-card-body>

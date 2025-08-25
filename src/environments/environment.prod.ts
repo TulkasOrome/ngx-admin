@@ -1,5 +1,6 @@
+// src/environments/environment.prod.ts
 export const environment = {
-  production: true,
+  production: true,  // THIS MUST BE TRUE
   identityPulseApi: {
     baseUrl: 'https://identitypulse-api20.azurewebsites.net',
     endpoint: '/api/identity_match',

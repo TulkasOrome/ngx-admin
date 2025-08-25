@@ -1,102 +1,261 @@
-// src/app/auth/azure-auth.service.ts
 import { Injectable } from '@angular/core';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { AuthenticationResult, InteractionStatus, EventType } from '@azure/msal-browser';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+export interface AzureUser {
+  clientPrincipal: {
+    userId: string;
+    userRoles: string[];
+    claims: Array<{ typ: string; val: string }>;
+    identityProvider: string;
+    userDetails: string;
+  };
+}
+
 export interface User {
-  displayName: string;
   email: string;
-  id: string;
+  name: string;
+  role: string;
+  provider?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AzureAuthService {
-  private readonly _destroying$ = new Subject<void>();
-  loggedIn = false;
-  user: User | null = null;
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
+  
+  // Allowed email domains
+  private readonly ALLOWED_DOMAINS = ['identitypulse.ai', 'identitypulse.com', 'data-direct.com.au'];
 
   constructor(
-    private msalService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
     private http: HttpClient,
     private router: Router
   ) {
-    this.msalBroadcastService.msalSubject$
+    this.currentUserSubject = new BehaviorSubject<User | null>(null);
+    this.currentUser = this.currentUserSubject.asObservable();
+    this.loadUser();
+  }
+
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  loadUser(): void {
+    console.log('Loading user...');
+    
+    // Check if we're in development mode
+    if (this.isDevelopment()) {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        // For dev mode, skip domain validation for stored users
+        this.currentUserSubject.next(user);
+      }
+      return;
+    }
+
+    // In production, check for Azure Static Web Apps authentication
+    this.http.get<any>('/.auth/me')
       .pipe(
-        filter((msg: any) => msg.eventType === EventType.LOGIN_SUCCESS),
-        takeUntil(this._destroying$)
+        tap(response => console.log('Auth response:', response)),
+        map(response => {
+          // Azure SWA returns an array with the user info
+          if (response && Array.isArray(response) && response.length > 0) {
+            return this.mapAzureUserToUser({ clientPrincipal: response[0] });
+          } else if (response && response.clientPrincipal) {
+            return this.mapAzureUserToUser(response);
+          }
+          return null;
+        }),
+        catchError((error) => {
+          console.log('Auth check failed:', error);
+          return of(null);
+        })
       )
-      .subscribe((result: any) => {
-        const payload = result.payload as AuthenticationResult;
-        this.msalService.instance.setActiveAccount(payload.account);
-        this.checkAndSetActiveAccount();
+      .subscribe(user => {
+        console.log('Mapped user:', user);
         
-        // Check for redirect URL
-        const redirectUrl = localStorage.getItem('redirectUrl');
-        if (redirectUrl) {
-          localStorage.removeItem('redirectUrl');
-          this.router.navigateByUrl(redirectUrl);
+        if (user && this.isEmailAllowed(user.email)) {
+          this.currentUserSubject.next(user);
+          
+          // If we have a user and we're on the login page, redirect to dashboard
+          if (window.location.pathname === '/login') {
+            const redirectUrl = localStorage.getItem('redirectUrl') || '/pages/dashboard';
+            localStorage.removeItem('redirectUrl');
+            this.router.navigate([redirectUrl]);
+          }
+        } else if (user) {
+          // User authenticated but not authorized
+          console.error('User authenticated but not authorized:', user.email);
+          this.showUnauthorizedMessage(user.email);
+          this.logout();
         } else {
-          this.router.navigate(['/pages/dashboard']);
+          this.currentUserSubject.next(null);
         }
       });
-
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.checkAndSetActiveAccount();
-      });
   }
 
-  checkAndSetActiveAccount() {
-    const activeAccount = this.msalService.instance.getActiveAccount();
-    if (!activeAccount && this.msalService.instance.getAllAccounts().length > 0) {
-      const accounts = this.msalService.instance.getAllAccounts();
-      this.msalService.instance.setActiveAccount(accounts[0]);
+  private mapAzureUserToUser(response: any): User | null {
+    const principal = response.clientPrincipal;
+    if (!principal || !principal.userId) return null;
+
+    console.log('Mapping principal:', principal);
+
+    // Find email from claims
+    const emailClaim = principal.claims?.find(
+      (c: any) => c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
+                  c.typ === 'emails' ||
+                  c.typ === 'email' ||
+                  c.typ === 'preferred_username'
+    );
+
+    const nameClaim = principal.claims?.find(
+      (c: any) => c.typ === 'name' ||
+                  c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
+    );
+
+    const email = emailClaim?.val || principal.userDetails || '';
+    
+    // Return user object (domain validation happens in loadUser)
+    return {
+      email: email,
+      name: nameClaim?.val || principal.userDetails || 'User',
+      role: principal.userRoles?.[0] || 'authenticated',
+      provider: principal.identityProvider
+    };
+  }
+
+  private isEmailAllowed(email: string): boolean {
+    if (!email) return false;
+    
+    const emailLower = email.toLowerCase();
+    const domain = emailLower.split('@')[1];
+    
+    // Check if it's an allowed domain
+    if (this.ALLOWED_DOMAINS.includes(domain)) {
+      return true;
     }
     
-    if (this.msalService.instance.getActiveAccount()) {
-      this.loggedIn = true;
-      const account = this.msalService.instance.getActiveAccount();
-      if (account) {
-        this.user = {
-          displayName: account.name || account.username,
-          email: account.username,
-          id: account.localAccountId
-        };
+    // Check if user is in the allowed external emails list
+    const allowedExternalEmails = [     
+      'earl@data-direct.com.au',
+      'jedwards@buzzsaw.media'
+      // Add more external emails here as needed
+    ];     
+    
+    return allowedExternalEmails.includes(emailLower);
+  }
+
+  private showUnauthorizedMessage(email: string): void {
+    // Store unauthorized attempt
+    localStorage.setItem('unauthorizedEmail', email);
+    
+    // You can also trigger a toast notification here if you have access to NbToastrService
+    alert(`Access denied. Only users with @identitypulse.ai or @identitypulse.com email addresses are allowed. Your email: ${email}`);
+  }
+
+  login(provider: 'github' | 'aad' | 'google' | 'twitter' = 'aad'): void {
+    if (this.isDevelopment()) {
+      const mockUser: User = {
+        email: 'admin@identitypulse.com',
+        name: 'Admin User',
+        role: 'authenticated'
+      };
+      localStorage.setItem('currentUser', JSON.stringify(mockUser));
+      this.currentUserSubject.next(mockUser);
+      this.router.navigate(['/pages/dashboard']);
+    } else {
+      // Store current location for redirect after login
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login') {
+        localStorage.setItem('redirectUrl', currentPath);
       }
+      
+      // Azure SWA login with domain hint
+      const loginUrl = provider === 'aad' 
+        ? `/.auth/login/${provider}?domain_hint=identitypulse.ai`
+        : `/.auth/login/${provider}`;
+      
+      window.location.href = loginUrl;
     }
   }
 
-  login() {
-    this.msalService.loginRedirect();
-  }
-
-  logout() {
-    this.msalService.logoutRedirect({
-      postLogoutRedirectUri: '/'
+  devLogin(email: string, password: string): Observable<boolean> {
+    console.log('devLogin called with:', email);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const allowedUsers = [
+          { email: 'admin@identitypulse.com', password: 'admin123', name: 'Admin User' },
+          { email: 'test@identitypulse.ai', password: 'test123', name: 'Test User' },
+          { email: 'demo@identitypulse.ai', password: 'demo123', name: 'Demo User' },
+          { email: 'earl@data-direct.com.au', password: 'E@rl#D@t@2024!Pulse', name: 'Earl' }
+        ];
+        
+        // Debug with alert
+        const user = allowedUsers.find(u => 
+          u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        );
+        
+        if (!user) {
+          // Check if it's the email or password that's wrong
+          const emailExists = allowedUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+          if (emailExists) {
+            alert(`Password mismatch for ${email}. Make sure you're entering: E@rl#D@t@2024!Pulse`);
+          } else {
+            alert(`Email ${email} not found in allowed users.`);
+          }
+        }
+        
+        if (user) {
+          const authUser: User = {
+            email: user.email,
+            name: user.name,
+            role: 'authenticated'
+          };
+          localStorage.setItem('currentUser', JSON.stringify(authUser));
+          this.currentUserSubject.next(authUser);
+          observer.next(true);
+        } else {
+          observer.next(false);
+        }
+        observer.complete();
+      }, 1000);
     });
   }
 
-  getUser(): User | null {
-    return this.user;
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('redirectUrl');
+    localStorage.removeItem('unauthorizedEmail');
+    this.currentUserSubject.next(null);
+    
+    if (this.isDevelopment()) {
+      this.router.navigate(['/login']);
+    } else {
+      window.location.href = '/.auth/logout';
+    }
   }
 
-  getUserProfile(): Observable<any> {
-    return this.http.get('https://graph.microsoft.com/v1.0/me');
+  isAuthenticated(): boolean {
+  const user = this.currentUserValue;
+  // In development, skip domain check for authenticated users
+  if (this.isDevelopment()) {
+    return !!user;
+  }
+  return !!user && this.isEmailAllowed(user.email);
+}
+
+  public isDevelopment(): boolean {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1';
   }
 
-  ngOnDestroy(): void {
-    this._destroying$.next(undefined);
-    this._destroying$.complete();
+  public getAllowedDomains(): string[] {
+    return [...this.ALLOWED_DOMAINS];
   }
 }

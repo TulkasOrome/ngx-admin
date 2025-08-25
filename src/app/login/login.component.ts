@@ -1,8 +1,10 @@
+// src/app/login/login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AzureAuthService } from '../@core/services/azure-auth.service';
 import { NbToastrService } from '@nebular/theme';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'ngx-login',
@@ -15,8 +17,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   showPassword = false;
   isDevelopment = false;
-  allowedDomains: string[] = [];
-  unauthorizedEmail: string | null = null;
+  isProduction = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -26,18 +27,21 @@ export class LoginComponent implements OnInit {
     private toastr: NbToastrService
   ) {
     console.log('LoginComponent constructor called');
-    this.isDevelopment = this.authService.isDevelopment();
-    this.allowedDomains = this.authService.getAllowedDomains();
+    
+    // Check environment and hostname
+    this.isProduction = environment.production || this.isProductionDomain();
+    this.isDevelopment = !this.isProduction;
+    
+    console.log('Environment check:', {
+      environmentProduction: environment.production,
+      hostname: window.location.hostname,
+      isProduction: this.isProduction,
+      isDevelopment: this.isDevelopment
+    });
     
     // Check if already authenticated
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/pages/dashboard']);
-    }
-    
-    // Check if there was an unauthorized attempt
-    this.unauthorizedEmail = localStorage.getItem('unauthorizedEmail');
-    if (this.unauthorizedEmail) {
-      localStorage.removeItem('unauthorizedEmail');
     }
   }
 
@@ -52,13 +56,13 @@ export class LoginComponent implements OnInit {
       }
     }, 0);
     
-    // Initialize form without domain validation
+    // Initialize form with empty values in production
+    const defaultEmail = this.isDevelopment ? 'admin@identitypulse.com' : '';
+    const defaultPassword = this.isDevelopment ? 'admin123' : '';
+    
     this.loginForm = this.formBuilder.group({
-      email: ['admin@identitypulse.com', [
-        Validators.required, 
-        Validators.email
-      ]],
-      password: ['admin123', Validators.required],
+      email: [defaultEmail, [Validators.required, Validators.email]],
+      password: [defaultPassword, Validators.required],
       rememberMe: [true]
     });
 
@@ -70,31 +74,14 @@ export class LoginComponent implements OnInit {
     if (storedRedirectUrl) {
       this.returnUrl = storedRedirectUrl;
     }
-    
-    // Show unauthorized message if applicable
-    if (this.unauthorizedEmail) {
-      setTimeout(() => {
-        this.toastr.danger(
-          `Access denied for ${this.unauthorizedEmail}. Only ${this.allowedDomains.join(' or ')} email addresses are allowed.`,
-          'Unauthorized Access',
-          { duration: 5000 }
-        );
-      }, 500);
-    }
   }
 
-  // Custom validator for email domain
-  domainValidator(control: any) {
-    if (!control.value) return null;
-    
-    const email = control.value.toLowerCase();
-    const domain = email.split('@')[1];
-    
-    if (!domain || !this.allowedDomains.includes(domain)) {
-      return { invalidDomain: true };
-    }
-    
-    return null;
+  private isProductionDomain(): boolean {
+    const hostname = window.location.hostname;
+    return hostname.includes('identitypulse.ai') || 
+           hostname.includes('identitypulse.com') ||
+           hostname.includes('azurestaticapps.net') ||
+           hostname.includes('azurewebsites.net');
   }
 
   get email() { return this.loginForm.get('email'); }
@@ -117,8 +104,8 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     
-    // Use devLogin for both development and production
-    // This validates against allowed domains/emails internally
+    // In production, we still allow email/password login for special accounts
+    // but don't show the demo message
     this.authService.devLogin(this.email.value, this.password.value)
       .subscribe(
         success => {
@@ -131,7 +118,11 @@ export class LoginComponent implements OnInit {
             // Navigate to return URL
             this.router.navigate([this.returnUrl]);
           } else {
-            this.toastr.danger('Invalid email or password', 'Login Failed');
+            if (this.isProduction) {
+              this.toastr.danger('Invalid credentials or access not granted', 'Login Failed');
+            } else {
+              this.toastr.danger('Invalid email or password', 'Login Failed');
+            }
             this.loading = false;
           }
         },

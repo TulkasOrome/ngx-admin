@@ -1,3 +1,4 @@
+// src/app/@core/services/azure-auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -27,9 +28,12 @@ export interface User {
 export class AzureAuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
-  
-  // Allowed email domains
-  private readonly ALLOWED_DOMAINS = ['identitypulse.ai', 'identitypulse.com'];
+
+  // Add allowed external emails
+  private allowedExternalEmails = [
+    'earl@data-direct.com.au',
+    'jedwards@buzzsaw.media'
+  ];
 
   constructor(
     private http: HttpClient,
@@ -51,13 +55,7 @@ export class AzureAuthService {
     if (this.isDevelopment()) {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
-        const user = JSON.parse(storedUser);
-        // Validate domain even in development
-        if (this.isEmailAllowed(user.email)) {
-          this.currentUserSubject.next(user);
-        } else {
-          this.logout();
-        }
+        this.currentUserSubject.next(JSON.parse(storedUser));
       }
       return;
     }
@@ -82,23 +80,13 @@ export class AzureAuthService {
       )
       .subscribe(user => {
         console.log('Mapped user:', user);
+        this.currentUserSubject.next(user);
         
-        if (user && this.isEmailAllowed(user.email)) {
-          this.currentUserSubject.next(user);
-          
-          // If we have a user and we're on the login page, redirect to dashboard
-          if (window.location.pathname === '/login') {
-            const redirectUrl = localStorage.getItem('redirectUrl') || '/pages/dashboard';
-            localStorage.removeItem('redirectUrl');
-            this.router.navigate([redirectUrl]);
-          }
-        } else if (user) {
-          // User authenticated but not authorized
-          console.error('User authenticated but domain not allowed:', user.email);
-          this.showUnauthorizedMessage(user.email);
-          this.logout();
-        } else {
-          this.currentUserSubject.next(null);
+        // If we have a user and we're on the login page, redirect to dashboard
+        if (user && window.location.pathname === '/login') {
+          const redirectUrl = localStorage.getItem('redirectUrl') || '/pages/dashboard';
+          localStorage.removeItem('redirectUrl');
+          this.router.navigate([redirectUrl]);
         }
       });
   }
@@ -113,8 +101,7 @@ export class AzureAuthService {
     const emailClaim = principal.claims?.find(
       (c: any) => c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
                   c.typ === 'emails' ||
-                  c.typ === 'email' ||
-                  c.typ === 'preferred_username'
+                  c.typ === 'email'
     );
 
     const nameClaim = principal.claims?.find(
@@ -122,32 +109,12 @@ export class AzureAuthService {
                   c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
     );
 
-    const email = emailClaim?.val || principal.userDetails || '';
-    
-    // Return user object (domain validation happens in loadUser)
     return {
-      email: email,
+      email: emailClaim?.val || principal.userDetails || 'user@example.com',
       name: nameClaim?.val || principal.userDetails || 'User',
       role: principal.userRoles?.[0] || 'authenticated',
       provider: principal.identityProvider
     };
-  }
-
-  private isEmailAllowed(email: string): boolean {
-    if (!email) return false;
-    
-    const emailLower = email.toLowerCase();
-    const domain = emailLower.split('@')[1];
-    
-    return this.ALLOWED_DOMAINS.includes(domain);
-  }
-
-  private showUnauthorizedMessage(email: string): void {
-    // Store unauthorized attempt
-    localStorage.setItem('unauthorizedEmail', email);
-    
-    // You can also trigger a toast notification here if you have access to NbToastrService
-    alert(`Access denied. Only users with @identitypulse.ai or @identitypulse.com email addresses are allowed. Your email: ${email}`);
   }
 
   login(provider: 'github' | 'aad' | 'google' | 'twitter' = 'aad'): void {
@@ -167,29 +134,19 @@ export class AzureAuthService {
         localStorage.setItem('redirectUrl', currentPath);
       }
       
-      // Azure SWA login with domain hint
-      const loginUrl = provider === 'aad' 
-        ? `/.auth/login/${provider}?domain_hint=identitypulse.ai`
-        : `/.auth/login/${provider}`;
-      
-      window.location.href = loginUrl;
+      // Azure SWA login
+      window.location.href = `/.auth/login/${provider}`;
     }
   }
 
   devLogin(email: string, password: string): Observable<boolean> {
     return new Observable(observer => {
       setTimeout(() => {
-        // Check if email has allowed domain
-        if (!this.isEmailAllowed(email)) {
-          observer.next(false);
-          observer.complete();
-          return;
-        }
-        
         const allowedUsers = [
           { email: 'admin@identitypulse.com', password: 'admin123', name: 'Admin User' },
-          { email: 'test@identitypulse.ai', password: 'test123', name: 'Test User' },
-          { email: 'demo@identitypulse.ai', password: 'demo123', name: 'Demo User' }
+          { email: 'test@identitypulse.com', password: 'test123', name: 'Test User' },
+          { email: 'earl@data-direct.com.au', password: 'earl2024!', name: 'Earl' },
+          { email: 'jedwards@buzzsaw.media', password: 'buzzsaw2024!', name: 'J Edwards' }
         ];
         
         const user = allowedUsers.find(u => 
@@ -216,7 +173,6 @@ export class AzureAuthService {
   logout(): void {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('redirectUrl');
-    localStorage.removeItem('unauthorizedEmail');
     this.currentUserSubject.next(null);
     
     if (this.isDevelopment()) {
@@ -228,7 +184,24 @@ export class AzureAuthService {
 
   isAuthenticated(): boolean {
     const user = this.currentUserValue;
-    return !!user && this.isEmailAllowed(user.email);
+    if (!user) return false;
+    
+    // Check if email is from identitypulse domain OR is in allowed external list
+    const email = user.email.toLowerCase();
+    const isIdentityPulseEmail = email.endsWith('@identitypulse.com') || email.endsWith('@identitypulse.ai');
+    const isAllowedExternal = this.allowedExternalEmails.some(allowed => 
+      allowed.toLowerCase() === email
+    );
+    
+    // Log for debugging
+    console.log('Auth check:', {
+      email,
+      isIdentityPulseEmail,
+      isAllowedExternal,
+      isAuthenticated: isIdentityPulseEmail || isAllowedExternal
+    });
+    
+    return isIdentityPulseEmail || isAllowedExternal;
   }
 
   public isDevelopment(): boolean {
@@ -236,7 +209,22 @@ export class AzureAuthService {
            window.location.hostname === '127.0.0.1';
   }
 
+  // Method to get allowed domains and emails for display
   public getAllowedDomains(): string[] {
-    return [...this.ALLOWED_DOMAINS];
+    return [
+      '@identitypulse.com',
+      '@identitypulse.ai',
+      ...this.allowedExternalEmails
+    ];
+  }
+
+  // Method to check if an email is allowed
+  public isEmailAllowed(email: string): boolean {
+    const emailLower = email.toLowerCase();
+    const isIdentityPulseEmail = emailLower.endsWith('@identitypulse.com') || emailLower.endsWith('@identitypulse.ai');
+    const isAllowedExternal = this.allowedExternalEmails.some(allowed => 
+      allowed.toLowerCase() === emailLower
+    );
+    return isIdentityPulseEmail || isAllowedExternal;
   }
 }
