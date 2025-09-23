@@ -54,27 +54,30 @@
                            formControlName="country" 
                            placeholder="Select Country"
                            status="basic">
+                  <nb-option value="">-- Select Country --</nb-option>
+                  <nb-option value="" disabled>━━ Asia-Pacific ━━</nb-option>
                   <nb-option value="australia">Australia</nb-option>
-                  <nb-option value="bangladesh">Bangladesh</nb-option>
-                  <nb-option value="canada">Canada</nb-option>
-                  <nb-option value="egypt">Egypt</nb-option>
-                  <nb-option value="france">France</nb-option>
-                  <nb-option value="hong-kong">Hong Kong</nb-option>
                   <nb-option value="indonesia">Indonesia</nb-option>
                   <nb-option value="japan">Japan</nb-option>
                   <nb-option value="malaysia">Malaysia</nb-option>
-                  <nb-option value="mexico">Mexico</nb-option>
                   <nb-option value="new-zealand">New Zealand</nb-option>
                   <nb-option value="philippines">Philippines</nb-option>
-                  <nb-option value="saudi-arabia">Saudi Arabia</nb-option>
-                  <nb-option value="singapore">Singapore</nb-option>
-                  <nb-option value="south-africa">South Africa</nb-option>
-                  <nb-option value="south-korea">South Korea</nb-option>
-                  <nb-option value="sri-lanka">Sri Lanka</nb-option>
                   <nb-option value="thailand">Thailand</nb-option>
+                  <nb-option value="vietnam">Vietnam</nb-option>
+                  <nb-option value="" disabled>━━ Middle East & Africa ━━</nb-option>
+                  <nb-option value="egypt">Egypt</nb-option>
+                  <nb-option value="qatar">Qatar</nb-option>
+                  <nb-option value="saudi-arabia">Saudi Arabia</nb-option>
+                  <nb-option value="south-africa">South Africa</nb-option>
                   <nb-option value="turkey">Turkey</nb-option>
                   <nb-option value="uae">UAE</nb-option>
-                  <nb-option value="vietnam">Vietnam</nb-option>
+                  <nb-option value="" disabled>━━ Americas ━━</nb-option>
+                  <nb-option value="canada">Canada</nb-option>
+                  <nb-option value="mexico">Mexico</nb-option>
+                  <nb-option value="" disabled>━━ Europe ━━</nb-option>
+                  <nb-option value="czech-republic">Czech Republic</nb-option>
+                  <nb-option value="france">France</nb-option>
+                  <nb-option value="morocco">Morocco</nb-option>
                 </nb-select>
               </div>
             </div>
@@ -167,12 +170,12 @@
             </div>
             <div class="col-md-4">
               <div class="form-group">
-                <label for="state" class="label">State</label>
+                <label for="state" class="label">State/Province</label>
                 <input nbInput 
                        fullWidth 
                        id="state"
                        formControlName="state" 
-                       placeholder="State"
+                       placeholder="State/Province"
                        status="basic">
               </div>
             </div>
@@ -252,6 +255,10 @@
             <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
             <span>Mobile numbers can include country codes</span>
           </nb-list-item>
+          <nb-list-item>
+            <nb-icon icon="info-outline" status="info"></nb-icon>
+            <span>Vietnam has 85% email coverage - highest among all regions!</span>
+          </nb-list-item>
         </nb-list>
         
         <div class="mt-3">
@@ -260,6 +267,16 @@
             <li><strong>Strict:</strong> Requires exact matches, no fuzzy matching</li>
             <li><strong>Normal:</strong> Balanced approach, handles minor variations</li>
             <li><strong>Loose:</strong> Maximum flexibility for problematic data</li>
+          </ul>
+        </div>
+
+        <div class="mt-3">
+          <h6>Coverage Highlights:</h6>
+          <ul class="coverage-guide">
+            <li><strong>800M+</strong> Total records globally</li>
+            <li><strong>20+</strong> Countries supported</li>
+            <li><strong>99.9%</strong> Uptime SLA</li>
+            <li><strong>450ms</strong> Average response time</li>
           </ul>
         </div>
       </nb-card-body>

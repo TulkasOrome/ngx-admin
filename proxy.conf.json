@@ -1,11 +1,11 @@
 {
   "/api/*": {
-    "target": "https://identitypulse-api20.azurewebsites.net",
+    "target": "https://identitypulse-api-v3.azurewebsites.net",
     "secure": true,
     "changeOrigin": true,
     "logLevel": "debug",
     "headers": {
-      "Origin": "https://identitypulse-api20.azurewebsites.net"
+      "Origin": "https://identitypulse-api-v3.azurewebsites.net"
     }
   },
   "/azure-storage/*": {

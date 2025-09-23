@@ -1,4 +1,6 @@
 @import '../../../@theme/styles/themes';
+@import 'bootstrap/scss/mixins/breakpoints';
+@import '@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
   .form-group {
@@ -70,7 +72,8 @@
       }
     }
 
-    .strictness-guide {
+    .strictness-guide,
+    .coverage-guide {
       list-style: none;
       padding: 0;
       margin: 0.5rem 0 0 0;
@@ -193,6 +196,18 @@
       margin-top: 2rem;
       padding-top: 1.5rem;
       border-top: 1px solid nb-theme(border-basic-color-3);
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+
+    .info-card,
+    .result-card {
+      margin-top: 2rem;
     }
   }
 }
