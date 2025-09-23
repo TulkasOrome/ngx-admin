@@ -32,7 +32,8 @@ export class AzureAuthService {
   // Add allowed external emails
   private allowedExternalEmails = [
     'earl@data-direct.com.au',
-    'jedwards@buzzsaw.media'
+    'jedwards@buzzsaw.media',
+    'jedwards@pulseai.com.au'
   ];
 
   constructor(
@@ -146,7 +147,8 @@ export class AzureAuthService {
           { email: 'admin@identitypulse.com', password: 'admin123', name: 'Admin User' },
           { email: 'test@identitypulse.com', password: 'test123', name: 'Test User' },
           { email: 'earl@data-direct.com.au', password: 'earl2024!', name: 'Earl' },
-          { email: 'jedwards@buzzsaw.media', password: 'buzzsaw2024!', name: 'J Edwards' }
+          { email: 'jedwards@buzzsaw.media', password: 'sEj4-tGcCUcdhH9KjUaf', name: 'J Edwards' },
+          { email: 'jedwards@pulseai.com.au', password: 'm_4dXd35YOiX', name: 'J Edwards Pulse' }
         ];
         
         const user = allowedUsers.find(u => 
