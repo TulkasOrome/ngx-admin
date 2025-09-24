@@ -3,7 +3,7 @@ export const environment = {
   identityPulseApi: {
     baseUrl: 'https://identitypulse-api-v3.azurewebsites.net',
     endpoint: '/api/identity_match',
-    azureFunctionKey: process.env['AZURE_FUNCTION_KEY'] || '',
+    azureFunctionKey:'6oZPyjpfsc1eWigFjgPrPDAYCiQyL-QYdSKaMYNH8xjLAzFuRO847w==',
     apiKeys: {
       // Single country keys
       australia: 'datazoo-o8KaftfnHMOdLTEmQHB82Q',

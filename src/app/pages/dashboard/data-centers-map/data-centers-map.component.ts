@@ -390,7 +390,8 @@ export class DataCentersMapComponent implements AfterViewInit, OnInit, OnDestroy
         const apiKey = this.getApiKeyForCountry(countryCode);
         
         // Make a lightweight test call to check if the API is responding
-        const url = `${baseUrl}${apiConfig.endpoint}?code=${apiConfig.functionCode}`;
+        // Fixed: Changed from apiConfig.functionCode to apiConfig.azureFunctionKey
+        const url = `${baseUrl}${apiConfig.endpoint}?code=${apiConfig.azureFunctionKey}`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
           'x-api-key': apiKey
