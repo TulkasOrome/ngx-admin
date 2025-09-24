@@ -1,3 +1,4 @@
+// src/app/pages/identity/api-test/api-test.component.ts
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -155,7 +156,7 @@ export class ApiTestComponent implements OnInit {
       environment: isDev ? 'development' : 'production',
       baseUrl: this.apiConfig.baseUrl,
       endpoint: this.apiConfig.endpoint,
-      functionCode: this.apiConfig.functionCode.substring(0, 20) + '...',
+      azureFunctionKey: this.apiConfig.azureFunctionKey.substring(0, 20) + '...',
       apiKeys: Object.keys(this.apiConfig.apiKeys).reduce((acc, key) => {
         acc[key] = this.apiConfig.apiKeys[key].substring(0, 20) + '...';
         return acc;
@@ -170,7 +171,7 @@ export class ApiTestComponent implements OnInit {
 
     const isDevelopment = !environment.production;
     const baseUrl = isDevelopment ? '' : this.apiConfig.baseUrl;
-    const url = `${baseUrl}${this.apiConfig.endpoint}?code=${this.apiConfig.functionCode}`;
+    const url = `${baseUrl}${this.apiConfig.endpoint}?code=${this.apiConfig.azureFunctionKey}`;
     const apiKey = this.getApiKey(test.data.Country);
     
     const headers = new HttpHeaders({
@@ -210,7 +211,7 @@ export class ApiTestComponent implements OnInit {
 
   runCurlEquivalent(test: any) {
     const apiKey = this.getApiKey(test.data.Country);
-    const url = `${this.apiConfig.baseUrl}${this.apiConfig.endpoint}?code=${this.apiConfig.functionCode}`;
+    const url = `${this.apiConfig.baseUrl}${this.apiConfig.endpoint}?code=${this.apiConfig.azureFunctionKey}`;
     
     const curlCommand = `curl -X POST "${url}" \\
   -H "Content-Type: application/json" \\

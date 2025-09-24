@@ -1,8 +1,21 @@
+// src/app/pages/identity/manual-lookup/manual-lookup.component.scss
 @import '../../../@theme/styles/themes';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
+  .header-subtitle {
+    margin-left: auto;
+    font-size: 0.875rem;
+    color: nb-theme(text-hint-color);
+    font-weight: normal;
+  }
+
+  .required {
+    color: nb-theme(color-danger-default);
+    margin-left: 0.25rem;
+  }
+
   .form-group {
     margin-bottom: 1.5rem;
 
@@ -29,6 +42,16 @@
     }
   }
 
+  nb-optgroup::ng-deep .option-group-title {
+    font-weight: 600;
+    color: nb-theme(text-basic-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    background: nb-theme(background-basic-color-2);
+  }
+
   .bulk-upload-section {
     .bulk-help-text {
       margin-top: 0.5rem;
@@ -47,7 +70,104 @@
     }
   }
 
+  // Country Info Card
+  .country-info-card {
+    .info-section {
+      margin-bottom: 1.5rem;
+      
+      h6 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: nb-theme(text-basic-color);
+      }
+      
+      .field-list, .requirements-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        
+        li {
+          font-size: 0.8125rem;
+          color: nb-theme(text-hint-color);
+          padding: 0.25rem 0;
+          padding-left: 1.25rem;
+          position: relative;
+          
+          &:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: nb-theme(color-primary-default);
+          }
+          
+          strong {
+            color: nb-theme(text-basic-color);
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    
+    .stats-section {
+      padding-top: 1rem;
+      border-top: 1px solid nb-theme(border-basic-color-3);
+      
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        font-size: 0.875rem;
+        
+        .stat-label {
+          color: nb-theme(text-hint-color);
+        }
+        
+        .stat-value {
+          font-weight: 600;
+          color: nb-theme(text-basic-color);
+        }
+      }
+    }
+  }
+
+  // Info Card
   .info-card {
+    .coverage-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      
+      .stat-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        background: nb-theme(background-basic-color-2);
+        border-radius: nb-theme(border-radius);
+        text-align: center;
+        
+        nb-icon {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        h4 {
+          margin: 0;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: nb-theme(text-basic-color);
+        }
+        
+        span {
+          font-size: 0.75rem;
+          color: nb-theme(text-hint-color);
+          margin-top: 0.25rem;
+        }
+      }
+    }
+
     nb-list {
       margin: 0;
     }
@@ -90,6 +210,7 @@
     }
   }
 
+  // Result Card
   .result-card {
     .match-result {
       margin-bottom: 2rem;
@@ -199,15 +320,25 @@
     }
   }
 
+  // Alert styling
+  nb-alert {
+    margin-bottom: 1.5rem;
+  }
+
   // Responsive styles
   @media (max-width: 768px) {
     .form-row {
       flex-direction: column;
     }
 
+    .country-info-card,
     .info-card,
     .result-card {
       margin-top: 2rem;
+    }
+
+    .info-card .coverage-stats {
+      grid-template-columns: 1fr;
     }
   }
 }
