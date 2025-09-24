@@ -42,3 +42,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
+identitypulse-functions/local.settings.backup.1758687085003.json
+identitypulse-functions/local.settings.backup.1758688057234.json
+identitypulse-functions/diagnose_services.js
+identitypulse-functions/local.settings.json
+identitypulse-functions/test_admin.js
+identitypulse-functions/test_approval.js
+identitypulse-functions/updatesettings.js
