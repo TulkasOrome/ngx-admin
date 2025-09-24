@@ -49,3 +49,9 @@ identitypulse-functions/local.settings.json
 identitypulse-functions/test_admin.js
 identitypulse-functions/test_approval.js
 identitypulse-functions/updatesettings.js
+
+identity-pulse\src\environments\environment.ts
+.env
+local.settings.json
+*.local.json
+identitypulse-functions/local.settings.json
