@@ -1,7 +1,6 @@
 // src/app/@theme/styles/styles.scss
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap');
 
 // themes - our custom or/and out of the box themes
 @import 'themes';
@@ -18,12 +17,6 @@
 // loading progress bar theme
 @import './pace.theme';
 
-@import './layout';
-@import './overrides';
-
-// Import dark theme overrides
-@import './dark-theme-overrides';
-
 // install the framework and custom global styles
 @include nb-install() {
 
@@ -31,90 +24,257 @@
   @include nb-theme-global();
   @include nb-auth-global();
 
-  @include ngx-layout();
-  // loading progress bar
   @include ngx-pace-theme();
 
-  @include nb-overrides();
+  // Add Inter font as default
+  body {
+    font-family: 'Inter', 'Open Sans', sans-serif;
+  }
+  
+  // Dark theme for Identity Pulse
+  .nb-theme-identitypulse {
+    background: #010A26;
+    
+    nb-layout-column {
+      background: #010A26;
+    }
+    
+    nb-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      
+      nb-card-header {
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: #FFFFFF;
+      }
+      
+      nb-card-body {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+    
+    // Table styles
+    .table {
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.9);
+      
+      thead {
+        background: rgba(255, 255, 255, 0.05);
+        
+        th {
+          border-color: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
+        }
+      }
+      
+      tbody {
+        tr {
+          &:hover {
+            background: rgba(255, 255, 255, 0.03);
+          }
+          
+          td {
+            border-color: rgba(255, 255, 255, 0.05);
+          }
+        }
+      }
+    }
+    
+    // Form inputs
+    .form-control,
+    nb-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      color: #FFFFFF !important;
+      
+      &:focus {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: #0066FF !important;
+        color: #FFFFFF !important;
+      }
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+    
+    // Buttons
+    .btn {
+      &.btn-primary {
+        background: #0066FF;
+        border-color: #0066FF;
+        
+        &:hover {
+          background: #0052CC;
+          border-color: #0052CC;
+        }
+      }
+      
+      &.btn-success {
+        background: #00D68F;
+        border-color: #00D68F;
+        
+        &:hover {
+          background: #00B074;
+          border-color: #00B074;
+        }
+      }
+      
+      &.btn-danger {
+        background: #FF3D71;
+        border-color: #FF3D71;
+        
+        &:hover {
+          background: #DB2C66;
+          border-color: #DB2C66;
+        }
+      }
+      
+      &.btn-warning {
+        background: #FFAA00;
+        border-color: #FFAA00;
+        
+        &:hover {
+          background: #CC8800;
+          border-color: #CC8800;
+        }
+      }
+    }
+    
+    // Status badges
+    .badge {
+      &.badge-success {
+        background: rgba(0, 214, 143, 0.2);
+        color: #00D68F;
+        border: 1px solid rgba(0, 214, 143, 0.3);
+      }
+      
+      &.badge-warning {
+        background: rgba(255, 170, 0, 0.2);
+        color: #FFAA00;
+        border: 1px solid rgba(255, 170, 0, 0.3);
+      }
+      
+      &.badge-danger {
+        background: rgba(255, 61, 113, 0.2);
+        color: #FF3D71;
+        border: 1px solid rgba(255, 61, 113, 0.3);
+      }
+      
+      &.badge-info {
+        background: rgba(0, 102, 255, 0.2);
+        color: #0066FF;
+        border: 1px solid rgba(0, 102, 255, 0.3);
+      }
+    }
+    
+    // Scrollbar styling
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
 };
 
-// Import custom sidebar styles
-@import './identitypulse-sidebar';
-
-// Global font override for Inter
-body {
-  font-family: 'Inter', sans-serif;
+/* Force footer dark theme - ADD THIS SECTION */
+nb-layout-footer {
+  background: #010A26 !important;
+  border: none !important;
+  box-shadow: none !important;
+  
+  &.fixed {
+    background: #010A26 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+  }
+  
+  nav {
+    background: #010A26 !important;
+    border: none !important;
+    padding: 1rem 2rem !important;
+    box-shadow: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .footer-container {
+    background: #010A26 !important;
+    border: none !important;
+  }
+  
+  ngx-footer {
+    background: #010A26 !important;
+  }
 }
 
-/* Force dark theme globally */
-html, body {
-  background: #010A26 !important;
-  color: #FFFFFF !important;
-  font-family: 'Inter', sans-serif !important;
+/* Override any Nebular default footer styling */
+.nb-theme-identitypulse {
+  nb-layout-footer {
+    background: #010A26 !important;
+    
+    nav {
+      background: #010A26 !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      padding: 0 !important;
+    }
+  }
 }
 
-/* Override Nebular layout background */
-nb-layout {
+/* Additional footer overrides to ensure dark background */
+.nb-theme-default nb-layout-footer,
+.nb-theme-corporate nb-layout-footer,
+.nb-theme-cosmic nb-layout-footer,
+.nb-theme-dark nb-layout-footer {
   background: #010A26 !important;
-}
-
-nb-layout .layout {
-  background: #010A26 !important;
-}
-
-nb-layout .layout-container {
-  background: #010A26 !important;
+  border: none !important;
+  
+  nav {
+    background: #010A26 !important;
+  }
 }
 
 nb-layout-column {
-  background: #010A26 !important;
   padding: 0 !important;
+  
+  .dashboard-container {
+    padding: 0 !important;
+    
+    // Restore padding for non-hero sections
+    .status-wrapper,
+    .map-section,
+    .two-column-section {
+      padding-left: 60px;
+      padding-right: 60px;
+    }
+  }
 }
 
-/* Header dark theme */
-nb-layout-header {
-  background: #010A26 !important;
-  border-bottom: none !important;
-  color: #FFFFFF !important;
-}
-
-/* Footer */
-nb-layout-footer {
-  background: #010A26 !important;
-}
-
-/* Cards dark theme */
-nb-card {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #FFFFFF !important;
-}
-
-nb-card-header {
-  background: transparent !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: #FFFFFF !important;
-}
-
-nb-card-body {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+/* Ensure hero section extends full width */
+.hero-section {
+  width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
 }

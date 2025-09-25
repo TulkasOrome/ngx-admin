@@ -122,10 +122,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     try {
-      // Initialize the map
+      // Initialize the map with increased zoom
       this.map = L.map('world-map', {
-        center: [20, 0],
-        zoom: 2,
+        center: [20, 20],  // Adjusted center for better view
+        zoom: 2.5,  // Set initial zoom
         minZoom: 2,
         maxZoom: 6,
         zoomControl: false,
@@ -145,7 +145,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                      dc.status === 'coming-soon' ? '#FFAA00' : '#FF3D71';
         
         const marker = L.circleMarker(dc.coords, {
-          radius: 6,
+          radius: 8,  // Increased marker size for better visibility at higher zoom
           fillColor: color,
           color: color,
           weight: 1,
@@ -162,9 +162,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         `);
       });
 
-      // Fit map to show all markers
-      const bounds = L.latLngBounds(this.dataCenters.map(dc => dc.coords));
-      this.map.fitBounds(bounds, { padding: [50, 50] });
+      // DON'T use fitBounds as it overrides the zoom level
+      // Instead, just set the view to our desired zoom
+      // If you need to ensure all markers are visible, use setView with specific coordinates
+      this.map.setView([20, 20], 2.5);
+      
     } catch (error) {
       console.error('Error initializing map:', error);
     }
@@ -200,8 +202,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   contactUs() {
-    // Open contact form or navigate to contact page
-    window.open('https://identitypulse.com/contact', '_blank');
+    // Open email client with pre-filled information
+    const email = 'sales@identitypulse.ai';
+    const subject = 'Request for IdentityPulse Demo';
+    const body = 'Hello,\n\nI would like to request a full demo of IdentityPulse.\n\nBest regards,';
+    
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
   }
 
   ngOnDestroy() {

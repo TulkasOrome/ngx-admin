@@ -1,88 +1,86 @@
 <!-- src/app/login/login.component.html -->
-<nb-layout>
-  <nb-layout-column class="auth-container">
-    <div class="auth-card">
-      <nb-card>
-        <nb-card-body>
-          <div class="logo-container">
-            <img src="assets/images/logo-vertical.png" alt="IdentityPulse" class="login-logo">
-            <p></p>
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Logo Section with White Background -->
+      <div class="logo-section">
+        <img src="assets/images/identitypulse-logo.png" alt="IdentityPulse" class="logo">
+      </div>
+      
+      <!-- Form Section with Dark Background -->
+      <div class="form-section">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <!-- Email Input -->
+          <div class="form-group">
+            <label for="email" class="form-label">Email address</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-input"
+              placeholder="Enter your email"
+              formControlName="email"
+              [class.error]="email.invalid && email.touched"
+              autocomplete="email">
+            <div class="error-message" *ngIf="email.invalid && email.touched">
+              <span *ngIf="email.errors?.['required']">Email is required</span>
+              <span *ngIf="email.errors?.['email']">Please enter a valid email address</span>
+            </div>
           </div>
 
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-              <label for="email" class="label">Email address</label>
+          <!-- Password Input -->
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="password-wrapper">
               <input 
-                nbInput 
-                fullWidth 
-                type="email" 
-                id="email" 
-                placeholder="Email address"
-                formControlName="email"
-                [status]="email.invalid && email.touched ? 'danger' : 'basic'"
-                autocomplete="email">
-              <p class="error-message" *ngIf="email.invalid && email.touched">
-                Please enter a valid email address
-              </p>
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password" 
+                class="form-input"
+                placeholder="Enter your password"
+                formControlName="password"
+                [class.error]="password.invalid && password.touched"
+                autocomplete="current-password">
+              <button 
+                type="button"
+                class="password-toggle"
+                (click)="toggleShowPassword()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'" pack="eva"></nb-icon>
+              </button>
             </div>
-
-            <div class="form-group">
-              <label for="password" class="label">Password</label>
-              <div class="password-input-wrapper">
-                <input 
-                  nbInput 
-                  fullWidth 
-                  [type]="showPassword ? 'text' : 'password'" 
-                  id="password" 
-                  placeholder="Password"
-                  formControlName="password"
-                  [status]="password.invalid && password.touched ? 'danger' : 'basic'"
-                  autocomplete="current-password">
-                <button 
-                  type="button"
-                  class="password-toggle"
-                  (click)="toggleShowPassword()"
-                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                  <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'" pack="eva"></nb-icon>
-                </button>
-              </div>
-              <p class="error-message" *ngIf="password.invalid && password.touched">
-                Password is required
-              </p>
+            <div class="error-message" *ngIf="password.invalid && password.touched">
+              Password is required
             </div>
-
-            <div class="form-group remember-me">
-              <nb-checkbox formControlName="rememberMe">Remember me</nb-checkbox>
-              <a href="#" class="forgot-password">Forgot Password?</a>
-            </div>
-
-            <button 
-              nbButton 
-              fullWidth 
-              status="primary" 
-              size="large"
-              type="submit"
-              [disabled]="loading || loginForm.invalid"
-              [nbSpinner]="loading"
-              nbSpinnerStatus="primary"
-              nbSpinnerSize="small">
-              {{ loading ? 'Signing in...' : 'Sign In' }}
-            </button>
-          </form>
-
-          <div class="links">
-            <p class="text-center">
-              Don't have an account? 
-              <a href="https://access.identitypulse.ai" target="_blank">
-                <strong>Request Access</strong>
-              </a>
-            </p>
-            <p class="text-center text-hint">
-              <small>Your request will be reviewed and approved by an administrator</small>
-            </p>
           </div>
-        </nb-card-body>
-      </nb-card>
+
+          <!-- Remember Me and Forgot Password -->
+          <div class="form-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" formControlName="rememberMe" class="checkbox-input">
+              <span class="checkbox-label">Remember me</span>
+            </label>
+            <a href="#" class="forgot-password" (click)="forgotPassword($event)">Forgot Password?</a>
+          </div>
+
+          <!-- Sign In Button -->
+          <button 
+            type="submit"
+            class="sign-in-button"
+            [disabled]="loading || loginForm.invalid"
+            [class.loading]="loading">
+            <span *ngIf="!loading">SIGN IN</span>
+            <span *ngIf="loading" class="loading-text">
+              <nb-icon icon="loader-outline" pack="eva" class="spin"></nb-icon>
+              Signing in...
+            </span>
+          </button>
+        </form>
+
+        <!-- Request Access Section -->
+        <div class="request-access">
+          <p>Don't have an account? <a href="https://access.identitypulse.ai" target="_blank">Request Access</a></p>
+          <p class="access-note">Your request will be reviewed and approved by an administrator</p>
+        </div>
+      </div>
     </div>
-  </nb-layout-column>
-</nb-layout>
+  </div>
+</div>

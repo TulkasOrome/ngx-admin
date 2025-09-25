@@ -128,6 +128,17 @@ export class LoginComponent implements OnInit {
         }
       );
   }
+   forgotPassword(event: Event) {
+    event.preventDefault();
+    
+    // Open email client to support
+    const email = 'support@identitypulse.ai';
+    const subject = 'Password Reset Request';
+    const body = `Hello,\n\nI would like to request a password reset for my IdentityPulse account.\n\nEmail: ${this.email.value || '[Please provide your email]'}\n\nThank you.`;
+    
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+  }
 
   // Remove or disable social login methods since we're using database auth
   loginWithProvider(provider: string) {

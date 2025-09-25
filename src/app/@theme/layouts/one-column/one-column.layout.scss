@@ -151,9 +151,26 @@
     min-height: 100vh;
   }
   
-  nb-layout-footer {
+   nb-layout-footer {
     background: #010A26 !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    nav {
+      background: #010A26 !important;
+      border: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    ::ng-deep {
+      .footer-container {
+        background: #010A26 !important;
+        border: none !important;
+      }
+    }
   }
   
   // Mobile responsive

@@ -1,225 +1,291 @@
+// src/app/login/login.component.scss
 @import '../@theme/styles/themes';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 
-@include nb-install-component() {
-  // Remove the min-height from auth-container since nb-layout handles it
-  .auth-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    // Remove min-height: 100vh;
+.login-page {
+  min-height: 100vh;
+  background: #010A26;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+// Logo Section - White Background
+.logo-section {
+  background: #FFFFFF;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .logo {
+    max-height: 48px;
+    width: auto;
+    object-fit: contain;
   }
+}
 
-  .auth-card {
-    width: 100%;
-    max-width: 450px;
-
-    nb-card {
-      border: none;
-      box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    nb-card-body {
-      padding: 2.5rem;
-    }
-  }
-
-  .logo-container {
-    text-align: center;
-    margin-bottom: 2rem;
-
-    .login-logo {
-      height: 48px;  // Reduced from 80px (40% reduction)
-      width: auto;
-      margin-bottom: 1rem;
-    }
-
-    .title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0;
-      color: nb-theme(color-primary-default);
-    }
-
-    .sub-title {
-      font-size: 0.875rem;
-      color: nb-theme(text-hint-color);
-      margin-top: 0.5rem;
-    }
-  }
-
+// Form Section - Dark Theme
+.form-section {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2.5rem;
+  
   .form-group {
     margin-bottom: 1.5rem;
-
-    .label {
+    
+    .form-label {
       display: block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
       margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: nb-theme(text-basic-color);
+      text-transform: capitalize;
     }
-
-    &.remember-me {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-  }
-
-  .password-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    input {
-      padding-right: 3rem;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      padding: 0.5rem;
-      background: transparent;
-      cursor: pointer;
-      z-index: 1;
+    
+    .form-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: all 0.3s ease;
       
-      // Fix the button size
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      &:hover {
-        background: transparent;
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.4);
       }
       
-      nb-icon {
-        font-size: 1.25rem;
-        line-height: 1;
+      &:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #0066FF;
+        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
       }
       
-      // Override any default button styles
-      ::ng-deep {
-        .eva-hover {
-          display: none;
-        }
+      &.error {
+        border-color: #FF3D71;
         
-        svg {
-          width: 20px;
-          height: 20px;
+        &:focus {
+          box-shadow: 0 0 0 3px rgba(255, 61, 113, 0.1);
         }
       }
     }
-  }
-
-  .error-message {
-    color: nb-theme(color-danger-default);
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0;
-  }
-
-  .forgot-password {
-    color: nb-theme(color-primary-default);
-    font-size: 0.875rem;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .social-login {
-    margin-top: 2rem;
-
-    .divider {
+    
+    .password-wrapper {
       position: relative;
-      text-align: center;
-      margin: 1.5rem 0;
-
-      &::before {
-        content: '';
+      
+      .password-toggle {
         position: absolute;
+        right: 12px;
         top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: nb-theme(border-basic-color-3);
-      }
-
-      span {
-        position: relative;
-        padding: 0 1rem;
-        background: nb-theme(card-background-color);
-        color: nb-theme(text-hint-color);
-        font-size: 0.875rem;
-      }
-    }
-
-    .social-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-
-      button {
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        padding: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-
-        nb-icon {
-          font-size: 1.25rem;
+        transition: color 0.3s ease;
+        
+        &:hover {
+          color: rgba(255, 255, 255, 0.8);
         }
+        
+        nb-icon {
+          font-size: 20px;
+        }
+      }
+      
+      input {
+        padding-right: 3rem;
+      }
+    }
+    
+    .error-message {
+      margin-top: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #FF3D71;
+      display: flex;
+      align-items: center;
+      
+      span {
+        display: block;
       }
     }
   }
-
-  .demo-info {
-    margin: 1.5rem 0;
-
-    nb-alert {
-      font-size: 0.875rem;
+  
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      
+      .checkbox-input {
+        width: 18px;
+        height: 18px;
+        margin-right: 0.5rem;
+        accent-color: #0066FF;
+        cursor: pointer;
+      }
+      
+      .checkbox-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+      }
+    }
+    
+    .forgot-password {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #0066FF;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: #0052CC;
+        text-decoration: underline;
+      }
     }
   }
-
-  .links {
+  
+  .sign-in-button {
+    width: 100%;
+    padding: 1rem;
+    background: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    color: #010A26;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    
+    &:hover:not(:disabled) {
+      background: #F0F0F0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    &.loading {
+      pointer-events: none;
+    }
+    
+    .loading-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      
+      nb-icon {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .request-access {
     margin-top: 2rem;
-
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    
     p {
       margin: 0;
-      font-size: 0.875rem;
-      color: nb-theme(text-hint-color);
-
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      
       a {
-        color: nb-theme(color-primary-default);
+        color: #0066FF;
         text-decoration: none;
-
+        font-weight: 500;
+        
         &:hover {
+          color: #0052CC;
           text-decoration: underline;
         }
       }
     }
+    
+    .access-note {
+      margin-top: 0.5rem;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
   }
-
-  .auth-note {
-  font-size: 0.875rem;
-  font-style: italic;
-  color: nb-theme(text-hint-color);
-  text-align: center;
-  margin-bottom: 0.5rem;
 }
 
-  @include media-breakpoint-down(sm) {
-    .auth-card {
-      nb-card-body {
-        padding: 1.5rem;
-      }
+// Loading spinner animation
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+// Responsive adjustments
+@include media-breakpoint-down(sm) {
+  .login-page {
+    padding: 1rem;
+  }
+  
+  .login-container {
+    max-width: 100%;
+  }
+  
+  .form-section {
+    padding: 1.5rem;
+  }
+  
+  .logo-section {
+    padding: 2rem 1.5rem;
+    
+    .logo {
+      max-height: 40px;
     }
   }
 }

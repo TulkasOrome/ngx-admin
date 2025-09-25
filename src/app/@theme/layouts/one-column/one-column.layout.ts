@@ -1,6 +1,8 @@
 // src/app/@theme/layouts/one-column/one-column.layout.ts
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { NbSidebarService } from '@nebular/theme';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-one-column-layout',
@@ -39,8 +41,15 @@ import { NbSidebarService } from '@nebular/theme';
     </nb-layout>
   `,
 })
-export class OneColumnLayoutComponent implements OnInit, AfterViewInit {
-  constructor(private sidebarService: NbSidebarService) {}
+export class OneColumnLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private clickListener: any;
+
+  constructor(
+    private sidebarService: NbSidebarService,
+    private elementRef: ElementRef,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit() {
     // Start with sidebar collapsed
@@ -50,6 +59,52 @@ export class OneColumnLayoutComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Any additional initialization if needed
+    // Set up global click listener for closing sidebar
+    this.clickListener = this.renderer.listen('document', 'click', (event: MouseEvent) => {
+      this.handleDocumentClick(event);
+    });
+    
+    // Subscribe to sidebar state changes
+    this.sidebarService.onToggle()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Sidebar state changed
+      });
+  }
+
+  private handleDocumentClick(event: MouseEvent): void {
+    const clickedElement = event.target as HTMLElement;
+    
+    // Check if sidebar exists and is expanded
+    this.sidebarService.getSidebarState('menu-sidebar')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        if (state === 'expanded') {
+          // Check if click is outside sidebar
+          const sidebar = this.elementRef.nativeElement.querySelector('.menu-sidebar');
+          const header = this.elementRef.nativeElement.querySelector('nb-layout-header');
+          const toggleButton = header?.querySelector('.sidebar-toggle');
+          
+          // Don't close if clicking on toggle button (let the toggle handle it)
+          if (toggleButton && toggleButton.contains(clickedElement)) {
+            return;
+          }
+          
+          // Close sidebar if click is outside
+          if (sidebar && !sidebar.contains(clickedElement)) {
+            this.sidebarService.collapse('menu-sidebar');
+          }
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Remove click listener
+    if (this.clickListener) {
+      this.clickListener();
+    }
   }
 }
