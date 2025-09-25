@@ -156,11 +156,11 @@ export class CountriesComponent implements OnInit {
         updateFrequency: 'daily',
         region: 'middle-east-africa'
       },
-      {
+       {
         name: 'Turkey',
         flag: '🇹🇷',
         status: 'online',
-        coverage: '104%',  // 88.40M / 85M population (includes historical records)
+        coverage: '100%',  // Complete coverage
         recordCount: '88.40M',
         responseTime: '220ms',
         options: ['T.C. Kimlik Verification', 'Address Validation', 'Phone Verification'],
