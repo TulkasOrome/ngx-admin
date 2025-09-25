@@ -1,16 +1,15 @@
-// identitypulse-functions/VerifyOTP/index.js - With Strong Password Generation
+// identitypulse-functions/VerifyOTP/index.js - Simple Strong Password Generation
 const { EmailClient } = require("@azure/communication-email");
 const { TableClient } = require("@azure/data-tables");
 const crypto = require('crypto');
 
-// Strong password generator function
+// Simple strong password generator - no special characters
 function generateStrongPassword() {
-    const length = 16; // 16 character password
+    const length = 16;
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    const allChars = uppercase + lowercase + numbers + symbols;
+    const allChars = uppercase + lowercase + numbers;
     
     let password = '';
     
@@ -19,7 +18,6 @@ function generateStrongPassword() {
         password += uppercase[Math.floor(Math.random() * uppercase.length)];
         password += lowercase[Math.floor(Math.random() * lowercase.length)];
         password += numbers[Math.floor(Math.random() * numbers.length)];
-        password += symbols[Math.floor(Math.random() * symbols.length)];
     }
     
     // Fill the remaining characters randomly
@@ -34,8 +32,8 @@ function generateStrongPassword() {
 // Generate secure username
 function generateSecureUsername(email) {
     const prefix = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-    const randomSuffix = crypto.randomBytes(3).toString('hex'); // 6 character hex string
-    return `${prefix}_${randomSuffix}`;
+    const randomSuffix = Math.floor(Math.random() * 10000);
+    return `${prefix}${randomSuffix}`;
 }
 
 module.exports = async function (context, req) {
@@ -252,11 +250,13 @@ module.exports = async function (context, req) {
             context.log('Processing auto-approval...');
             
             try {
-                // Generate strong credentials
+                // Generate strong credentials without special characters
                 const username = generateSecureUsername(formData.email);
                 const securePassword = generateStrongPassword();
                 
-                context.log('Generated secure credentials for user');
+                context.log('Generated credentials for user');
+                context.log('Username:', username);
+                context.log('Password length:', securePassword.length);
                 
                 // Complete registration
                 const completeResponse = await fetch(`${backendUrl}/api/approval/complete`, {
@@ -280,7 +280,7 @@ module.exports = async function (context, req) {
                             to: [{ address: formData.email }]
                         },
                         content: {
-                            subject: "Welcome to IdentityPulse - Your Secure Account Credentials",
+                            subject: "Welcome to IdentityPulse - Your Account is Ready",
                             html: `
                                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                                     <div style="background: linear-gradient(135deg, #4B7BF5, #3B5EDB); padding: 20px; text-align: center;">
@@ -289,11 +289,11 @@ module.exports = async function (context, req) {
                                     <div style="padding: 30px; background: #f7f9fc;">
                                         <h2 style="color: #1a1a1a;">Hi ${formData.firstName},</h2>
                                         <p style="color: #6b7280; font-size: 16px;">
-                                            Your account has been approved and is ready to use. Below are your secure login credentials.
+                                            Your account has been approved and is ready to use.
                                         </p>
                                         
                                         <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                            <h3 style="color: #4B7BF5; margin-top: 0;">Your Secure Login Credentials</h3>
+                                            <h3 style="color: #4B7BF5; margin-top: 0;">Your Login Credentials</h3>
                                             <table style="width: 100%;">
                                                 <tr>
                                                     <td style="padding: 8px 0;"><strong>Username:</strong></td>
@@ -301,7 +301,7 @@ module.exports = async function (context, req) {
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px 0;"><strong>Password:</strong></td>
-                                                    <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace; font-size: 12px; word-break: break-all;">${securePassword}</code></td>
+                                                    <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace;">${securePassword}</code></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px 0;"><strong>Email:</strong></td>
@@ -310,15 +310,9 @@ module.exports = async function (context, req) {
                                             </table>
                                         </div>
                                         
-                                        <div style="background: #dbeafe; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                                            <p style="color: #1e40af; margin: 0;">
-                                                <strong>🔒 Security Notice:</strong> Your password has been generated using cryptographically secure methods. Please store it safely in a password manager. This password provides maximum security for your account.
-                                            </p>
-                                        </div>
-                                        
                                         <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px; margin: 20px 0;">
                                             <p style="color: #92400e; margin: 0;">
-                                                <strong>⚠️ Important:</strong> For security reasons, this email is the only time your password will be shown. Please save these credentials immediately.
+                                                <strong>Important:</strong> Please save these credentials securely. This password will not be sent again.
                                             </p>
                                         </div>
                                         
@@ -328,12 +322,12 @@ module.exports = async function (context, req) {
                                             </a>
                                         </div>
                                         
-                                        <h3 style="color: #1a1a1a;">Security Best Practices:</h3>
+                                        <h3 style="color: #1a1a1a;">Getting Started:</h3>
                                         <ul style="color: #6b7280;">
-                                            <li>Store your credentials in a secure password manager</li>
-                                            <li>Never share your login details with anyone</li>
-                                            <li>Enable two-factor authentication if available</li>
-                                            <li>Contact support immediately if you suspect unauthorized access</li>
+                                            <li>Access our comprehensive API documentation</li>
+                                            <li>Explore identity verification endpoints</li>
+                                            <li>Set up your first integration</li>
+                                            <li>Contact support for any assistance</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -360,7 +354,6 @@ module.exports = async function (context, req) {
                                         <p>Company: ${formData.company}</p>
                                         <p>Username: ${username}</p>
                                         <p>User ID: ${newUser.id}</p>
-                                        <p>Secure credentials have been sent to the user.</p>
                                     </div>
                                 `
                             }
@@ -377,7 +370,9 @@ module.exports = async function (context, req) {
                         message: 'User automatically approved'
                     });
                 } else {
-                    throw new Error('Failed to complete registration');
+                    const errorText = await completeResponse.text();
+                    context.log.error('User creation failed:', completeResponse.status, errorText);
+                    throw new Error('Failed to complete registration: ' + errorText);
                 }
             } catch (error) {
                 context.log.error('Auto-approval failed:', error.message);

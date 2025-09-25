@@ -1,15 +1,14 @@
-// identitypulse-functions/ApproveUser/index.js - With Strong Password Generation
+// identitypulse-functions/ApproveUser/index.js - Simple Strong Password Generation
 const { EmailClient } = require("@azure/communication-email");
 const crypto = require('crypto');
 
-// Strong password generator function
+// Simple strong password generator - no special characters
 function generateStrongPassword() {
-    const length = 16; // 16 character password
+    const length = 16;
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    const allChars = uppercase + lowercase + numbers + symbols;
+    const allChars = uppercase + lowercase + numbers;
     
     let password = '';
     
@@ -18,7 +17,6 @@ function generateStrongPassword() {
         password += uppercase[Math.floor(Math.random() * uppercase.length)];
         password += lowercase[Math.floor(Math.random() * lowercase.length)];
         password += numbers[Math.floor(Math.random() * numbers.length)];
-        password += symbols[Math.floor(Math.random() * symbols.length)];
     }
     
     // Fill the remaining characters randomly
@@ -33,8 +31,8 @@ function generateStrongPassword() {
 // Generate secure username
 function generateSecureUsername(email) {
     const prefix = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-    const randomSuffix = crypto.randomBytes(3).toString('hex'); // 6 character hex string
-    return `${prefix}_${randomSuffix}`;
+    const randomSuffix = Math.floor(Math.random() * 10000);
+    return `${prefix}${randomSuffix}`;
 }
 
 module.exports = async function (context, req) {
@@ -160,11 +158,13 @@ module.exports = async function (context, req) {
             // ==========================================
             context.log('Approving user:', userInfo.email);
             
-            // Generate secure credentials
+            // Generate secure credentials without special characters
             const username = generateSecureUsername(userInfo.email);
             const securePassword = generateStrongPassword();
             
-            context.log('Generated secure credentials for user');
+            context.log('Generated credentials for user');
+            context.log('Username:', username);
+            context.log('Password length:', securePassword.length);
             
             // Complete registration in backend
             const completeResponse = await fetch(`${backendUrl}/api/approval/complete`, {
@@ -205,7 +205,7 @@ module.exports = async function (context, req) {
                     }]
                 },
                 content: {
-                    subject: "Welcome to IdentityPulse - Your Secure Account Credentials",
+                    subject: "Welcome to IdentityPulse - Your Account is Ready",
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                             <div style="background: linear-gradient(135deg, #4B7BF5, #3B5EDB); padding: 20px; text-align: center;">
@@ -214,12 +214,11 @@ module.exports = async function (context, req) {
                             <div style="padding: 30px; background: #f7f9fc;">
                                 <h2 style="color: #1a1a1a;">Hi ${userInfo.first_name},</h2>
                                 <p style="color: #6b7280; font-size: 16px;">
-                                    Great news! Your account has been approved and is ready to use. 
-                                    Below are your secure login credentials.
+                                    Great news! Your account has been approved and is ready to use.
                                 </p>
                                 
                                 <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                    <h3 style="color: #4B7BF5; margin-top: 0;">Your Secure Login Credentials</h3>
+                                    <h3 style="color: #4B7BF5; margin-top: 0;">Your Login Credentials</h3>
                                     <table style="width: 100%;">
                                         <tr>
                                             <td style="padding: 8px 0;"><strong>Username:</strong></td>
@@ -227,7 +226,7 @@ module.exports = async function (context, req) {
                                         </tr>
                                         <tr>
                                             <td style="padding: 8px 0; vertical-align: top;"><strong>Password:</strong></td>
-                                            <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace; font-size: 12px; word-break: break-all; display: inline-block;">${securePassword}</code></td>
+                                            <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace;">${securePassword}</code></td>
                                         </tr>
                                         <tr>
                                             <td style="padding: 8px 0;"><strong>Email:</strong></td>
@@ -236,15 +235,9 @@ module.exports = async function (context, req) {
                                     </table>
                                 </div>
                                 
-                                <div style="background: #dbeafe; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                                    <p style="color: #1e40af; margin: 0;">
-                                        <strong>🔒 Security Notice:</strong> Your password has been generated using cryptographically secure methods and contains 16 characters including uppercase, lowercase, numbers, and special characters. This provides maximum security for your account.
-                                    </p>
-                                </div>
-                                
                                 <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px; margin: 20px 0;">
                                     <p style="color: #92400e; margin: 0;">
-                                        <strong>⚠️ Important:</strong> For security reasons, this email is the only time your password will be shown. Please save these credentials immediately in a secure password manager.
+                                        <strong>Important:</strong> Please save these credentials securely. This password will not be sent again.
                                     </p>
                                 </div>
                                 
@@ -260,14 +253,6 @@ module.exports = async function (context, req) {
                                     <li>Explore identity verification endpoints</li>
                                     <li>Set up your first integration</li>
                                     <li>Contact support for any assistance</li>
-                                </ul>
-                                
-                                <h3 style="color: #1a1a1a;">Security Best Practices:</h3>
-                                <ul style="color: #6b7280;">
-                                    <li><strong>Store your credentials securely:</strong> Use a reputable password manager</li>
-                                    <li><strong>Never share your password:</strong> Our team will never ask for it</li>
-                                    <li><strong>Enable two-factor authentication:</strong> Add an extra layer of security when available</li>
-                                    <li><strong>Report suspicious activity:</strong> Contact us immediately at security@identitypulse.ai</li>
                                 </ul>
                             </div>
                         </div>
@@ -294,11 +279,10 @@ module.exports = async function (context, req) {
                                 <tr><td style="padding: 8px;"><strong>Username:</strong></td><td>${username}</td></tr>
                                 <tr><td style="padding: 8px;"><strong>Company:</strong></td><td>${userInfo.organization || 'N/A'}</td></tr>
                                 <tr><td style="padding: 8px;"><strong>User ID:</strong></td><td>${newUser.id}</td></tr>
-                                <tr><td style="padding: 8px;"><strong>Password Strength:</strong></td><td>16 characters (High Security)</td></tr>
                                 <tr><td style="padding: 8px;"><strong>Action:</strong></td><td style="color: #10b981;">APPROVED</td></tr>
                                 <tr><td style="padding: 8px;"><strong>Date:</strong></td><td>${new Date().toLocaleString()}</td></tr>
                             </table>
-                            <p>Welcome email with secure credentials has been sent to the user.</p>
+                            <p>Welcome email with credentials has been sent to the user.</p>
                         </div>
                     `
                 }
@@ -528,14 +512,13 @@ function generateHTMLResponse(success, message, userInfo, action, debugInfo) {
             ${success && isApproved ? `
                 <div class="action-summary">
                     <strong>✅ User Successfully Approved</strong><br>
-                    The user has been created with a secure 16-character password and will receive their login credentials via email.
+                    The user has been created and will receive their login credentials via email.
                 </div>
                 
                 <div class="next-steps">
                     <h4>What happens next:</h4>
                     <ul>
-                        <li>User receives welcome email with secure credentials</li>
-                        <li>Password is cryptographically secure (16 characters)</li>
+                        <li>User receives welcome email with credentials</li>
                         <li>User can login immediately</li>
                         <li>Sales team receives confirmation</li>
                         <li>User has full access to the platform</li>
