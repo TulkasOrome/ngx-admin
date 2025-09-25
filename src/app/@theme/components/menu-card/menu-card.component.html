@@ -1,0 +1,40 @@
+<!-- src/app/@theme/components/menu-card/menu-card.component.html -->
+<div class="menu-cards-container">
+  <div *ngFor="let item of menuItems" class="menu-card-wrapper">
+    <!-- Main Menu Card -->
+    <div 
+      class="menu-card"
+      [class.active]="isActive(item)"
+      [class.has-children]="item.children"
+      (click)="navigateTo(item)">
+      
+      <!-- Icon -->
+      <nb-icon 
+        *ngIf="item.icon" 
+        [icon]="item.icon" 
+        pack="eva"
+        class="menu-icon">
+      </nb-icon>
+      
+      <!-- Content -->
+      <div class="menu-content">
+        <div class="menu-title">{{ item.title }}</div>
+        <div class="menu-subtitle" *ngIf="item.subtitle">{{ item.subtitle }}</div>
+      </div>
+      
+      <!-- Arrow -->
+      <div class="menu-arrow">›</div>
+    </div>
+    
+    <!-- Children Items (Submenu) -->
+    <div class="submenu-container" *ngIf="item.children && item.expanded">
+      <div 
+        *ngFor="let child of item.children" 
+        class="submenu-item"
+        [class.active]="isActive(child)"
+        (click)="navigateTo(child)">
+        <span class="submenu-title">{{ child.title }}</span>
+      </div>
+    </div>
+  </div>
+</div>

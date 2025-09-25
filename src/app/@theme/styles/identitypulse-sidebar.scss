@@ -1,8 +1,8 @@
 // src/app/@theme/styles/identitypulse-sidebar.scss
-// Final complete sidebar fix for IdentityPulse theme
+// Complete sidebar styles for IdentityPulse theme with custom menu cards
 
 .nb-theme-identitypulse {
-  // Override Nebular sidebar defaults
+  // Global sidebar container styles
   nb-sidebar.menu-sidebar {
     background: #010A26 !important;
     width: 280px !important;
@@ -11,12 +11,12 @@
     left: 0;
     top: 0;
     height: 100vh;
-    transition: transform 0.3s ease;
     z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     
-    // When collapsed - move off screen
+    // States - slide completely off screen when collapsed
     &.collapsed {
       transform: translateX(-280px);
     }
@@ -29,40 +29,29 @@
       transform: translateX(0);
     }
     
-    // Override the scrollable container completely
-    ::ng-deep .scrollable {
-      background: #010A26 !important;
-      padding: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      overflow-y: auto;
-      overflow-x: hidden;
+    // Remove ALL Nebular default padding and backgrounds
+    ::ng-deep {
+      .scrollable {
+        background: #010A26 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
       
-      // Remove the extra padding that causes white space
       .main-container,
       .main-container-fixed {
         background: #010A26 !important;
         padding: 0 !important;
         width: 100% !important;
-      }
-    }
-    
-    // Override ALL nebular defaults
-    ::ng-deep {
-      .main-container {
-        background: #010A26 !important;
-        padding: 0 !important;
-      }
-      
-      .main-container-fixed {
-        background: #010A26 !important;
-        padding: 0 !important;
+        height: 100% !important;
       }
     }
   }
   
-  // Logo section styles - apply to sidebar-header
-  nb-sidebar .sidebar-header {
+  // Logo section - white background FULL WIDTH
+  .sidebar-logo-section {
     width: 100%;
     height: 80px;
     background: #FFFFFF !important;
@@ -70,203 +59,173 @@
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     
     .logo {
       max-height: 40px;
       max-width: 180px;
       width: auto;
       height: auto;
+      object-fit: contain;
     }
   }
   
-  // Menu body with dark background
-  nb-sidebar .sidebar-body {
+  // Menu section - dark background
+  .sidebar-menu-section {
     background: #010A26 !important;
     width: 100%;
-    height: calc(100% - 80px);
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0;
+    position: relative;
     
-    // Menu styling - remove ALL padding from container
-    ::ng-deep nb-menu {
-      background: #010A26 !important;
-      padding: 20px 0 !important; // Only vertical padding
-      margin: 0;
-      width: 100%;
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
       
-      .menu-items {
-        background: #010A26 !important;
-        padding: 0 16px !important; // Add horizontal padding here
-        margin: 0;
-        
-        // Each menu item
-        > .menu-item {
-          margin: 0 0 12px 0;
-          background: transparent !important;
-          
-          > a {
-            background: #010A26 !important;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 16px;
-            color: #FFFFFF; // Make text white, not dull
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            position: relative;
-            width: 100%;
-            box-sizing: border-box;
-            
-            &:hover {
-              background: rgba(255, 255, 255, 0.05) !important;
-              transform: translateY(-2px);
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-              border-color: rgba(255, 255, 255, 0.2);
-              color: #FFFFFF;
-            }
-            
-            // Title and icon wrapper
-            .menu-title {
-              font-size: 16px;
-              font-weight: 600;
-              display: flex;
-              align-items: center;
-              color: #FFFFFF;
-              width: 100%;
-              
-              .menu-icon {
-                color: rgba(255, 255, 255, 0.7);
-                margin-right: 12px;
-                font-size: 1.25rem;
-              }
-              
-              // Arrow on the right
-              &::after {
-                content: '›';
-                margin-left: auto;
-                font-size: 20px;
-                color: rgba(255, 255, 255, 0.5);
-              }
-            }
-            
-            // Subtitle text - make it visible!
-            .menu-subtitle {
-              display: block;
-              font-size: 10px;
-              font-weight: 400;
-              color: rgba(255, 255, 255, 0.6);
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              margin-top: 6px;
-              margin-left: 36px;
-              line-height: 1.4;
-            }
-          }
-          
-          // Active state - darker blue, not light
-          &.active > a,
-          &.selected > a {
-            background: rgba(0, 102, 255, 0.15) !important; // Darker selection
-            color: #FFFFFF;
-            border-color: rgba(0, 102, 255, 0.3);
-            border-left: 3px solid #0066FF;
-            
-            .menu-title,
-            .menu-icon {
-              color: #FFFFFF;
-            }
-            
-            .menu-subtitle {
-              color: rgba(255, 255, 255, 0.8);
-            }
-            
-            .menu-title::after {
-              color: rgba(255, 255, 255, 0.7);
-            }
-          }
-        }
-        
-        // Submenu items for ID Verification
-        .menu-item .menu-items {
-          background: transparent !important;
-          padding: 0;
-          margin-top: 8px;
-          
-          .menu-item {
-            background: transparent !important;
-            margin: 0 0 4px 0;
-            
-            a {
-              background: rgba(255, 255, 255, 0.03) !important;
-              padding: 12px 16px 12px 40px;
-              font-size: 13px;
-              border: 1px solid rgba(255, 255, 255, 0.05);
-              
-              &::after {
-                display: none !important;
-              }
-              
-              &:hover {
-                background: rgba(255, 255, 255, 0.05) !important;
-              }
-            }
-            
-            &.active > a,
-            &.selected > a {
-              background: rgba(0, 102, 255, 0.2) !important;
-              border-left: 3px solid #0066FF;
-            }
-          }
-        }
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
       }
     }
   }
   
-  // Fix layout adjustments
+  // Hide the original nb-menu completely
+  nb-menu {
+    display: none !important;
+  }
+  
+  // Layout adjustments for sidebar
   nb-layout {
+    background: #010A26 !important;
+    
     .layout-container {
-      .content .columns nb-layout-column {
-        transition: padding 0.3s ease;
-        padding-left: 0 !important; // Default to no padding (sidebar closed)
+      background: #010A26 !important;
+      
+      .content {
+        background: #010A26 !important;
+        
+        .columns {
+          nb-layout-column {
+            transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-left: 0 !important;
+            background: #010A26 !important;
+          }
+        }
       }
     }
     
-    // When sidebar is expanded
-    nb-sidebar.expanded ~ .layout-container {
-      .content .columns nb-layout-column {
-        padding-left: 280px !important;
+    // When sidebar is expanded, push content
+    &.with-sidebar {
+      nb-sidebar.expanded ~ .layout-container {
+        .content .columns nb-layout-column {
+          padding-left: 280px !important;
+          
+          @include media-breakpoint-down(md) {
+            padding-left: 0 !important;
+          }
+        }
       }
     }
   }
   
-  // Ensure dark background on all layout elements
+  // Header and footer dark backgrounds
   nb-layout-header {
     background: #010A26 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1001;
-  }
-  
-  nb-layout-column {
-    background: #010A26 !important;
-    min-height: 100vh;
+    
+    .header-container {
+      background: transparent !important;
+    }
   }
   
   nb-layout-footer {
     background: #010A26 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    
+    a {
+      color: #0066FF;
+      
+      &:hover {
+        color: #0052CC;
+      }
+    }
   }
   
-  // Mobile responsive
+  // Mobile responsive styles
   @include media-breakpoint-down(md) {
     nb-sidebar.menu-sidebar {
       z-index: 1002;
+      
+      // Always slide off screen on mobile when collapsed
+      &.collapsed {
+        transform: translateX(-280px);
+      }
+      
+      &.expanded {
+        transform: translateX(0);
+        
+        // Add dark overlay when sidebar is open
+        & ~ .layout-container::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 998;
+          animation: fadeIn 0.3s ease;
+        }
+      }
     }
     
     nb-layout-column {
       padding-left: 0 !important;
+    }
+  }
+  
+  @include media-breakpoint-down(sm) {
+    nb-sidebar.menu-sidebar {
+      width: 260px !important;
+      
+      &.collapsed {
+        transform: translateX(-260px);
+      }
+    }
+    
+    .sidebar-logo-section {
+      height: 70px;
+      
+      .logo {
+        max-height: 35px;
+        max-width: 160px;
+      }
+    }
+  }
+  
+  // Animation for overlay
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 }

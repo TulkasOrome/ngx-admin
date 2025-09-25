@@ -1,6 +1,6 @@
 // src/app/@theme/layouts/one-column/one-column.layout.ts
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { NbSidebarService, NbMenuItem } from '@nebular/theme';
+import { NbSidebarService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-one-column-layout',
@@ -12,13 +12,19 @@ import { NbSidebarService, NbMenuItem } from '@nebular/theme';
       </nb-layout-header>
 
       <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive start>
-        <!-- Logo Section -->
-        <div class="sidebar-header">
+        <!-- Logo Section with White Background -->
+        <div class="sidebar-logo-section">
           <img src="assets/images/identitypulse-logo.png" alt="IdentityPulse" class="logo">
         </div>
         
-        <!-- Menu -->
-        <div class="sidebar-body">
+        <!-- Dark Menu Section with Custom Cards -->
+        <div class="sidebar-menu-section">
+          <!-- Custom Menu Cards Component -->
+          <ngx-menu-card></ngx-menu-card>
+        </div>
+        
+        <!-- Hide the original nb-menu but keep it for compatibility -->
+        <div style="display: none;">
           <ng-content select="nb-menu"></ng-content>
         </div>
       </nb-sidebar>
@@ -37,37 +43,13 @@ export class OneColumnLayoutComponent implements OnInit, AfterViewInit {
   constructor(private sidebarService: NbSidebarService) {}
 
   ngOnInit() {
-    // Default to collapsed state
+    // Start with sidebar collapsed
     setTimeout(() => {
       this.sidebarService.collapse('menu-sidebar');
     }, 0);
   }
 
   ngAfterViewInit() {
-    // Add subtitle text to menu items after view initializes
-    setTimeout(() => {
-      this.addMenuSubtitles();
-    }, 100);
-  }
-
-  private addMenuSubtitles() {
-    // Get all menu items
-    const menuItems = document.querySelectorAll('.menu-sidebar .menu-item > a');
-    
-    const subtitles = [
-      'ONE PLACE FOR EVERYTHING YOU NEED',
-      'EXPLORE OUR COVERAGE AND COMPLIANCE', 
-      'TEST THE INTEGRITY OF OUR DATA FIRST HAND',
-      'REVIEW YOUR PREVIOUS QUERIES AND RESULTS'
-    ];
-
-    menuItems.forEach((item: HTMLElement, index: number) => {
-      if (index < subtitles.length && !item.querySelector('.menu-subtitle')) {
-        const subtitle = document.createElement('div');
-        subtitle.className = 'menu-subtitle';
-        subtitle.textContent = subtitles[index];
-        item.appendChild(subtitle);
-      }
-    });
+    // Any additional initialization if needed
   }
 }

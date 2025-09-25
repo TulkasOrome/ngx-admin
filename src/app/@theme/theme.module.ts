@@ -1,8 +1,8 @@
 // src/app/@theme/theme.module.ts
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // Add this import
-import { FormsModule } from '@angular/forms'; // Add this import
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { IDENTITYPULSE_THEME } from './styles/theme.identitypulse';
 import {
   NbActionsModule,
@@ -38,6 +38,7 @@ import {
   ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
 } from './layouts';
+import { MenuCardComponent } from './components/menu-card/menu-card.component';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { CORPORATE_THEME } from './styles/theme.corporate';
@@ -62,6 +63,7 @@ const COMPONENTS = [
   FooterComponent,
   SearchInputComponent,
   TinyMCEComponent,
+  MenuCardComponent, // Add the new menu card component
   OneColumnLayoutComponent,
   ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
@@ -77,8 +79,8 @@ const PIPES = [
 @NgModule({
   imports: [
     CommonModule, 
-    RouterModule, // Add RouterModule
-    FormsModule,  // Add FormsModule for ngIf
+    RouterModule,
+    FormsModule,
     ...NB_MODULES
   ],
   exports: [CommonModule, ...PIPES, ...COMPONENTS],
@@ -91,7 +93,7 @@ export class ThemeModule {
       providers: [
         ...NbThemeModule.forRoot(
           {
-            name: 'identitypulse',  // Set identitypulse as the default theme
+            name: 'identitypulse',
           },
           [ DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME, IDENTITYPULSE_THEME ],
         ).providers,
