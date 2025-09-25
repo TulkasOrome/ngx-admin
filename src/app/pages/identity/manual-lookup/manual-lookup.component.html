@@ -1,710 +1,674 @@
 <!-- src/app/pages/identity/manual-lookup/manual-lookup.component.html -->
-<div class="row">
-  <div class="col-12 col-lg-8">
-    <nb-card>
-      <nb-card-header>
-        <h5>Identity Verification - Manual Lookup</h5>
-        <span class="header-subtitle" *ngIf="selectedCountry">
-          {{ selectedCountry.name }} - {{ selectedCountry.recordCount }} records
-        </span>
-      </nb-card-header>
-      <nb-card-body>
+<div class="identity-verification-container">
+  <!-- Main Title -->
+  <div class="page-header">
+    <h1 class="page-title">ID Verification</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <div class="verification-form-wrapper">
         <form [formGroup]="identityForm" (ngSubmit)="onSubmit()">
           <!-- Country Selection (Always First) -->
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="country" class="label">
-                  Country <span class="required">*</span>
-                </label>
-                <nb-select fullWidth 
-                           id="country"
-                           formControlName="country" 
-                           placeholder="Select Country"
-                           [status]="getFieldStatus('country')">
-                  <nb-option value="">-- Select Country --</nb-option>
-                  <nb-option value="" disabled>━━ Asia-Pacific ━━</nb-option>
-                  <nb-option value="AU">🇦🇺 Australia (11.57M records)</nb-option>
-                  <nb-option value="NZ">🇳🇿 New Zealand (2.42M records)</nb-option>
-                  <nb-option value="JP">🇯🇵 Japan (58.26M records)</nb-option>
-                  <nb-option value="ID">🇮🇩 Indonesia (103.08M records)</nb-option>
-                  <nb-option value="MY">🇲🇾 Malaysia (24.42M records)</nb-option>
-                  <nb-option value="PH">🇵🇭 Philippines (49.06M records)</nb-option>
-                  <nb-option value="TH">🇹🇭 Thailand (41.46M records)</nb-option>
-                  <nb-option value="VN">🇻🇳 Vietnam (75.75M records)</nb-option>
-                  <nb-option value="" disabled>━━ Middle East & Africa ━━</nb-option>
-                  <nb-option value="SA">🇸🇦 Saudi Arabia (26.83M records)</nb-option>
-                  <nb-option value="TR">🇹🇷 Turkey (88.40M records)</nb-option>
-                  <nb-option value="AE">🇦🇪 UAE (8.30M records)</nb-option>
-                  <nb-option value="EG">🇪🇬 Egypt (77.74M records)</nb-option>
-                  <nb-option value="QA">🇶🇦 Qatar (2.36M records)</nb-option>
-                  <nb-option value="ZA">🇿🇦 South Africa (44.47M records)</nb-option>
-                  <nb-option value="" disabled>━━ Europe ━━</nb-option>
-                  <nb-option value="CZ">🇨🇿 Czech Republic (9.05M records)</nb-option>
-                  <nb-option value="FR">🇫🇷 France (29.31M records)</nb-option>
-                  <nb-option value="MA">🇲🇦 Morocco (25.18M records)</nb-option>
-                  <nb-option value="" disabled>━━ Americas ━━</nb-option>
-                  <nb-option value="CA">🇨🇦 Canada (9.32M records)</nb-option>
-                  <nb-option value="MX">🇲🇽 Mexico (94.94M records)</nb-option>
-                </nb-select>
-                <span class="hint-text">Select the country to search identity records</span>
-              </div>
+          <div class="form-section country-section">
+            <div class="form-group">
+              <label for="country" class="field-label">
+                Country <span class="required">*</span>
+              </label>
+              <select id="country"
+                      formControlName="country" 
+                      class="custom-dropdown"
+                      [class.has-error]="showFieldError('country')">
+                <option value="">-- Select Country --</option>
+                <optgroup label="Asia-Pacific">
+                  <option value="AU">🇦🇺 Australia (11.57M records)</option>
+                  <option value="NZ">🇳🇿 New Zealand (2.42M records)</option>
+                  <option value="JP">🇯🇵 Japan (58.26M records)</option>
+                  <option value="ID">🇮🇩 Indonesia (103.08M records)</option>
+                  <option value="MY">🇲🇾 Malaysia (24.42M records)</option>
+                  <option value="PH">🇵🇭 Philippines (49.06M records)</option>
+                  <option value="TH">🇹🇭 Thailand (41.46M records)</option>
+                  <option value="VN">🇻🇳 Vietnam (75.75M records)</option>
+                </optgroup>
+                <optgroup label="Middle East & Africa">
+                  <option value="SA">🇸🇦 Saudi Arabia (26.83M records)</option>
+                  <option value="TR">🇹🇷 Turkey (88.40M records)</option>
+                  <option value="AE">🇦🇪 UAE (8.30M records)</option>
+                  <option value="EG">🇪🇬 Egypt (77.74M records)</option>
+                  <option value="QA">🇶🇦 Qatar (2.36M records)</option>
+                  <option value="ZA">🇿🇦 South Africa (44.47M records)</option>
+                </optgroup>
+                <optgroup label="Europe">
+                  <option value="CZ">🇨🇿 Czech Republic (9.05M records)</option>
+                  <option value="FR">🇫🇷 France (29.31M records)</option>
+                  <option value="MA">🇲🇦 Morocco (25.18M records)</option>
+                </optgroup>
+                <optgroup label="Americas">
+                  <option value="CA">🇨🇦 Canada (9.32M records)</option>
+                  <option value="MX">🇲🇽 Mexico (94.94M records)</option>
+                </optgroup>
+              </select>
             </div>
           </div>
 
           <!-- Alert if no country selected -->
-          <nb-alert status="warning" *ngIf="!identityForm.get('country').value" class="mb-3">
-            Please select a country first to see available fields
-          </nb-alert>
+          <div class="select-country-message" *ngIf="!identityForm.get('country').value">
+            <div class="message-content">
+              <span>Please select a country first to see available fields</span>
+            </div>
+          </div>
 
           <!-- Dynamic Fields Based on Country -->
-          <div *ngIf="identityForm.get('country').value">
+          <div *ngIf="identityForm.get('country').value" class="form-fields-container">
             
             <!-- Basic Name Fields -->
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="firstName" class="label">
-                    First Name / Given Name 
-                    <span class="required" *ngIf="isFieldRequired('firstName')">*</span>
-                  </label>
-                  <input nbInput 
-                         fullWidth 
-                         id="firstName"
-                         formControlName="firstName" 
-                         placeholder="Enter first/given name"
-                         [status]="getFieldStatus('firstName')">
-                  <span class="hint-text" *ngIf="getFieldHint('firstName')">
-                    {{ getFieldHint('firstName') }}
-                  </span>
-                  <span class="error-message" *ngIf="showFieldError('firstName')">
-                    This field is required
-                  </span>
+            <div class="form-section">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="firstName" class="field-label">
+                      First Name
+                      <span class="required" *ngIf="isFieldRequired('firstName')">*</span>
+                    </label>
+                    <input nbInput 
+                           fullWidth 
+                           id="firstName"
+                           formControlName="firstName" 
+                           placeholder="Enter first/given name"
+                           [status]="getFieldStatus('firstName')"
+                           class="custom-input">
+                    <span class="error-message" *ngIf="showFieldError('firstName')">
+                      This field is required
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="lastName" class="field-label">
+                      Last Name
+                      <span class="required" *ngIf="isFieldRequired('lastName')">*</span>
+                    </label>
+                    <input nbInput 
+                           fullWidth 
+                           id="lastName"
+                           formControlName="lastName" 
+                           placeholder="Enter last/family name"
+                           [status]="getFieldStatus('lastName')"
+                           class="custom-input">
+                    <span class="error-message" *ngIf="showFieldError('lastName')">
+                      This field is required
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle Names for Vietnam -->
+              <div class="row" *ngIf="showField('middleName')">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="middleName" class="field-label">Middle Name</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="middleName"
+                           formControlName="middleName" 
+                           placeholder="Enter middle name"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4" *ngIf="showField('middleName2')">
+                  <div class="form-group">
+                    <label for="middleName2" class="field-label">Middle Name 2</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="middleName2"
+                           formControlName="middleName2" 
+                           placeholder="Second middle name"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4" *ngIf="showField('middleName3')">
+                  <div class="form-group">
+                    <label for="middleName3" class="field-label">Middle Name 3</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="middleName3"
+                           formControlName="middleName3" 
+                           placeholder="Third middle name"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Given Names (for Indonesia, Malaysia, etc.) -->
+              <div class="row" *ngIf="showMultipleGivenNames()">
+                <div class="col-md-4" *ngFor="let i of getGivenNameIndices()">
+                  <div class="form-group">
+                    <label [for]="'givenName' + i" class="field-label">Given Name {{ i }}</label>
+                    <input nbInput 
+                           fullWidth 
+                           [id]="'givenName' + i"
+                           [formControlName]="'givenName' + i" 
+                           [placeholder]="'Given name ' + i"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Japanese Name Scripts -->
+              <div class="row" *ngIf="showJapaneseNameFields()">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nameKanji" class="field-label">Name in Kanji</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="nameKanji"
+                           formControlName="nameKanji" 
+                           placeholder="漢字"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nameKatakana" class="field-label">Name in Katakana</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="nameKatakana"
+                           formControlName="nameKatakana" 
+                           placeholder="カタカナ"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nameHiragana" class="field-label">Name in Hiragana</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="nameHiragana"
+                           formControlName="nameHiragana" 
+                           placeholder="ひらがな"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Arabic Names -->
+              <div class="row" *ngIf="showArabicNameFields()">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="arabicFirstName" class="field-label">First Name (Arabic)</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="arabicFirstName"
+                           formControlName="arabicFirstName" 
+                           placeholder="الاسم الأول"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="arabicLastName" class="field-label">Last Name (Arabic)</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="arabicLastName"
+                           formControlName="arabicLastName" 
+                           placeholder="اسم العائلة"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="lastName" class="label">
-                    Last Name / Family Name
-                    <span class="required" *ngIf="isFieldRequired('lastName')">*</span>
-                  </label>
-                  <input nbInput 
-                         fullWidth 
-                         id="lastName"
-                         formControlName="lastName" 
-                         placeholder="Enter last/family name"
-                         [status]="getFieldStatus('lastName')">
-                  <span class="hint-text" *ngIf="getFieldHint('lastName')">
-                    {{ getFieldHint('lastName') }}
-                  </span>
-                  <span class="error-message" *ngIf="showFieldError('lastName')">
-                    This field is required
-                  </span>
+              <!-- Date of Birth and ID Number -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="dateOfBirth" class="field-label">
+                      Date of Birth
+                      <span class="required" *ngIf="isFieldRequired('dateOfBirth')">*</span>
+                    </label>
+                    <input nbInput 
+                           fullWidth 
+                           id="dateOfBirth"
+                           type="date"
+                           formControlName="dateOfBirth" 
+                           placeholder="DD/MM/YYYY"
+                           [status]="getFieldStatus('dateOfBirth')"
+                           class="custom-input">
+                    <span class="error-message" *ngIf="showFieldError('dateOfBirth')">
+                      This field is required
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="nationalId" class="field-label">
+                      ID Number
+                    </label>
+                    <input nbInput 
+                           fullWidth 
+                           id="nationalId"
+                           formControlName="nationalId" 
+                           [placeholder]="getNationalIdPlaceholder()"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Middle Names for Vietnam -->
-            <div class="row" *ngIf="showField('middleName')">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="middleName" class="label">Middle Name</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="middleName"
-                         formControlName="middleName" 
-                         placeholder="Enter middle name"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getFieldHint('middleName')">
-                    {{ getFieldHint('middleName') }}
-                  </span>
+              <!-- Special ID Fields -->
+              <div class="row" *ngIf="showSpecialIdFields()">
+                <div class="col-md-6" *ngIf="showField('urn')">
+                  <div class="form-group">
+                    <label for="urn" class="field-label">URN</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="urn"
+                           formControlName="urn" 
+                           placeholder="Enter URN"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-4" *ngIf="showField('middleName2')">
-                <div class="form-group">
-                  <label for="middleName2" class="label">Middle Name 2</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="middleName2"
-                         formControlName="middleName2" 
-                         placeholder="Second middle name"
-                         status="basic">
+                <div class="col-md-6" *ngIf="showField('insee')">
+                  <div class="form-group">
+                    <label for="insee" class="field-label">INSEE/NIR</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="insee"
+                           formControlName="insee" 
+                           placeholder="Enter INSEE number"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-4" *ngIf="showField('middleName3')">
-                <div class="form-group">
-                  <label for="middleName3" class="label">Middle Name 3</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="middleName3"
-                         formControlName="middleName3" 
-                         placeholder="Third middle name"
-                         status="basic">
-                </div>
-              </div>
-            </div>
-
-            <!-- Additional Given Names (for Indonesia, Malaysia, etc.) -->
-            <div class="row" *ngIf="showMultipleGivenNames()">
-              <div class="col-md-4" *ngFor="let i of getGivenNameIndices()">
-                <div class="form-group">
-                  <label [for]="'givenName' + i" class="label">Given Name {{ i }}</label>
-                  <input nbInput 
-                         fullWidth 
-                         [id]="'givenName' + i"
-                         [formControlName]="'givenName' + i" 
-                         [placeholder]="'Given name ' + i"
-                         status="basic">
-                  <span class="hint-text" *ngIf="i === 2 && getFieldHint('givenName2')">
-                    {{ getFieldHint('givenName2') }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Japanese Name Scripts -->
-            <div class="row" *ngIf="showJapaneseNameFields()">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="nameKanji" class="label">Name in Kanji</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="nameKanji"
-                         formControlName="nameKanji" 
-                         placeholder="漢字"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('nameKanji') }}</span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="nameKatakana" class="label">Name in Katakana</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="nameKatakana"
-                         formControlName="nameKatakana" 
-                         placeholder="カタカナ"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('nameKatakana') }}</span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="nameHiragana" class="label">Name in Hiragana</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="nameHiragana"
-                         formControlName="nameHiragana" 
-                         placeholder="ひらがな"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('nameHiragana') }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Arabic Names -->
-            <div class="row" *ngIf="showArabicNameFields()">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="arabicFirstName" class="label">First Name (Arabic)</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="arabicFirstName"
-                         formControlName="arabicFirstName" 
-                         placeholder="الاسم الأول"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('arabicFirstName') }}</span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="arabicLastName" class="label">Last Name (Arabic)</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="arabicLastName"
-                         formControlName="arabicLastName" 
-                         placeholder="اسم العائلة"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('arabicLastName') }}</span>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Date of Birth and National ID -->
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="dateOfBirth" class="label">
-                    Date of Birth
-                    <span class="required" *ngIf="isFieldRequired('dateOfBirth')">*</span>
-                  </label>
-                  <input nbInput 
-                         fullWidth 
-                         id="dateOfBirth"
-                         type="date"
-                         formControlName="dateOfBirth" 
-                         placeholder="YYYY-MM-DD"
-                         [status]="getFieldStatus('dateOfBirth')">
-                  <span class="hint-text">Format: YYYY-MM-DD</span>
-                  <span class="error-message" *ngIf="showFieldError('dateOfBirth')">
-                    This field is required
-                  </span>
+                <div class="col-md-6" *ngIf="showField('carteIdentite')">
+                  <div class="form-group">
+                    <label for="carteIdentite" class="field-label">Carte d'Identité</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="carteIdentite"
+                           formControlName="carteIdentite" 
+                           placeholder="Enter ID card number"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="nationalId" class="label">
-                    {{ getNationalIdLabel() }}
-                  </label>
-                  <input nbInput 
-                         fullWidth 
-                         id="nationalId"
-                         formControlName="nationalId" 
-                         [placeholder]="getNationalIdPlaceholder()"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getNationalIdHint()">
-                    {{ getNationalIdHint() }}
-                  </span>
+              <!-- Contact Information -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="email" class="field-label">Email</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="email"
+                           type="email"
+                           formControlName="email" 
+                           placeholder="Enter email address"
+                           [status]="identityForm.get('email').invalid && identityForm.get('email').touched ? 'danger' : 'basic'"
+                           class="custom-input">
+                    <span class="error-message" *ngIf="identityForm.get('email').invalid && identityForm.get('email').touched">
+                      Please enter a valid email
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="mobile" class="field-label">Phone / Mobile</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="mobile"
+                           formControlName="mobile" 
+                           [placeholder]="getMobilePlaceholder()"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Special ID Fields -->
-            <div class="row" *ngIf="showSpecialIdFields()">
-              <div class="col-md-6" *ngIf="showField('urn')">
-                <div class="form-group">
-                  <label for="urn" class="label">URN (Unique Reference Number)</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="urn"
-                         formControlName="urn" 
-                         placeholder="Enter URN"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('urn') }}</span>
+              <!-- Additional Mobile Numbers for South Africa -->
+              <div class="row" *ngIf="showMultipleMobileFields()">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="mobile2" class="field-label">Mobile 2</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="mobile2"
+                           formControlName="mobile2" 
+                           placeholder="Alternative mobile"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-6" *ngIf="showField('insee')">
-                <div class="form-group">
-                  <label for="insee" class="label">INSEE/NIR Number</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="insee"
-                         formControlName="insee" 
-                         placeholder="Enter INSEE number"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('insee') }}</span>
-                </div>
-              </div>
-              <div class="col-md-6" *ngIf="showField('carteIdentite')">
-                <div class="form-group">
-                  <label for="carteIdentite" class="label">Carte d'Identité</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="carteIdentite"
-                         formControlName="carteIdentite" 
-                         placeholder="Enter ID card number"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('carteIdentite') }}</span>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Contact Information -->
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="email" class="label">Email</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="email"
-                         type="email"
-                         formControlName="email" 
-                         placeholder="Enter email address"
-                         [status]="identityForm.get('email').invalid && identityForm.get('email').touched ? 'danger' : 'basic'">
-                  <span class="hint-text" *ngIf="getFieldHint('email')">
-                    {{ getFieldHint('email') }}
-                  </span>
-                  <span class="error-message" *ngIf="identityForm.get('email').invalid && identityForm.get('email').touched">
-                    Please enter a valid email
-                  </span>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="mobile3" class="field-label">Mobile 3</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="mobile3"
+                           formControlName="mobile3" 
+                           placeholder="Third mobile number"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="mobile" class="label">{{ getMobileLabel() }}</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="mobile"
-                         formControlName="mobile" 
-                         [placeholder]="getMobilePlaceholder()"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getFieldHint('mobile')">
-                    {{ getFieldHint('mobile') }}
-                  </span>
+              <!-- Address Information -->
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="addressLine" class="field-label">Address</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="addressLine"
+                           formControlName="addressLine" 
+                           placeholder="Enter address"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Location Details -->
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="city" class="field-label">{{ getCityLabel() }}</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="city"
+                           formControlName="city" 
+                           [placeholder]="getCityPlaceholder()"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="state" class="field-label">{{ getStateLabel() }}</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="state"
+                           formControlName="state" 
+                           [placeholder]="getStatePlaceholder()"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="postCode" class="field-label">{{ getPostCodeLabel() }}</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="postCode"
+                           formControlName="postCode" 
+                           [placeholder]="getPostCodePlaceholder()"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Location Fields for Vietnam -->
+              <div class="row" *ngIf="showVietnameseLocationFields()">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="district" class="field-label">District</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="district"
+                           formControlName="district" 
+                           placeholder="Enter district"
+                           status="basic"
+                           class="custom-input">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="ward" class="field-label">Ward</label>
+                    <input nbInput 
+                           fullWidth 
+                           id="ward"
+                           formControlName="ward" 
+                           placeholder="Enter ward"
+                           status="basic"
+                           class="custom-input">
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Additional Mobile Numbers for South Africa -->
-            <div class="row" *ngIf="showMultipleMobileFields()">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="mobile2" class="label">Mobile 2</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="mobile2"
-                         formControlName="mobile2" 
-                         placeholder="Alternative mobile"
-                         status="basic">
-                  <span class="hint-text">{{ getFieldHint('mobile2') }}</span>
-                </div>
+            <!-- Match Strictness Section -->
+            <div class="match-strictness-section">
+              <h2 class="strictness-title">Match strictness</h2>
+              <div class="form-group">
+                <select id="matchStrictness"
+                        formControlName="matchStrictness"
+                        class="custom-dropdown">
+                  <option value="strict">Strict</option>
+                  <option value="normal">Normal</option>
+                  <option value="loose">Loose</option>
+                </select>
               </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="mobile3" class="label">Mobile 3</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="mobile3"
-                         formControlName="mobile3" 
-                         placeholder="Third mobile number"
-                         status="basic">
+              <div class="strictness-descriptions">
+                <div class="strictness-item" *ngIf="identityForm.get('matchStrictness').value === 'strict'">
+                  <strong>STRICT:</strong> Requires exact matches on key fields
                 </div>
-              </div>
-            </div>
-            
-            <!-- Address Information -->
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="addressLine" class="label">Address</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="addressLine"
-                         formControlName="addressLine" 
-                         placeholder="Enter address"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getFieldHint('addressLine')">
-                    {{ getFieldHint('addressLine') }}
-                  </span>
+                <div class="strictness-item" *ngIf="identityForm.get('matchStrictness').value === 'normal'">
+                  <strong>NORMAL:</strong> Balanced approach, handles minor variations
                 </div>
-              </div>
-            </div>
-            
-            <!-- Location Details -->
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="city" class="label">{{ getCityLabel() }}</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="city"
-                         formControlName="city" 
-                         [placeholder]="getCityPlaceholder()"
-                         status="basic">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="state" class="label">{{ getStateLabel() }}</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="state"
-                         formControlName="state" 
-                         [placeholder]="getStatePlaceholder()"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getFieldHint('state')">
-                    {{ getFieldHint('state') }}
-                  </span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="postCode" class="label">{{ getPostCodeLabel() }}</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="postCode"
-                         formControlName="postCode" 
-                         [placeholder]="getPostCodePlaceholder()"
-                         status="basic">
-                  <span class="hint-text" *ngIf="getFieldHint('postCode')">
-                    {{ getFieldHint('postCode') }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Additional Location Fields for Vietnam -->
-            <div class="row" *ngIf="showVietnameseLocationFields()">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="district" class="label">District</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="district"
-                         formControlName="district" 
-                         placeholder="Enter district"
-                         status="basic">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="ward" class="label">Ward</label>
-                  <input nbInput 
-                         fullWidth 
-                         id="ward"
-                         formControlName="ward" 
-                         placeholder="Enter ward"
-                         status="basic">
-                </div>
-              </div>
-            </div>
-
-            <!-- Match Strictness -->
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="matchStrictness" class="label">Match Strictness</label>
-                  <nb-select fullWidth 
-                             id="matchStrictness"
-                             formControlName="matchStrictness">
-                    <nb-option value="strict">Strict - Exact matches only</nb-option>
-                    <nb-option value="normal">Normal - Balanced matching</nb-option>
-                    <nb-option value="loose">Loose - Fuzzy matching</nb-option>
-                  </nb-select>
-                  <span class="hint-text">Controls how flexibly identity matching is performed</span>
+                <div class="strictness-item" *ngIf="identityForm.get('matchStrictness').value === 'loose'">
+                  <strong>LOOSE:</strong> Maximum flexibility for guidelines, data variations
                 </div>
               </div>
             </div>
           </div>
           
-          <!-- Submit Buttons -->
-          <div class="row mt-4">
-            <div class="col-12">
-              <button nbButton 
-                      fullWidth 
-                      status="primary" 
-                      size="large"
-                      [disabled]="isSubmitting || !identityForm.valid"
-                      [nbSpinner]="isSubmitting"
-                      nbSpinnerStatus="primary"
-                      nbSpinnerSize="small">
-                <nb-icon icon="search-outline" *ngIf="!isSubmitting"></nb-icon>
-                {{ isSubmitting ? 'Verifying...' : 'Verify Identity' }}
-              </button>
-            </div>
+          <!-- Submit Button -->
+          <div class="submit-section" *ngIf="identityForm.get('country').value">
+            <button type="submit"
+                    class="verify-button" 
+                    [disabled]="isSubmitting || !identityForm.valid"
+                    [class.loading]="isSubmitting">
+              <span *ngIf="!isSubmitting">Verify Identity</span>
+              <span *ngIf="isSubmitting">Verifying...</span>
+            </button>
           </div>
           
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="bulk-upload-section">
-                <button nbButton 
-                        fullWidth 
-                        status="info" 
-                        size="large"
-                        type="button"
-                        (click)="openBulkUpload()">
-                  <nb-icon icon="cloud-upload-outline"></nb-icon>
-                  Bulk Upload CSV
-                </button>
-                <p class="bulk-help-text">
-                  Upload a CSV file with multiple identities to verify. 
-                  <a href="#" (click)="downloadSampleCSV(); $event.preventDefault()">Download sample CSV</a>
-                </p>
-              </div>
-            </div>
+          <!-- Bulk Upload Section -->
+          <div class="bulk-upload-section" *ngIf="identityForm.get('country').value">
+            <button type="button"
+                    class="bulk-upload-button"
+                    (click)="openBulkUpload()">
+              <nb-icon icon="cloud-upload-outline"></nb-icon>
+              <span>Bulk Upload CSV</span>
+            </button>
+            <p class="bulk-help-text">
+              Upload a CSV file with multiple identities to verify. 
+              <a href="#" (click)="downloadSampleCSV(); $event.preventDefault()">Download sample CSV</a>
+            </p>
           </div>
         </form>
-      </nb-card-body>
-    </nb-card>
-  </div>
-  
-  <div class="col-12 col-lg-4">
-    <!-- Country Info Card -->
-    <nb-card *ngIf="selectedCountry && !result" class="country-info-card">
-      <nb-card-header>
-        <h6>{{ selectedCountry.name }} Requirements</h6>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="info-section">
-          <h6>Required Fields:</h6>
-          <ul class="field-list">
-            <li *ngFor="let field of getRequiredFieldsList()">
-              {{ getFieldDisplayName(field) }}
-            </li>
-          </ul>
+      </div>
+    </div>
+    
+    <div class="col-12 col-lg-4">
+      <!-- Verification Tips Card - Shows when no country selected -->
+      <div class="tips-card" *ngIf="!selectedCountry && !result">
+        <h3 class="tips-title">Verification Tips</h3>
+        <div class="tips-content">
+          <div class="tip-item">
+            <span class="tip-text">Select Integration with government and trusted sources ensures instant access and verification</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-text">Use full names as they appear on official documents. This includes single names, are supported</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-text">ID Number can be National ID, Passport, Driver's License or other government-issued IDs, depending on source type</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-text">Mobile Numbers can include country codes (e.g. 61 for Australia)</span>
+          </div>
+          <div class="tip-item">
+            <span class="tip-text">Ensure data format is GDPR/KVKPY or Australia</span>
+          </div>
         </div>
+      </div>
 
-        <div class="info-section" *ngIf="selectedCountry.specificRequirements">
-          <h6>Special Requirements:</h6>
-          <ul class="requirements-list">
-            <li *ngFor="let req of getSpecificRequirements()">
-              <strong>{{ req.key }}:</strong> {{ req.value }}
-            </li>
-          </ul>
-        </div>
+      <!-- Country Requirements Card - Shows when country selected -->
+      <div class="requirements-card" *ngIf="selectedCountry && !result">
+        <h3 class="requirements-title">{{ selectedCountry.name }} Requirements</h3>
+        <div class="requirements-content">
+          <div class="info-section">
+            <h4 class="section-label">Required Fields</h4>
+            <ul class="field-list">
+              <li *ngFor="let field of getRequiredFieldsList()">
+                {{ getFieldDisplayName(field) }}
+              </li>
+            </ul>
+          </div>
 
-        <div class="stats-section">
-          <div class="stat-item">
-            <span class="stat-label">Database Size:</span>
-            <span class="stat-value">{{ selectedCountry.recordCount }}</span>
+          <div class="info-section" *ngIf="selectedCountry.specificRequirements">
+            <h4 class="section-label">Special Requirements</h4>
+            <ul class="requirements-list">
+              <li *ngFor="let req of getSpecificRequirements()">
+                <strong>{{ req.key }}:</strong> {{ req.value }}
+              </li>
+            </ul>
           </div>
-          <div class="stat-item">
-            <span class="stat-label">Region:</span>
-            <span class="stat-value">{{ selectedCountry.region }}</span>
-          </div>
-        </div>
-      </nb-card-body>
-    </nb-card>
 
-    <!-- Default Tips Card -->
-    <nb-card *ngIf="!selectedCountry && !result" class="info-card">
-      <nb-card-header>
-        <h6>Global Coverage</h6>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="coverage-stats">
-          <div class="stat-card">
-            <nb-icon icon="globe-outline" status="primary"></nb-icon>
-            <div>
-              <h4>20+</h4>
-              <span>Countries</span>
+          <div class="stats-section">
+            <div class="stat-item">
+              <span class="stat-label">Database Size:</span>
+              <span class="stat-value">{{ selectedCountry.recordCount }}</span>
             </div>
-          </div>
-          <div class="stat-card">
-            <nb-icon icon="people-outline" status="success"></nb-icon>
-            <div>
-              <h4>850M+</h4>
-              <span>Records</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <nb-icon icon="flash-outline" status="warning"></nb-icon>
-            <div>
-              <h4>450ms</h4>
-              <span>Avg Response</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <nb-icon icon="shield-outline" status="info"></nb-icon>
-            <div>
-              <h4>99.9%</h4>
-              <span>Uptime</span>
+            <div class="stat-item">
+              <span class="stat-label">Region:</span>
+              <span class="stat-value">{{ selectedCountry.region }}</span>
             </div>
           </div>
         </div>
-      </nb-card-body>
-    </nb-card>
+      </div>
 
-    <!-- Results Card -->
-    <nb-card *ngIf="result" class="result-card">
-      <nb-card-header>
-        <h6>Verification Results</h6>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="match-result">
-          <h6>Overall Match Confidence</h6>
-          <nb-progress-bar [value]="result.overallMatch" 
-                          [status]="getMatchStatus(result.overallMatch)" 
-                          [displayValue]="true"
-                          size="large">
-          </nb-progress-bar>
-          <div class="confidence-level mt-2">
-            <span class="badge badge-{{ getMatchStatus(result.overallMatch) }}">
-              {{ result.confidenceLevel }}
-            </span>
-            <span class="match-tier">{{ result.matchTier }}</span>
-          </div>
-        </div>
-        
-        <div class="field-matches mt-4">
-          <h6>Field-level Match Breakdown</h6>
-          
-          <div class="field-match-item" *ngIf="result.fieldMatches.name > 0">
-            <div class="match-header">
-              <span>Name</span>
-              <span class="match-value">{{ result.fieldMatches.name }}%</span>
-            </div>
-            <nb-progress-bar [value]="result.fieldMatches.name" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.name)">
+      <!-- Results Card -->
+      <div class="results-card" *ngIf="result">
+        <h3 class="results-title">Verification Results</h3>
+        <div class="results-content">
+          <div class="match-result">
+            <h4>Overall Match Confidence</h4>
+            <nb-progress-bar [value]="result.overallMatch" 
+                            [status]="getMatchStatus(result.overallMatch)" 
+                            [displayValue]="true"
+                            size="large">
             </nb-progress-bar>
+            <div class="confidence-level">
+              <span class="badge badge-{{ getMatchStatus(result.overallMatch) }}">
+                {{ result.confidenceLevel }}
+              </span>
+              <span class="match-tier">{{ result.matchTier }}</span>
+            </div>
           </div>
           
-          <div class="field-match-item" *ngIf="result.fieldMatches.dateOfBirth > 0">
-            <div class="match-header">
-              <span>Date of Birth</span>
-              <span class="match-value">{{ result.fieldMatches.dateOfBirth }}%</span>
+          <div class="field-matches">
+            <h4>Field-level Breakdown</h4>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.name > 0">
+              <div class="match-header">
+                <span>Name</span>
+                <span class="match-value">{{ result.fieldMatches.name }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.name" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.name)">
+              </nb-progress-bar>
             </div>
-            <nb-progress-bar [value]="result.fieldMatches.dateOfBirth" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.dateOfBirth)">
-            </nb-progress-bar>
-          </div>
-          
-          <div class="field-match-item" *ngIf="result.fieldMatches.address > 0">
-            <div class="match-header">
-              <span>Address</span>
-              <span class="match-value">{{ result.fieldMatches.address }}%</span>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.dateOfBirth > 0">
+              <div class="match-header">
+                <span>Date of Birth</span>
+                <span class="match-value">{{ result.fieldMatches.dateOfBirth }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.dateOfBirth" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.dateOfBirth)">
+              </nb-progress-bar>
             </div>
-            <nb-progress-bar [value]="result.fieldMatches.address" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.address)">
-            </nb-progress-bar>
-          </div>
-          
-          <div class="field-match-item" *ngIf="result.fieldMatches.identification > 0">
-            <div class="match-header">
-              <span>Identification</span>
-              <span class="match-value">{{ result.fieldMatches.identification }}%</span>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.address > 0">
+              <div class="match-header">
+                <span>Address</span>
+                <span class="match-value">{{ result.fieldMatches.address }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.address" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.address)">
+              </nb-progress-bar>
             </div>
-            <nb-progress-bar [value]="result.fieldMatches.identification" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.identification)">
-            </nb-progress-bar>
-          </div>
-          
-          <div class="field-match-item" *ngIf="result.fieldMatches.email > 0">
-            <div class="match-header">
-              <span>Email</span>
-              <span class="match-value">{{ result.fieldMatches.email }}%</span>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.identification > 0">
+              <div class="match-header">
+                <span>Identification</span>
+                <span class="match-value">{{ result.fieldMatches.identification }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.identification" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.identification)">
+              </nb-progress-bar>
             </div>
-            <nb-progress-bar [value]="result.fieldMatches.email" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.email)">
-            </nb-progress-bar>
-          </div>
-          
-          <div class="field-match-item" *ngIf="result.fieldMatches.phone > 0">
-            <div class="match-header">
-              <span>Phone</span>
-              <span class="match-value">{{ result.fieldMatches.phone }}%</span>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.email > 0">
+              <div class="match-header">
+                <span>Email</span>
+                <span class="match-value">{{ result.fieldMatches.email }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.email" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.email)">
+              </nb-progress-bar>
             </div>
-            <nb-progress-bar [value]="result.fieldMatches.phone" 
-                            size="tiny" 
-                            [status]="getMatchStatus(result.fieldMatches.phone)">
-            </nb-progress-bar>
+            
+            <div class="field-match-item" *ngIf="result.fieldMatches.phone > 0">
+              <div class="match-header">
+                <span>Phone</span>
+                <span class="match-value">{{ result.fieldMatches.phone }}%</span>
+              </div>
+              <nb-progress-bar [value]="result.fieldMatches.phone" 
+                              size="tiny" 
+                              [status]="getMatchStatus(result.fieldMatches.phone)">
+              </nb-progress-bar>
+            </div>
           </div>
-        </div>
 
-        <div class="warning-section" *ngIf="result.warningMessage">
-          <nb-icon icon="alert-triangle-outline" status="warning"></nb-icon>
-          <span>{{ result.warningMessage }}</span>
-        </div>
+          <div class="warning-section" *ngIf="result.warningMessage">
+            <nb-icon icon="alert-triangle-outline" status="warning"></nb-icon>
+            <span>{{ result.warningMessage }}</span>
+          </div>
 
-        <div class="action-buttons">
-          <button nbButton fullWidth status="info" size="medium" (click)="downloadReport()">
-            <nb-icon icon="download-outline"></nb-icon>
-            Download Report
-          </button>
-          <button nbButton fullWidth status="basic" size="medium" (click)="resetForm()">
-            <nb-icon icon="refresh-outline"></nb-icon>
-            New Verification
-          </button>
+          <div class="action-buttons">
+            <button class="download-button" (click)="downloadReport()">
+              <nb-icon icon="download-outline"></nb-icon>
+              Download Report
+            </button>
+            <button class="reset-button" (click)="resetForm()">
+              <nb-icon icon="refresh-outline"></nb-icon>
+              New Verification
+            </button>
+          </div>
         </div>
-      </nb-card-body>
-    </nb-card>
+      </div>
+    </div>
   </div>
 </div>
