@@ -1,47 +1,27 @@
 <!-- src/app/pages/dashboard/dashboard.component.html -->
 <div class="dashboard-container">
-  <!-- Hero Section with Background -->
+  <!-- Hero Section with Full Width Background -->
   <div class="hero-section">
-    <div class="hero-background"></div>
+    <!-- Background Image that fills the space -->
+    <div class="hero-background-image"></div>
     
-    <!-- Top Metrics Bar -->
-    <div class="top-metrics">
-      <div class="metric">
-        <span class="value">1.2M+</span>
-        <span class="label">Total Verifications</span>
-      </div>
-      <div class="metric">
-        <span class="value">403ms</span>
-        <span class="label">Average Response Time</span>
-      </div>
-      <div class="metric">
-        <span class="value">99.9%</span>
-        <span class="label">Global Uptime</span>
-      </div>
-      <div class="metric">
-        <span class="value">21</span>
-        <span class="label">Active Countries</span>
-      </div>
-    </div>
-    
-    <!-- Main Title and CTA aligned to right -->
+    <!-- Main Title and CTA - Right Aligned -->
     <div class="hero-content">
       <div class="main-title">
-        <span class="line1">Reliable identity intelligence, built</span>
-        <span class="line2">to strengthen trust at scale.</span>
+        <div class="title-line-1">Reliable identity intelligence, built</div>
+        <div class="title-line-2">to strengthen trust at scale.</div>
       </div>
       
-      <!-- CTA Button right-aligned below title -->
+      <!-- CTA Button -->
       <button class="cta-button" (click)="contactUs()">
         Contact us for a full demo →
       </button>
     </div>
   </div>
   
-  <!-- Status and Map Section Combined -->
-  <div class="map-wrapper">
-    <!-- Status Indicators positioned above map -->
-    <div class="status-section">
+  <!-- Status Section -->
+  <div class="status-wrapper">
+    <div class="status-header">
       <h2 class="status-title">Status</h2>
       <div class="status-indicators">
         <div class="indicator">
@@ -58,12 +38,12 @@
         </div>
       </div>
     </div>
-    
-    <!-- Map Section -->
-    <div class="map-section">
-      <div class="map-container">
-        <div id="world-map" class="world-map"></div>
-      </div>
+  </div>
+  
+  <!-- Map Section -->
+  <div class="map-section">
+    <div class="map-container">
+      <div id="world-map" class="world-map"></div>
     </div>
   </div>
   
@@ -122,16 +102,6 @@
               <span class="coverage-label">COVERAGE</span>
               <span class="response-label">AVG RESPONSE</span>
             </div>
-            <div class="card-footer">
-              <span class="country-item">
-                <span class="flag">🇨🇦</span>
-                <span class="country-name">Canada</span>
-              </span>
-              <span class="country-item">
-                <span class="flag">🇲🇽</span>
-                <span class="country-name">Mexico</span>
-              </span>
-            </div>
           </div>
         </div>
         
@@ -159,7 +129,6 @@
       <h2 class="section-title">Why choose Identity Pulse?</h2>
       
       <div class="feature-row">
-        <!-- First Row -->
         <div class="feature-card">
           <div class="feature-header">
             <span class="feature-value">&lt;5 min</span>
@@ -205,11 +174,10 @@
         </div>
       </div>
       
-      <!-- Second Row -->
       <div class="feature-row">
         <div class="feature-card">
           <div class="feature-header">
-            <span class="feature-value">&lt; 250ms</span>
+            <span class="feature-value">&lt;250ms</span>
             <span class="feature-label">response</span>
           </div>
           <div class="feature-title">ELASTIC INFRASTRUCTURE</div>

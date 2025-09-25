@@ -3,103 +3,178 @@
 @import '@nebular/theme/styles/global/breakpoints';
 @import '../../styles/themes';
 
-@include nb-install-component() {
+:host {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  height: 100%;
+  padding: 0 1rem;
   background: transparent;
+}
 
-  .logo-container {
+.header-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  
+  .sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 8px;
     display: flex;
     align-items: center;
-    width: calc(280px - 2.25rem);
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    nb-icon {
+      font-size: 1.75rem;
+    }
+    
+    &:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:focus {
+      outline: none;
+    }
   }
+}
 
-  nb-action {
-    height: auto;
+.header-center {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 2rem;
+  
+  .header-metrics {
     display: flex;
-    align-content: center;
+    gap: 48px;
+    align-items: center;
+    
+    .metric {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      white-space: nowrap;
+      
+      .value {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: #FFFFFF;
+        line-height: 1;
+      }
+      
+      .label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1;
+      }
+    }
   }
+}
 
+.header-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  
+  nb-actions {
+    display: block;
+  }
+  
+  .user-action {
+    display: flex;
+    align-items: center;
+  }
+  
   nb-user {
     cursor: pointer;
     color: #FFFFFF;
     
     ::ng-deep {
-      .user-name {
-        color: #FFFFFF;
-      }
-    }
-  }
-
-  ::ng-deep nb-search button {
-    padding: 0!important;
-  }
-
-  .header-container {
-    display: flex;
-    align-items: center;
-    width: auto;
-
-    .sidebar-toggle {
-      @include nb-ltr(padding-right, 1.25rem);
-      @include nb-rtl(padding-left, 1.25rem);
-      text-decoration: none;
-      color: rgba(255, 255, 255, 0.7);
-      
-      nb-icon {
-        font-size: 1.75rem;
-      }
-      
-      &:hover {
-        color: #FFFFFF;
-      }
-    }
-
-    .logo {
-      padding: 0 1.25rem;
-      font-size: 1.75rem;
-      @include nb-ltr(border-left, 1px solid rgba(255, 255, 255, 0.1));
-      @include nb-rtl(border-right, 1px solid rgba(255, 255, 255, 0.1));
-      white-space: nowrap;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      
-      .logo-image {
-        height: 2.5rem;
-        width: auto;
-      }
-      
-      .logo-text {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #FFFFFF;
-      }
-    }
-  }
-
-  .control-item {
-    display: none; // Hide theme selector in production
-  }
-
-  @include media-breakpoint-down(sm) {
-    .user-action {
-      border: none;
-      padding: 0;
-    }
-    
-    .logo-container {
-      width: auto;
-      
-      .logo {
-        padding: 0 0.75rem;
+      .user-container {
+        display: flex;
+        align-items: center;
         
-        .logo-image {
-          height: 2rem;
+        .user-name {
+          color: #FFFFFF;
+        }
+        
+        .user-picture {
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.2);
         }
       }
     }
+  }
+}
+
+// Responsive adjustments
+@include media-breakpoint-down(xl) {
+  .header-center {
+    .header-metrics {
+      gap: 36px;
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .header-center {
+    padding: 0 1rem;
+    
+    .header-metrics {
+      gap: 24px;
+      
+      .metric {
+        gap: 6px;
+        
+        .value {
+          font-size: 13px;
+        }
+        
+        .label {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  :host {
+    padding: 0 0.5rem;
+  }
+  
+  .header-center {
+    padding: 0 0.5rem;
+    
+    .header-metrics {
+      gap: 16px;
+      
+      .metric {
+        .value {
+          font-size: 12px;
+        }
+        
+        .label {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .header-center {
+    display: none;
   }
 }

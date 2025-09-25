@@ -4,7 +4,7 @@ import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeServ
 import { AzureAuthService } from '../../../@core/services/azure-auth.service';
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil, filter } from 'rxjs/operators';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'ngx-header',
@@ -14,15 +14,14 @@ import { Subject, Observable } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<void> = new Subject<void>();
-  public readonly materialTheme$: Observable<boolean>;
   userPictureOnly: boolean = false;
   user: any;
 
   userMenu = [ 
+    { title: 'Profile', link: '/pages/profile' },
+    { title: 'Settings', link: '/pages/settings' },
     { title: 'Log out', data: { action: 'logout' } } 
   ];
-
-  currentTheme = 'identitypulse';
 
   constructor(
     private sidebarService: NbSidebarService,
@@ -31,17 +30,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService,
     private authService: AzureAuthService,
-  ) {
-    this.materialTheme$ = this.themeService.onThemeChange()
-      .pipe(map(theme => {
-        const themeName: string = theme?.name || '';
-        return themeName.startsWith('material');
-      }));
-  }
+  ) {}
 
   ngOnInit() {
-    this.currentTheme = this.themeService.currentTheme;
-
     const { xl } = this.breakpointService.getBreakpointsMap();
     this.themeService.onMediaQueryChange()
       .pipe(
@@ -68,13 +59,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Handle menu clicks - listen to the menu events
+    // Handle menu clicks
     this.menuService.onItemClick()
       .pipe(
+        filter(({ tag }) => tag === 'user-menu'),
         takeUntil(this.destroy$)
       )
       .subscribe((event) => {
-        if (event.item.title === 'Log out' || event.item.data?.action === 'logout') {
+        if (event.item.data?.action === 'logout') {
           console.log('Logout clicked');
           this.authService.logout();
         }
@@ -86,19 +78,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  changeTheme(themeName: string) {
-    this.themeService.changeTheme(themeName);
-  }
-
   toggleSidebar(): boolean {
     this.sidebarService.toggle(true, 'menu-sidebar');
     this.layoutService.changeLayoutSize();
-
-    return false;
-  }
-
-  navigateHome() {
-    this.menuService.navigateHome();
     return false;
   }
 }

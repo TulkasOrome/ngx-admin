@@ -9,7 +9,12 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
   },
   {
-    title: 'Identity Verification',
+    title: 'Data by Country',
+    icon: 'globe-outline',
+    link: '/pages/countries',
+  },
+  {
+    title: 'ID Verification',
     icon: 'person-outline',
     children: [
       {
@@ -23,8 +28,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
-    title: 'Countries',
-    icon: 'globe-outline',
-    link: '/pages/countries',
+    title: 'Past Searches',
+    icon: 'clock-outline',
+    link: '/pages/searches',
   },
 ];

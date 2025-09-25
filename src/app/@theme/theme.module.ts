@@ -1,5 +1,8 @@
+// src/app/@theme/theme.module.ts
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router'; // Add this import
+import { FormsModule } from '@angular/forms'; // Add this import
 import { IDENTITYPULSE_THEME } from './styles/theme.identitypulse';
 import {
   NbActionsModule,
@@ -72,7 +75,12 @@ const PIPES = [
 ];
 
 @NgModule({
-  imports: [CommonModule, ...NB_MODULES],
+  imports: [
+    CommonModule, 
+    RouterModule, // Add RouterModule
+    FormsModule,  // Add FormsModule for ngIf
+    ...NB_MODULES
+  ],
   exports: [CommonModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
 })

@@ -7,33 +7,39 @@
   display: block;
   background: #010A26;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .dashboard-container {
   background: #010A26;
   color: #FFFFFF;
   font-family: 'Inter', sans-serif;
-  padding: 0 60px;
-  max-width: 1440px;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
-// Hero Section
+// Hero Section with Full Width Background
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: 450px;
-  margin: 0 -60px;
-  padding: 0 60px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #0A0E27 0%, #0F1835 50%, #0A0E27 100%); // Deep blue gradient matching hero
+  height: 450px;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  background: #010A26;
   
-  .hero-background {
+  // Background Image - fills the entire dashboard area
+  .hero-background-image {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('/assets/images/hero-background.jpg');
     background-size: cover;
     background-position: center;
@@ -41,6 +47,7 @@
     opacity: 0.6;
     z-index: 0;
     
+    // Add gradient overlay to ensure text readability
     &::after {
       content: '';
       position: absolute;
@@ -48,84 +55,52 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(180deg, rgba(10, 14, 39, 0.2) 0%, rgba(10, 14, 39, 0.7) 100%);
+      background: linear-gradient(180deg, 
+        rgba(1, 10, 38, 0.3) 0%, 
+        rgba(1, 10, 38, 0.5) 50%,
+        rgba(1, 10, 38, 0.8) 100%);
     }
   }
   
-  // Top Metrics - Center aligned
-  .top-metrics {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    gap: 48px;
-    padding: 60px 20px 40px;
-    
-    .metric {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      
-      .value {
-        font-size: 14px;
-        font-weight: 600;
-        color: #FFFFFF;
-      }
-      
-      .label {
-        font-size: 12px;
-        font-weight: 400;
-        color: rgba(255, 255, 255, 0.7);
-      }
-    }
-  }
-  
-  // Hero Content - Right aligned
+  // Hero Content - Right Aligned with 2-line title
   .hero-content {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-50%);
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    padding-right: 60px;
-    margin-top: 40px;
+    text-align: right;
     
     .main-title {
-      text-align: right;
-      margin: 0 0 24px 0;
-      max-width: 680px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+      margin-bottom: 30px;
       
-      .line1, .line2 {
-        display: block;
-        font-size: 48px;
+      .title-line-1,
+      .title-line-2 {
+        font-family: 'Inter', sans-serif;
         font-weight: 600;
+        font-size: 48px;
         line-height: 58px;
         color: #FFFFFF;
-        white-space: nowrap; // Prevent wrapping within each line
-      }
-      
-      .line1 {
-        margin-bottom: 0;
-      }
-      
-      .line2 {
-        margin-top: 0;
+        text-align: right;
+        display: block;
       }
     }
     
     .cta-button {
       padding: 12px 24px;
-      background: transparent;
+      background: rgba(1, 10, 38, 0.9);
       border: 1px solid #FFFFFF;
       border-radius: 10px;
       color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       
       &:hover {
         background: rgba(255, 255, 255, 0.1);
@@ -135,28 +110,32 @@
   }
 }
 
-// Map Wrapper - Status above map
-.map-wrapper {
+// Status Section - Positioned below hero
+.status-wrapper {
   position: relative;
-  margin-top: 60px;
+  padding: 0 60px;
+  margin-top: 40px;
+  z-index: 10;
   
-  .status-section {
+  .status-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     
     .status-title {
-      font-size: 26px;
+      font-family: 'Inter', sans-serif;
       font-weight: 400;
+      font-size: 26px;
+      line-height: 16px;
+      letter-spacing: 0.02em;
       color: #FFFFFF;
       margin: 0;
-      letter-spacing: 0.02em;
     }
     
     .status-indicators {
+      width: 409px;
       display: flex;
-      gap: 40px;
+      gap: 26px;
       
       .indicator {
         display: flex;
@@ -182,6 +161,7 @@
         }
         
         .text {
+          font-family: 'Inter', sans-serif;
           font-size: 12px;
           font-weight: 500;
           color: #FFFFFF;
@@ -194,6 +174,8 @@
 
 // Map Section
 .map-section {
+  padding: 20px 60px;
+  
   .map-container {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -216,12 +198,13 @@
 
 // Bottom Content
 .bottom-content {
-  padding: 60px 0;
+  padding: 60px;
   
   .info-section {
     margin-bottom: 60px;
     
     .section-title {
+      font-family: 'Inter', sans-serif;
       font-size: 24px;
       font-weight: 600;
       color: #FFFFFF;
@@ -229,7 +212,7 @@
     }
   }
   
-  // Coverage Cards in a Row
+  // Coverage Cards
   .coverage-row {
     display: flex;
     gap: 20px;
@@ -254,6 +237,7 @@
         margin-bottom: 16px;
         
         .region {
+          font-family: 'Inter', sans-serif;
           font-size: 16px;
           font-weight: 600;
           color: #FFFFFF;
@@ -265,13 +249,9 @@
           gap: 20px;
           text-align: right;
           
-          .percentage {
-            font-size: 24px;
-            font-weight: 600;
-            color: #00D68F;
-          }
-          
+          .percentage,
           .count {
+            font-family: 'Inter', sans-serif;
             font-size: 24px;
             font-weight: 600;
             color: #00D68F;
@@ -282,6 +262,7 @@
       .card-details {
         .countries {
           display: block;
+          font-family: 'Inter', sans-serif;
           font-size: 11px;
           color: rgba(255, 255, 255, 0.5);
           text-transform: uppercase;
@@ -295,38 +276,18 @@
           
           .coverage-label,
           .response-label {
+            font-family: 'Inter', sans-serif;
             font-size: 10px;
             color: rgba(255, 255, 255, 0.4);
             text-transform: uppercase;
             letter-spacing: 0.05em;
           }
         }
-        
-        .card-footer {
-          margin-top: 16px;
-          display: flex;
-          gap: 20px;
-          
-          .country-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            
-            .flag {
-              font-size: 16px;
-            }
-            
-            .country-name {
-              font-size: 12px;
-              color: rgba(255, 255, 255, 0.7);
-            }
-          }
-        }
       }
     }
   }
   
-  // Feature Cards in Rows
+  // Feature Cards
   .feature-row {
     display: flex;
     gap: 20px;
@@ -353,18 +314,21 @@
         margin-bottom: 16px;
         
         .feature-value {
+          font-family: 'Inter', sans-serif;
           font-size: 28px;
           font-weight: 600;
           color: #0066FF;
         }
         
         .feature-label {
+          font-family: 'Inter', sans-serif;
           font-size: 14px;
           color: rgba(255, 255, 255, 0.5);
         }
       }
       
       .feature-title {
+        font-family: 'Inter', sans-serif;
         font-size: 12px;
         font-weight: 600;
         color: #FFFFFF;
@@ -374,6 +338,7 @@
       }
       
       .feature-description {
+        font-family: 'Inter', sans-serif;
         font-size: 13px;
         line-height: 20px;
         color: rgba(255, 255, 255, 0.7);
@@ -384,49 +349,57 @@
 
 // Responsive Design
 @include media-breakpoint-down(xl) {
-  .dashboard-container {
-    padding: 0 40px;
-  }
-  
   .hero-section {
-    margin: 0 -40px;
-    padding: 0 40px;
-    
     .hero-content {
-      padding-right: 40px;
+      right: 40px;
       
       .main-title {
-        font-size: 40px;
-        line-height: 50px;
+        .title-line-1,
+        .title-line-2 {
+          font-size: 42px;
+          line-height: 52px;
+        }
+      }
+    }
+  }
+  
+  .status-wrapper {
+    .status-header {
+      .status-indicators {
+        width: auto;
       }
     }
   }
 }
 
 @include media-breakpoint-down(lg) {
-  .dashboard-container {
-    padding: 0 20px;
-  }
-  
   .hero-section {
-    margin: 0 -20px;
-    padding: 0 20px;
-    
-    .top-metrics {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    height: 400px;
     
     .hero-content {
-      align-items: center;
-      padding-right: 0;
+      right: 30px;
       
       .main-title {
-        text-align: center;
-        font-size: 36px;
-        line-height: 46px;
+        .title-line-1,
+        .title-line-2 {
+          font-size: 36px;
+          line-height: 44px;
+        }
       }
     }
+  }
+  
+  .status-wrapper {
+    margin-top: 20px;
+    padding: 0 30px;
+  }
+  
+  .map-section {
+    padding: 20px 30px;
+  }
+  
+  .bottom-content {
+    padding: 40px 30px;
   }
   
   .coverage-row {
@@ -448,23 +421,25 @@
 
 @include media-breakpoint-down(md) {
   .hero-section {
-    min-height: 400px;
+    height: 350px;
     
     .hero-content {
-      .main-title {
-        font-size: 32px;
-        line-height: 42px;
-      }
-    }
-    
-    .top-metrics {
-      gap: 20px;
-      padding: 40px 20px 20px;
+      right: 20px;
+      left: 20px;
+      width: auto;
       
-      .metric {
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
+      .main-title {
+        .title-line-1,
+        .title-line-2 {
+          font-size: 32px;
+          line-height: 40px;
+          text-align: center;
+        }
+      }
+      
+      .cta-button {
+        display: block;
+        margin: 0 auto;
       }
     }
   }
@@ -482,23 +457,48 @@
 
 @include media-breakpoint-down(sm) {
   .hero-section {
+    height: 300px;
+    
     .hero-content {
       .main-title {
-        font-size: 28px;
-        line-height: 38px;
-        br {
-          display: none;
+        .title-line-1,
+        .title-line-2 {
+          font-size: 24px;
+          line-height: 32px;
         }
+      }
+      
+      .cta-button {
+        font-size: 14px;
+        padding: 10px 20px;
       }
     }
   }
   
-  .map-wrapper {
-    .status-section {
+  .status-wrapper {
+    padding: 0 20px;
+    
+    .status-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      
+      .status-title {
+        font-size: 22px;
+      }
+      
       .status-indicators {
-        flex-wrap: wrap;
-        justify-content: center;
+        width: 100%;
+        justify-content: space-between;
       }
     }
+  }
+  
+  .map-section {
+    padding: 20px;
+  }
+  
+  .bottom-content {
+    padding: 30px 20px;
   }
 }

@@ -1,16 +1,32 @@
 <!-- src/app/@theme/components/header/header.component.html -->
-<div class="header-container">
-  <div class="logo-container">
-    <a href="#" class="sidebar-toggle" (click)="toggleSidebar()">
-      <nb-icon [icon]="(materialTheme$ | async) ? 'menu-outline' : 'menu-2-outline'"></nb-icon>
-    </a>
-    <a class="logo" href="#" (click)="navigateHome()">
-      <img src="assets/images/identitypulselogodark.png" alt="IdentityPulse" class="logo-image">
-    </a>
+<div class="header-left">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <nb-icon icon="menu-2-outline"></nb-icon>
+  </button>
+</div>
+
+<div class="header-center">
+  <div class="header-metrics">
+    <div class="metric">
+      <span class="value">1.2M+</span>
+      <span class="label">Total Verifications</span>
+    </div>
+    <div class="metric">
+      <span class="value">403ms</span>
+      <span class="label">Average Response Time</span>
+    </div>
+    <div class="metric">
+      <span class="value">99.9%</span>
+      <span class="label">Global Uptime</span>
+    </div>
+    <div class="metric">
+      <span class="value">21</span>
+      <span class="label">Active Countries</span>
+    </div>
   </div>
 </div>
 
-<div class="header-container">
+<div class="header-right">
   <nb-actions size="small">
     <nb-action class="user-action" *nbIsGranted="['view', 'user']">
       <nb-user [nbContextMenu]="userMenu"
