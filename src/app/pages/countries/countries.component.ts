@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+// src/app/pages/countries/countries.component.ts
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface Country {
   name: string;
   flag: string;
-  status: 'active' | 'coming-soon';
-  coverage: number;
-  population: string;
-  databases: number;
-  updateFrequency: string;
-  regulations: string[];
-  features: string[];
-  recordCount?: string;
-  adultPopulationCoverage?: string;
+  status: 'online' | 'offline';
+  coverage: string;
+  recordCount: string;
+  responseTime: string;
+  options: string[];
+  compliance: string[];
+  updateFrequency: 'daily' | 'updated';
+  region: string;
 }
 
 @Component({
@@ -19,298 +20,281 @@ interface Country {
   templateUrl: './countries.component.html',
   styleUrls: ['./countries.component.scss']
 })
-export class CountriesComponent {
+export class CountriesComponent implements OnInit {
+  selectedRegion = 'all';
+  countries: Country[] = [];
+  filteredCountries: Country[] = [];
 
-  countries: Country[] = [
-    // All countries are now active except Czech Republic
-    {
-      name: 'Australia',
-      flag: '🇦🇺',
-      status: 'active',
-      coverage: 75,
-      population: '25.7M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['Privacy Act 1988', 'AML/CTF Act', 'CDR'],
-      features: ['Full KYC', 'Document Verification', 'Biometric Matching', 'Watchlist Screening'],
-      recordCount: '11.5M',
-      adultPopulationCoverage: '75%'
-    },
-    {
-      name: 'Indonesia',
-      flag: '🇮🇩',
-      status: 'active',
-      coverage: 82,
-      population: '273.5M',
-      databases: 4,
-      updateFrequency: 'Weekly',
-      regulations: ['UU PDP', 'OJK Regulations'],
-      features: ['Identity Verification', 'Address Validation', 'Phone Verification', 'KTP Validation'],
-      recordCount: '180M+',
-      adultPopulationCoverage: '82%'
-    },
-    {
-      name: 'Malaysia',
-      flag: '🇲🇾',
-      status: 'active',
-      coverage: 85,
-      population: '32.4M',
-      databases: 2,
-      updateFrequency: 'Weekly',
-      regulations: ['PDPA 2010', 'AMLA'],
-      features: ['MyKad Verification', 'Address Check', 'Phone Validation', 'Business Registry'],
-      recordCount: '24M',
-      adultPopulationCoverage: '85%'
-    },
-    {
-      name: 'Japan',
-      flag: '🇯🇵',
-      status: 'active',
-      coverage: 88,
-      population: '125.8M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['APPI', 'FIEA'],
-      features: ['My Number Verification', 'Address Validation', 'Corporate Registry', 'AML Check'],
-      recordCount: '58M',
-      adultPopulationCoverage: '88%'
-    },
-    {
-      name: 'Thailand',
-      flag: '🇹🇭',
-      status: 'active',
-      coverage: 78,
-      population: '69.8M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['PDPA', 'AML Regulations'],
-      features: ['ID Card Verification', 'Address Check', 'Business Registry', 'Phone Validation'],
-      recordCount: '37M',
-      adultPopulationCoverage: '78%'
-    },
-    {
-      name: 'France',
-      flag: '🇫🇷',
-      status: 'active',
-      coverage: 84,
-      population: '67.4M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['GDPR', 'AML Directive'],
-      features: ['Identity Verification', 'Address Validation', 'Business Registry', 'PEP Screening'],
-      recordCount: '33M',
-      adultPopulationCoverage: '84%'
-    },
-    {
-      name: 'South Africa',
-      flag: '🇿🇦',
-      status: 'active',
-      coverage: 78,
-      population: '59.3M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['POPIA', 'FICA'],
-      features: ['ID Verification', 'Address Check', 'Business Registry', 'Credit Check'],
-      recordCount: '29M',
-      adultPopulationCoverage: '78%'
-    },
-    {
-      name: 'Canada',
-      flag: '🇨🇦',
-      status: 'active',
-      coverage: 87,
-      population: '38.0M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['PIPEDA', 'FINTRAC'],
-      features: ['Identity Verification', 'Address Validation', 'Business Registry', 'AML Check'],
-      recordCount: '19M',
-      adultPopulationCoverage: '87%'
-    },
-    {
-      name: 'Mexico',
-      flag: '🇲🇽',
-      status: 'active',
-      coverage: 76,
-      population: '128.9M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['LFPDPPP', 'AML Law'],
-      features: ['CURP Verification', 'Address Check', 'Business Registry', 'RFC Validation'],
-      recordCount: '64M',
-      adultPopulationCoverage: '76%'
-    },
-    {
-      name: 'Singapore',
-      flag: '🇸🇬',
-      status: 'active',
-      coverage: 90,
-      population: '5.7M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['PDPA', 'AML/CFT'],
-      features: ['NRIC Verification', 'Address Check', 'Business Registry', 'Work Permit Check'],
-      recordCount: '2.8M',
-      adultPopulationCoverage: '90%'
-    },
-    {
-      name: 'Philippines',
-      flag: '🇵🇭',
-      status: 'active',
-      coverage: 75,
-      population: '109.6M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['DPA', 'AML Act'],
-      features: ['PhilID Verification', 'Address Validation', 'Business Registry', 'TIN Verification'],
-      recordCount: '55M',
-      adultPopulationCoverage: '75%'
-    },
-    {
-      name: 'Vietnam',
-      flag: '🇻🇳',
-      status: 'active',
-      coverage: 79,
-      population: '97.3M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['Cybersecurity Law', 'Data Protection'],
-      features: ['National ID Verification', 'Address Validation', 'Business Registry', 'Phone Check'],
-      recordCount: '48M',
-      adultPopulationCoverage: '79%'
-    },
-    {
-      name: 'Egypt',
-      flag: '🇪🇬',
-      status: 'active',
-      coverage: 74,
-      population: '102.3M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['Data Protection Law', 'AML Law'],
-      features: ['National ID Verification', 'Address Check', 'Business Registry', 'Phone Validation'],
-      recordCount: '51M',
-      adultPopulationCoverage: '74%'
-    },
-    {
-      name: 'UAE',
-      flag: '🇦🇪',
-      status: 'active',
-      coverage: 85,
-      population: '9.9M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['Data Protection Law', 'AML/CFT'],
-      features: ['Emirates ID Verification', 'Address Validation', 'Business Registry', 'Visa Status'],
-      recordCount: '4.8M',
-      adultPopulationCoverage: '85%'
-    },
-    {
-      name: 'South Korea',
-      flag: '🇰🇷',
-      status: 'active',
-      coverage: 86,
-      population: '51.3M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['PIPA', 'AML Regulations'],
-      features: ['Resident Registration', 'Address Check', 'Business Registry', 'Phone Verification'],
-      recordCount: '26M',
-      adultPopulationCoverage: '86%'
-    },
-    {
-      name: 'Hong Kong',
-      flag: '🇭🇰',
-      status: 'active',
-      coverage: 92,
-      population: '7.5M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['PDPO', 'AMLO'],
-      features: ['HKID Verification', 'Address Check', 'Business Registry', 'Bank Account Verification'],
-      recordCount: '3.8M',
-      adultPopulationCoverage: '92%'
-    },
-    {
-      name: 'Bangladesh',
-      flag: '🇧🇩',
-      status: 'active',
-      coverage: 72,
-      population: '164.7M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['Digital Security Act', 'AML Act'],
-      features: ['NID Verification', 'Address Check', 'Business Registry', 'Phone Validation'],
-      recordCount: '82M',
-      adultPopulationCoverage: '72%'
-    },
-    {
-      name: 'Sri Lanka',
-      flag: '🇱🇰',
-      status: 'active',
-      coverage: 76,
-      population: '21.4M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['Personal Data Protection Act', 'FIU Act'],
-      features: ['NIC Verification', 'Address Check', 'Business Registry', 'Phone Validation'],
-      recordCount: '11M',
-      adultPopulationCoverage: '76%'
-    },
-    {
-      name: 'Turkey',
-      flag: '🇹🇷',
-      status: 'active',
-      coverage: 82,
-      population: '84.3M',
-      databases: 3,
-      updateFrequency: 'Weekly',
-      regulations: ['KVKK', 'AML Regulations'],
-      features: ['National ID Verification', 'Address Check', 'Business Registry', 'Tax ID Check'],
-      recordCount: '42M',
-      adultPopulationCoverage: '82%'
-    },
-    {
-      name: 'Saudi Arabia',
-      flag: '🇸🇦',
-      status: 'active',
-      coverage: 80,
-      population: '34.8M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['PDPL', 'SAMA Regulations'],
-      features: ['National ID Verification', 'Iqama Validation', 'Business Registry', 'AML Screening'],
-      recordCount: '17M',
-      adultPopulationCoverage: '80%'
-    },
-    {
-      name: 'New Zealand',
-      flag: '🇳🇿',
-      status: 'active',
-      coverage: 88,
-      population: '5.1M',
-      databases: 3,
-      updateFrequency: 'Daily',
-      regulations: ['Privacy Act 2020', 'AML/CFT Act'],
-      features: ['Identity Verification', 'Address Validation', 'Business Registry', 'Driver License Check'],
-      recordCount: '2.4M',
-      adultPopulationCoverage: '88%'
-    },
-    {
-      name: 'Czech Republic',
-      flag: '🇨🇿',
-      status: 'coming-soon',
-      coverage: 0,
-      population: '10.7M',
-      databases: 0,
-      updateFrequency: 'TBD',
-      regulations: ['GDPR', 'AML Directive'],
-      features: ['Identity Verification', 'Address Validation', 'Business Registry', 'EU Compliance'],
-      recordCount: 'Coming Soon',
-      adultPopulationCoverage: 'TBD'
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.loadCountries();
+    this.filteredCountries = [...this.countries];
+  }
+
+  loadCountries() {
+    this.countries = [
+      // Asia-Pacific
+      {
+        name: 'Australia',
+        flag: '🇦🇺',
+        status: 'online',
+        coverage: '45%',  // 11.57M / 25.7M population
+        recordCount: '11.57M',
+        responseTime: '220ms',
+        options: ['Full KYC', 'Document Verification', 'Sanctions Screening', 'Biometric Screening'],
+        compliance: ['Privacy Act 1988', 'AML/CTF Act', 'CDR'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Indonesia',
+        flag: '🇮🇩',
+        status: 'online',
+        coverage: '38%',  // 103.08M / 273M population
+        recordCount: '103.08M',
+        responseTime: '220ms',
+        options: ['Identity Verification', 'Address Validation', 'Phone Verification', 'KTP Validation'],
+        compliance: ['UU ITE', 'OJK Regulations'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Malaysia',
+        flag: '🇲🇾',
+        status: 'online',
+        coverage: '74%',  // 24.42M / 33M population
+        recordCount: '24.42M',
+        responseTime: '220ms',
+        options: ['MyKad Verification', 'Address Validation', 'Phone Verification', 'Business Registry'],
+        compliance: ['PDPA 2010', 'AMLA'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Japan',
+        flag: '🇯🇵',
+        status: 'online',
+        coverage: '46%',  // 58.26M / 125M population
+        recordCount: '58.26M',
+        responseTime: '220ms',
+        options: ['Full KYC', 'Document Verification', 'Sanctions Screening', 'Business Registry'],
+        compliance: ['APPI', 'FIEA'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Thailand',
+        flag: '🇹🇭',
+        status: 'online',
+        coverage: '59%',  // 41.46M / 70M population
+        recordCount: '41.46M',
+        responseTime: '220ms',
+        options: ['Identity Verification', 'Address Validation', 'Phone Verification'],
+        compliance: ['PDPA', 'AMLO'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Philippines',
+        flag: '🇵🇭',
+        status: 'online',
+        coverage: '44%',  // 49.06M / 111M population
+        recordCount: '49.06M',
+        responseTime: '220ms',
+        options: ['UMID Verification', 'Phone Verification', 'TIN Validation'],
+        compliance: ['DPA 2012', 'AMLA'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'Vietnam',
+        flag: '🇻🇳',
+        status: 'online',
+        coverage: '77%',  // 75.75M / 98M population
+        recordCount: '75.75M',
+        responseTime: '220ms',
+        options: ['Identity Verification', 'Address Validation', 'Phone Verification'],
+        compliance: ['Cybersecurity Law', 'AML Decree'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      {
+        name: 'New Zealand',
+        flag: '🇳🇿',
+        status: 'online',
+        coverage: '48%',  // 2.42M / 5M population
+        recordCount: '2.42M',
+        responseTime: '220ms',
+        options: ['Full KYC', 'Document Verification', 'Business Registry'],
+        compliance: ['Privacy Act 2020', 'AML/CFT Act'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      },
+      // Middle East & Africa
+      {
+        name: 'Saudi Arabia',
+        flag: '🇸🇦',
+        status: 'online',
+        coverage: '76%',  // 26.83M / 35M population
+        recordCount: '26.83M',
+        responseTime: '220ms',
+        options: ['Absher Verification', 'Iqama Validation', 'Business Registry'],
+        compliance: ['PDPL', 'SAMA Regulations'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'UAE',
+        flag: '🇦🇪',
+        status: 'online',
+        coverage: '83%',  // 8.30M / 10M population
+        recordCount: '8.30M',
+        responseTime: '220ms',
+        options: ['Emirates ID', 'Business License', 'Address Validation'],
+        compliance: ['PDPL 2021', 'AML/CFT'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'Turkey',
+        flag: '🇹🇷',
+        status: 'online',
+        coverage: '104%',  // 88.40M / 85M population (includes historical records)
+        recordCount: '88.40M',
+        responseTime: '220ms',
+        options: ['T.C. Kimlik Verification', 'Address Validation', 'Phone Verification'],
+        compliance: ['KVKK', 'MASAK'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'Egypt',
+        flag: '🇪🇬',
+        status: 'online',
+        coverage: '75%',  // 77.74M / 104M population
+        recordCount: '77.74M',
+        responseTime: '220ms',
+        options: ['National ID Verification', 'Phone Verification'],
+        compliance: ['Data Protection Law', 'AML Law'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'Qatar',
+        flag: '🇶🇦',
+        status: 'online',
+        coverage: '82%',  // 2.36M / 2.9M population
+        recordCount: '2.36M',
+        responseTime: '220ms',
+        options: ['Qatar ID Verification', 'Business Registry'],
+        compliance: ['Data Protection Law', 'AML/CFT'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'South Africa',
+        flag: '🇿🇦',
+        status: 'online',
+        coverage: '74%',  // 44.47M / 60M population
+        recordCount: '44.47M',
+        responseTime: '220ms',
+        options: ['SA ID Verification', 'Address Validation', 'Business Registry'],
+        compliance: ['POPIA', 'FICA'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      {
+        name: 'Morocco',
+        flag: '🇲🇦',
+        status: 'online',
+        coverage: '68%',  // 25.18M / 37M population
+        recordCount: '25.18M',
+        responseTime: '220ms',
+        options: ['CIN Verification', 'Address Validation'],
+        compliance: ['Law 09-08', 'AML/CFT'],
+        updateFrequency: 'daily',
+        region: 'middle-east-africa'
+      },
+      // Europe
+      {
+        name: 'Czech Republic',
+        flag: '🇨🇿',
+        status: 'online',
+        coverage: '85%',  // 9.05M / 10.7M population
+        recordCount: '9.05M',
+        responseTime: '220ms',
+        options: ['Birth Number Verification', 'Address Validation'],
+        compliance: ['GDPR', 'AML Directive'],
+        updateFrequency: 'updated',
+        region: 'europe'
+      },
+      {
+        name: 'France',
+        flag: '🇫🇷',
+        status: 'online',
+        coverage: '43%',  // 29.31M / 68M population
+        recordCount: '29.31M',
+        responseTime: '220ms',
+        options: ['INSEE Verification', 'Address Validation', 'Business Registry'],
+        compliance: ['GDPR', 'AML Directive'],
+        updateFrequency: 'daily',
+        region: 'europe'
+      },
+      // Americas
+      {
+        name: 'Canada',
+        flag: '🇨🇦',
+        status: 'online',
+        coverage: '24%',  // 9.32M / 38M population
+        recordCount: '9.32M',
+        responseTime: '220ms',
+        options: ['SIN Verification', 'Address Validation', 'Business Registry'],
+        compliance: ['PIPEDA', 'PCMLTFA'],
+        updateFrequency: 'daily',
+        region: 'americas'
+      },
+      {
+        name: 'Mexico',
+        flag: '🇲🇽',
+        status: 'online',
+        coverage: '74%',  // 94.94M / 128M population
+        recordCount: '94.94M',
+        responseTime: '220ms',
+        options: ['CURP Verification', 'RFC Validation', 'Address Validation'],
+        compliance: ['LFPDPPP', 'AML Law'],
+        updateFrequency: 'daily',
+        region: 'americas'
+      },
+      {
+        name: 'Pakistan',
+        flag: '🇵🇰',
+        status: 'offline',
+        coverage: '0%',  // Coming soon
+        recordCount: 'Coming Soon',
+        responseTime: 'N/A',
+        options: ['CNIC Verification', 'Phone Verification'],
+        compliance: ['PECA', 'AML Act'],
+        updateFrequency: 'daily',
+        region: 'asia-pacific'
+      }
+    ];
+  }
+
+  filterByRegion() {
+    if (this.selectedRegion === 'all') {
+      this.filteredCountries = [...this.countries];
+    } else {
+      this.filteredCountries = this.countries.filter(
+        country => country.region === this.selectedRegion
+      );
     }
-  ];
+  }
 
-  activeCountries = this.countries.filter(c => c.status === 'active');
-  comingSoonCountries = this.countries.filter(c => c.status === 'coming-soon');
+  verifyData(country: Country) {
+    // Navigate to manual lookup with country preselected
+    this.router.navigate(['/pages/identity/manual-lookup'], {
+      queryParams: { country: country.name }
+    });
+  }
 }

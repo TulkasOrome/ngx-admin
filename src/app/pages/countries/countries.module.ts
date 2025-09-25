@@ -1,30 +1,21 @@
+// src/app/pages/countries/countries.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { 
-  NbCardModule, 
-  NbButtonModule, 
-  NbIconModule,
-  NbBadgeModule 
-} from '@nebular/theme';
 import { CountriesComponent } from './countries.component';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule.forChild([
       {
         path: '',
         component: CountriesComponent,
-      },
-    ]),
-    NbCardModule,
-    NbButtonModule,
-    NbIconModule,
-    NbBadgeModule
+      }
+    ])
   ],
-  declarations: [
-    CountriesComponent,
-  ],
+  declarations: [CountriesComponent],
 })
 export class CountriesModule { }

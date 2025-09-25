@@ -1,139 +1,81 @@
-<div class="row">
-  <div class="col-12">
-    <nb-card>
-      <nb-card-header>
-        <h5>Supported Countries & Regions</h5>
-      </nb-card-header>
-      <nb-card-body>
-        <p class="subtitle">IdentityPulse provides comprehensive coverage across The Asia Pacific and Middle East and North Africa Regions and expanding into the Americas and North Asia.</p>
-      </nb-card-body>
-    </nb-card>
+<!-- src/app/pages/countries/countries.component.html -->
+<div class="countries-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Data by Country</h1>
+    
+    <!-- Region Filter -->
+    <div class="region-filter">
+      <select [(ngModel)]="selectedRegion" (change)="filterByRegion()" class="region-select">
+        <option value="all">All Regions</option>
+        <option value="asia-pacific">Asia-Pacific</option>
+        <option value="middle-east-africa">Middle East & Africa</option>
+        <option value="europe">Europe</option>
+        <option value="americas">Americas</option>
+      </select>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <h6 class="section-title">Active Countries</h6>
-  </div>
-  <div class="col-lg-6 col-xl-4" *ngFor="let country of activeCountries">
-    <nb-card class="country-card" [class.active]="country.status === 'active'">
-      <nb-card-header>
-        <div class="country-header">
-          <div class="country-title">
-            <span class="flag">{{ country.flag }}</span>
-            <h6>{{ country.name }}</h6>
-          </div>
-          <nb-badge [text]="country.status" status="success"></nb-badge>
+  <!-- Countries Grid -->
+  <div class="countries-grid">
+    <div class="country-card" *ngFor="let country of filteredCountries">
+      <!-- Country Header -->
+      <div class="card-header">
+        <div class="country-info">
+          <span class="country-flag">{{ country.flag }}</span>
+          <span class="country-name">{{ country.name }}</span>
         </div>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="country-stats">
-          <div class="stat">
-            <span class="label">Coverage</span>
-            <span class="value">{{ country.adultPopulationCoverage }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Records</span>
-            <span class="value">{{ country.recordCount }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Databases</span>
-            <span class="value">{{ country.databases }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Updates</span>
-            <span class="value">{{ country.updateFrequency }}</span>
+        <div class="status-section">
+          <span class="status-label">Status</span>
+          <div class="status-indicator" [class.online]="country.status === 'online'" [class.offline]="country.status === 'offline'">
+            <span class="status-dot"></span>
+            <span class="status-text">{{ country.status }}</span>
           </div>
         </div>
-        
-        <div class="status-indicator">
-          <span class="status-label">Status:</span>
-          <span class="status-value online">
-            <nb-icon icon="checkmark-circle-2-outline" pack="eva"></nb-icon>
-            Online
-          </span>
-        </div>
-        
-        <div class="features">
-          <h6>Available Features</h6>
-          <div class="feature-tags">
-            <span class="tag" *ngFor="let feature of country.features">{{ feature }}</span>
-          </div>
-        </div>
-        
-        <div class="regulations">
-          <h6>Compliance</h6>
-          <div class="regulation-tags">
-            <span class="tag" *ngFor="let reg of country.regulations">{{ reg }}</span>
-          </div>
-        </div>
-      </nb-card-body>
-      <nb-card-footer>
-        <button nbButton fullWidth status="primary" routerLink="/pages/identity/manual-lookup" 
-                [queryParams]="{country: country.name.toLowerCase().replace(' ', '-')}">
-          <nb-icon icon="search-outline"></nb-icon>
-          Verify in {{ country.name }}
-        </button>
-      </nb-card-footer>
-    </nb-card>
-  </div>
-</div>
+      </div>
 
-<div class="row" *ngIf="comingSoonCountries.length > 0">
-  <div class="col-12">
-    <h6 class="section-title">Coming Soon</h6>
-  </div>
-  <div class="col-lg-6 col-xl-4" *ngFor="let country of comingSoonCountries">
-    <nb-card class="country-card coming-soon">
-      <nb-card-header>
-        <div class="country-header">
-          <div class="country-title">
-            <span class="flag">{{ country.flag }}</span>
-            <h6>{{ country.name }}</h6>
-          </div>
-          <nb-badge text="coming soon" status="warning"></nb-badge>
+      <!-- Coverage Stats -->
+      <div class="stats-section">
+        <div class="stat-column">
+          <div class="stat-value">{{ country.coverage }}</div>
+          <div class="stat-label">Coverage</div>
+          <div class="stat-sublabel">{{ country.recordCount }} records</div>
         </div>
-      </nb-card-header>
-      <nb-card-body>
-        <div class="country-stats">
-          <div class="stat">
-            <span class="label">Population</span>
-            <span class="value">{{ country.population }}</span>
-          </div>
-          <div class="stat" *ngIf="country.recordCount !== 'Coming Soon'">
-            <span class="label">Expected Records</span>
-            <span class="value">{{ country.recordCount }}</span>
+        <div class="stat-column">
+          <div class="stat-value">{{ country.responseTime }}</div>
+          <div class="stat-label">Avg. Response</div>
+        </div>
+      </div>
+
+      <!-- Options and Compliance -->
+      <div class="details-section">
+        <div class="detail-column">
+          <div class="detail-label">OPTIONS</div>
+          <div class="detail-items">
+            <span *ngFor="let option of country.options" class="detail-item">{{ option }}</span>
           </div>
         </div>
-        
-        <div class="status-indicator">
-          <span class="status-label">Status:</span>
-          <span class="status-value coming-soon">
-            <nb-icon icon="sync-outline" pack="eva"></nb-icon>
-            Coming Soon
-          </span>
-        </div>
-        
-        <div class="features">
-          <h6>Planned Features</h6>
-          <div class="feature-tags">
-            <span class="tag" *ngFor="let feature of country.features">{{ feature }}</span>
+        <div class="detail-column">
+          <div class="detail-label">COMPLIANCE</div>
+          <div class="detail-items">
+            <span *ngFor="let compliance of country.compliance" class="detail-item">{{ compliance }}</span>
           </div>
         </div>
-        
-        <div class="regulations">
-          <h6>Target Compliance</h6>
-          <div class="regulation-tags">
-            <span class="tag" *ngFor="let reg of country.regulations">{{ reg }}</span>
-          </div>
-        </div>
-      </nb-card-body>
-      <nb-card-footer>
-        <button nbButton fullWidth status="basic" disabled>
-          <nb-icon icon="clock-outline"></nb-icon>
-          Coming Soon
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <button class="btn-verify" (click)="verifyData(country)">
+          Verify Data
         </button>
-      </nb-card-footer>
-    </nb-card>
+        <div class="update-status">
+          <span class="update-label">Updated</span>
+          <div class="update-frequency">
+            <span class="update-icon">{{ country.updateFrequency === 'daily' ? '⟳' : '✓' }}</span>
+            <span class="update-text">{{ country.updateFrequency === 'daily' ? 'Daily' : 'Weekly' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
