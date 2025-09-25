@@ -1,0 +1,219 @@
+// src/app/@theme/styles/_dark-theme-overrides.scss
+// Global dark theme overrides for IdentityPulse
+
+// Override Nebular components globally when identitypulse theme is active
+@mixin dark-theme-overrides() {
+  // Global background
+  background: #010A26;
+  color: #FFFFFF;
+  
+  // Cards
+  nb-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    
+    nb-card-header {
+      background: transparent;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      
+      h1, h2, h3, h4, h5, h6 {
+        color: #FFFFFF;
+      }
+    }
+    
+    nb-card-body {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
+  // Tables
+  .table {
+    color: rgba(255, 255, 255, 0.9);
+    
+    thead {
+      th {
+        color: #FFFFFF;
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    tbody {
+      td {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  // Progress bars
+  nb-progress-bar {
+    .progress-container {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  // Lists
+  nb-list {
+    nb-list-item {
+      border-color: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.9);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+  
+  // Alerts
+  nb-alert {
+    &.status-basic {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  // Inputs
+  input[nbInput], 
+  textarea[nbInput] {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    &:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #0066FF;
+    }
+  }
+  
+  // Select
+  nb-select {
+    button {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+  
+  // Option list
+  nb-option-list {
+    background: #1A2445;
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    nb-option {
+      color: rgba(255, 255, 255, 0.9);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      
+      &.selected {
+        background: rgba(0, 102, 255, 0.2);
+        color: #FFFFFF;
+      }
+    }
+  }
+  
+  // Tooltips
+  nb-tooltip {
+    .arrow {
+      background: #1A2445;
+    }
+    
+    .content {
+      background: #1A2445;
+      color: #FFFFFF;
+    }
+  }
+  
+  // Context menu
+  nb-context-menu {
+    background: #1A2445;
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    .menu-item {
+      color: rgba(255, 255, 255, 0.9);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  // Scrollbars
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+  
+  // Links
+  a {
+    color: #0066FF;
+    
+    &:hover {
+      color: #0052CC;
+    }
+  }
+  
+  // Text colors
+  h1, h2, h3, h4, h5, h6 {
+    color: #FFFFFF;
+  }
+  
+  p, span, div {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .text-hint {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .text-muted {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  // Fix for Nebular components
+  .nb-theme-identitypulse {
+    nb-card {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    nb-layout {
+      background: #010A26 !important;
+    }
+    
+    nb-sidebar {
+      background: #010A26 !important;
+    }
+    
+    nb-menu {
+      background: transparent !important;
+    }
+  }
+}

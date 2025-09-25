@@ -1,3 +1,4 @@
+// src/app/@theme/components/header/header.component.scss
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 @import '../../styles/themes';
@@ -6,11 +7,12 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+  background: transparent;
 
   .logo-container {
     display: flex;
     align-items: center;
-    width: calc(#{nb-theme(sidebar-width)} - #{nb-theme(header-padding)});
+    width: calc(280px - 2.25rem);
   }
 
   nb-action {
@@ -21,6 +23,13 @@
 
   nb-user {
     cursor: pointer;
+    color: #FFFFFF;
+    
+    ::ng-deep {
+      .user-name {
+        color: #FFFFFF;
+      }
+    }
   }
 
   ::ng-deep nb-search button {
@@ -36,17 +45,22 @@
       @include nb-ltr(padding-right, 1.25rem);
       @include nb-rtl(padding-left, 1.25rem);
       text-decoration: none;
-      color: nb-theme(text-hint-color);
+      color: rgba(255, 255, 255, 0.7);
+      
       nb-icon {
         font-size: 1.75rem;
+      }
+      
+      &:hover {
+        color: #FFFFFF;
       }
     }
 
     .logo {
       padding: 0 1.25rem;
       font-size: 1.75rem;
-      @include nb-ltr(border-left, 1px solid nb-theme(divider-color));
-      @include nb-rtl(border-right, 1px solid nb-theme(divider-color));
+      @include nb-ltr(border-left, 1px solid rgba(255, 255, 255, 0.1));
+      @include nb-rtl(border-right, 1px solid rgba(255, 255, 255, 0.1));
       white-space: nowrap;
       text-decoration: none;
       display: flex;
@@ -54,39 +68,38 @@
       gap: 0.5rem;
       
       .logo-image {
-        height: 2.0rem;
+        height: 2.5rem;
         width: auto;
       }
       
       .logo-text {
         font-size: 1.25rem;
         font-weight: 600;
+        color: #FFFFFF;
       }
     }
   }
 
   .control-item {
-    display: flex;
-    align-items: center;
-    
-    nb-select {
-      min-width: 8rem;
-    }
+    display: none; // Hide theme selector in production
   }
 
   @include media-breakpoint-down(sm) {
-    .control-item {
-      display: none;
-    }
     .user-action {
       border: none;
       padding: 0;
     }
-  }
-
-  @include media-breakpoint-down(is) {
-    nb-select {
-      display: none;
+    
+    .logo-container {
+      width: auto;
+      
+      .logo {
+        padding: 0 0.75rem;
+        
+        .logo-image {
+          height: 2rem;
+        }
+      }
     }
   }
 }

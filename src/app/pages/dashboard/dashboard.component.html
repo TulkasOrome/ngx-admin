@@ -1,37 +1,233 @@
-<div class="row">
-  <div class="col-xxxl-3 col-md-6" *ngFor="let statusCard of statusCards">
-    <ngx-metric-card 
-      [title]="statusCard.title" 
-      [type]="statusCard.type"
-      [value]="statusCard.value"
-      [unitOfMeasurement]="statusCard.unitOfMeasurement"
-      [iconClass]="statusCard.iconClass">
-    </ngx-metric-card>
+<!-- src/app/pages/dashboard/dashboard.component.html -->
+<div class="dashboard-container">
+  <!-- Hero Section with Background -->
+  <div class="hero-section">
+    <div class="hero-background"></div>
+    
+    <!-- Top Metrics Bar -->
+    <div class="top-metrics">
+      <div class="metric">
+        <span class="value">1.2M+</span>
+        <span class="label">Total Verifications</span>
+      </div>
+      <div class="metric">
+        <span class="value">403ms</span>
+        <span class="label">Average Response Time</span>
+      </div>
+      <div class="metric">
+        <span class="value">99.9%</span>
+        <span class="label">Global Uptime</span>
+      </div>
+      <div class="metric">
+        <span class="value">21</span>
+        <span class="label">Active Countries</span>
+      </div>
+    </div>
+    
+    <!-- Main Title and CTA aligned to right -->
+    <div class="hero-content">
+      <div class="main-title">
+        <span class="line1">Reliable identity intelligence, built</span>
+        <span class="line2">to strengthen trust at scale.</span>
+      </div>
+      
+      <!-- CTA Button right-aligned below title -->
+      <button class="cta-button" (click)="contactUs()">
+        Contact us for a full demo →
+      </button>
+    </div>
   </div>
-</div>
-
-<div class="row">
-  <div class="col-12">
-    <ngx-country-coverage></ngx-country-coverage>
+  
+  <!-- Status and Map Section Combined -->
+  <div class="map-wrapper">
+    <!-- Status Indicators positioned above map -->
+    <div class="status-section">
+      <h2 class="status-title">Status</h2>
+      <div class="status-indicators">
+        <div class="indicator">
+          <span class="dot online"></span>
+          <span class="text">ONLINE</span>
+        </div>
+        <div class="indicator">
+          <span class="dot coming-soon"></span>
+          <span class="text">COMING SOON</span>
+        </div>
+        <div class="indicator">
+          <span class="dot offline"></span>
+          <span class="text">OFFLINE</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="map-section">
+      <div class="map-container">
+        <div id="world-map" class="world-map"></div>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="row mt-4">
-  <div class="col-xxxl-8 col-xl-12">
-    <ngx-data-centers-map></ngx-data-centers-map>
-  </div>
-
-  <div class="col-xxxl-4 col-xxl-4 col-lg-5 col-md-6">
-    <ngx-recent-verifications></ngx-recent-verifications>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-xxxl-6 col-xxl-6 col-lg-6 col-md-12">
-    <ngx-compliance-summary></ngx-compliance-summary>
-  </div>
-
-  <div class="col-xxxl-6 col-xxl-6 col-lg-6 col-md-12">
-    <ngx-differentiators></ngx-differentiators>
+  
+  <!-- Bottom Content Section -->
+  <div class="bottom-content">
+    <!-- Global Coverage Section -->
+    <div class="info-section">
+      <h2 class="section-title">Global Coverage</h2>
+      
+      <div class="coverage-row">
+        <div class="coverage-card">
+          <div class="card-header">
+            <span class="region">Asia Pacific</span>
+            <div class="stats">
+              <span class="percentage">95%</span>
+              <span class="count">350ms</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <span class="countries">12 COUNTRIES | 500M+ RECORDS</span>
+            <div class="labels">
+              <span class="coverage-label">COVERAGE</span>
+              <span class="response-label">AVG RESPONSE</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="coverage-card">
+          <div class="card-header">
+            <span class="region">Middle East & Africa</span>
+            <div class="stats">
+              <span class="percentage">92%</span>
+              <span class="count">400ms</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <span class="countries">7 COUNTRIES | 200M+ RECORDS</span>
+            <div class="labels">
+              <span class="coverage-label">COVERAGE</span>
+              <span class="response-label">AVG RESPONSE</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="coverage-card">
+          <div class="card-header">
+            <span class="region">Americas</span>
+            <div class="stats">
+              <span class="percentage">90%</span>
+              <span class="count">300ms</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <span class="countries">2 COUNTRIES | 100M+ RECORDS</span>
+            <div class="labels">
+              <span class="coverage-label">COVERAGE</span>
+              <span class="response-label">AVG RESPONSE</span>
+            </div>
+            <div class="card-footer">
+              <span class="country-item">
+                <span class="flag">🇨🇦</span>
+                <span class="country-name">Canada</span>
+              </span>
+              <span class="country-item">
+                <span class="flag">🇲🇽</span>
+                <span class="country-name">Mexico</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="coverage-card">
+          <div class="card-header">
+            <span class="region">Europe</span>
+            <div class="stats">
+              <span class="percentage">88%</span>
+              <span class="count">250ms</span>
+            </div>
+          </div>
+          <div class="card-details">
+            <span class="countries">2 COUNTRIES | 50M+ RECORDS</span>
+            <div class="labels">
+              <span class="coverage-label">COVERAGE</span>
+              <span class="response-label">AVG RESPONSE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Why Choose Identity Pulse Section -->
+    <div class="info-section">
+      <h2 class="section-title">Why choose Identity Pulse?</h2>
+      
+      <div class="feature-row">
+        <!-- First Row -->
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">&lt;5 min</span>
+            <span class="feature-label">latency</span>
+          </div>
+          <div class="feature-title">REAL-TIME UPDATES</div>
+          <div class="feature-description">
+            Direct integration with government and trusted sources enables instant updates and continuous accuracy.
+          </div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">15+</span>
+            <span class="feature-label">sources</span>
+          </div>
+          <div class="feature-title">MULTI-SOURCE VALIDATION</div>
+          <div class="feature-description">
+            Data is cross-referenced from multiple authoritative sources to ensure thorough and reliable verification.
+          </div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">99.2%</span>
+            <span class="feature-label">accuracy</span>
+          </div>
+          <div class="feature-title">AI-POWERED MATCHING</div>
+          <div class="feature-description">
+            Advanced fuzzy matching algorithms seamlessly resolve name variations, spelling errors, and typos to improve matching accuracy.
+          </div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">4 global</span>
+            <span class="feature-label">regions</span>
+          </div>
+          <div class="feature-title">REGIONAL EXPERTISE</div>
+          <div class="feature-description">
+            Includes deep knowledge of local naming conventions and data formats, delivering more precise verification across regions.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Second Row -->
+      <div class="feature-row">
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">&lt; 250ms</span>
+            <span class="feature-label">response</span>
+          </div>
+          <div class="feature-title">ELASTIC INFRASTRUCTURE</div>
+          <div class="feature-description">
+            Built on ElasticSearch for rapid, scalable searches, maintaining sub-250ms response times at any volume.
+          </div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-header">
+            <span class="feature-value">ISO 27001</span>
+          </div>
+          <div class="feature-title">PRIVACY BY DESIGN</div>
+          <div class="feature-description">
+            Zero data retention and end-to-end encryption for complete transparency and full compliance with global privacy standards.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

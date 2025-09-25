@@ -1,5 +1,6 @@
+// src/app/@theme/styles/styles.scss
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap');
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 // themes - our custom or/and out of the box themes
@@ -20,6 +21,9 @@
 @import './layout';
 @import './overrides';
 
+// Import dark theme overrides
+@import './dark-theme-overrides';
+
 // install the framework and custom global styles
 @include nb-install() {
 
@@ -33,3 +37,177 @@
 
   @include nb-overrides();
 };
+
+// Apply dark theme overrides outside of nb-install
+.nb-theme-identitypulse {
+  @include dark-theme-overrides();
+  
+  // Additional global styles for dark theme
+  background: #010A26;
+  color: #FFFFFF;
+  
+  // Override body background
+  body {
+    background: #010A26;
+    color: #FFFFFF;
+  }
+  
+  // Override layout background
+  nb-layout {
+    background: #010A26;
+    
+    .layout {
+      background: #010A26;
+    }
+    
+    .layout-container {
+      background: #010A26;
+      
+      .content {
+        background: #010A26;
+        
+        .columns {
+          background: #010A26;
+          
+          nb-layout-column {
+            background: #010A26;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Global font override for Inter
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Force dark theme globally */
+html, body {
+  background: #010A26 !important;
+  color: #FFFFFF !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Override Nebular layout background */
+nb-layout {
+  background: #010A26 !important;
+}
+
+nb-layout .layout {
+  background: #010A26 !important;
+}
+
+nb-layout .layout-container {
+  background: #010A26 !important;
+}
+
+nb-layout-column {
+  background: #010A26 !important;
+  padding: 0 !important;
+}
+
+/* Sidebar dark theme */
+nb-sidebar {
+  background: #010A26 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+nb-sidebar.left {
+  width: 280px !important;
+}
+
+/* Menu dark theme */
+nb-menu {
+  background: transparent !important;
+}
+
+nb-menu .menu-items {
+  background: transparent !important;
+}
+
+nb-menu .menu-item a {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+nb-menu .menu-item a:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+}
+
+nb-menu .menu-item.active > a {
+  background: rgba(0, 102, 255, 0.15) !important;
+  color: #0066FF !important;
+}
+
+/* Header dark theme */
+nb-layout-header {
+  background: #010A26 !important;
+  border-bottom: none !important;
+  color: #FFFFFF !important;
+}
+
+/* Cards dark theme */
+nb-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+}
+
+nb-card-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+}
+
+nb-card-body {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Map fallback background */
+#world-map {
+  background-color: rgba(255, 255, 255, 0.02);
+  position: relative;
+}
+
+#world-map::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600'%3E%3Crect width='1200' height='600' fill='%23010A26'/%3E%3Ctext x='600' y='300' text-anchor='middle' fill='rgba(255,255,255,0.2)' font-size='24' font-family='Inter'%3EWorld Map%3C/text%3E%3C/svg%3E");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+/* Leaflet map container */
+.leaflet-container {
+  background: rgba(255, 255, 255, 0.02) !important;
+  z-index: 1;
+}

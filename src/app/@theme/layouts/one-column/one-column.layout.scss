@@ -1,9 +1,165 @@
+// src/app/@theme/layouts/one-column/one-column.layout.scss
 @import '../../styles/themes';
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
-  .menu-sidebar ::ng-deep .scrollable {
-    padding-top: nb-theme(layout-padding-top);
+  ::ng-deep {
+    // Dark theme layout styling
+    nb-layout.dark-theme-layout {
+      background: #010A26;
+      
+      nb-layout-column.dark-content {
+        background: #010A26;
+        padding: 0;
+      }
+      
+      nb-layout-header.dark-header {
+        background: #010A26;
+        border-bottom: none;
+        padding: 0 2.25rem;
+        height: 4.75rem;
+        
+        ngx-header {
+          background: transparent;
+        }
+      }
+      
+      nb-layout-footer.dark-footer {
+        background: #010A26;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    // Sidebar styling based on Figma
+    .menu-sidebar.dark-sidebar {
+      background: #010A26;
+      width: 280px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      
+      .scrollable {
+        padding-top: 2.25rem;
+      }
+      
+      // Menu items styling from Figma
+      nb-menu {
+        .menu-items {
+          padding: 0;
+          
+          .menu-item {
+            margin: 0;
+            
+            a {
+              position: relative;
+              padding: 10px 18px 8px 42px;
+              border-radius: 0;
+              border-top-right-radius: 5px;
+              border-bottom-right-radius: 5px;
+              color: rgba(255, 255, 255, 0.7);
+              font-family: 'Inter', sans-serif;
+              font-weight: 400;
+              font-size: 14px;
+              line-height: 24px;
+              transition: all 0.3s ease;
+              
+              &:hover {
+                background: rgba(255, 255, 255, 0.05);
+                color: #FFFFFF;
+                
+                .menu-icon {
+                  color: rgba(255, 255, 255, 0.9);
+                }
+              }
+              
+              .menu-icon {
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 1.25rem;
+                margin-right: 1rem;
+              }
+              
+              .menu-title {
+                font-weight: 400;
+              }
+            }
+            
+            &.active > a,
+            &.selected > a {
+              background: rgba(0, 102, 255, 0.15);
+              color: #0066FF;
+              
+              &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 3px;
+                background: #0066FF;
+              }
+              
+              .menu-icon {
+                color: #0066FF;
+              }
+            }
+            
+            // Dashboard specific styling (first menu item)
+            &:first-child {
+              a {
+                height: 80px;
+                display: flex;
+                align-items: center;
+                padding: 10px 18px 8px 42px;
+              }
+            }
+          }
+          
+          // Menu group styling
+          .menu-group {
+            .group-title {
+              color: rgba(255, 255, 255, 0.4);
+              font-size: 12px;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              padding: 10px 18px 5px 42px;
+              margin: 10px 0 5px 0;
+            }
+          }
+          
+          // Sub-menu items
+          .menu-item .menu-items .menu-item {
+            a {
+              padding-left: 68px;
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.6);
+              
+              &:hover {
+                color: rgba(255, 255, 255, 0.9);
+              }
+            }
+            
+            &.active > a,
+            &.selected > a {
+              color: #0066FF;
+              background: transparent;
+              
+              &::before {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Responsive adjustments
+  @include media-breakpoint-down(md) {
+    ::ng-deep {
+      .menu-sidebar.dark-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
   }
 }
