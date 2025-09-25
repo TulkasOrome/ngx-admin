@@ -1,25 +1,38 @@
 // src/app/@core/services/azure-auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
-export interface AzureUser {
-  clientPrincipal: {
-    userId: string;
-    userRoles: string[];
-    claims: Array<{ typ: string; val: string }>;
-    identityProvider: string;
-    userDetails: string;
-  };
-}
+import { environment } from '../../../environments/environment';
 
 export interface User {
   email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
   name: string;
   role: string;
+  id?: number;
   provider?: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
+export interface UserResponse {
+  id: number;
+  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  is_active: boolean;
+  is_verified: boolean;
+  created_at: string;
 }
 
 @Injectable({
@@ -28,205 +41,270 @@ export interface User {
 export class AzureAuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
-
-  // Add allowed external emails
-  private allowedExternalEmails = [
-    'earl@data-direct.com.au',
-    'jedwards@buzzsaw.media',
-    'jedwards@pulseai.com.au'
-  ];
+  
+  // Backend API URL
+  private apiUrl = environment.production 
+    ? 'https://identitypulse-backend.azurewebsites.net/api'
+    : '/api';
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
-    this.currentUserSubject = new BehaviorSubject<User | null>(null);
+    // Check for stored user and token
+    const storedUser = localStorage.getItem('currentUser');
+    const token = localStorage.getItem('access_token');
+    
+    this.currentUserSubject = new BehaviorSubject<User | null>(
+      storedUser && token ? JSON.parse(storedUser) : null
+    );
     this.currentUser = this.currentUserSubject.asObservable();
-    this.loadUser();
+    
+    // Verify token on initialization if it exists
+    if (token && !this.currentUserSubject.value) {
+      this.verifyToken();
+    }
   }
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
-  loadUser(): void {
-    console.log('Loading user...');
+  /**
+   * Login with email and password - FIXED VERSION
+   * Returns true when login AND profile loading is complete
+   */
+  login(email: string, password: string): Observable<boolean> {
+    console.log('Starting login process for:', email);
     
-    // Check if we're in development mode
-    if (this.isDevelopment()) {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        this.currentUserSubject.next(JSON.parse(storedUser));
-      }
-      return;
-    }
-
-    // In production, check for Azure Static Web Apps authentication
-    this.http.get<any>('/.auth/me')
-      .pipe(
-        tap(response => console.log('Auth response:', response)),
-        map(response => {
-          // Azure SWA returns an array with the user info
-          if (response && Array.isArray(response) && response.length > 0) {
-            return this.mapAzureUserToUser({ clientPrincipal: response[0] });
-          } else if (response && response.clientPrincipal) {
-            return this.mapAzureUserToUser(response);
-          }
-          return null;
-        }),
-        catchError((error) => {
-          console.log('Auth check failed:', error);
-          return of(null);
-        })
-      )
-      .subscribe(user => {
-        console.log('Mapped user:', user);
-        this.currentUserSubject.next(user);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/signin`, {
+      email,
+      password
+    }).pipe(
+      switchMap(response => {
+        console.log('Login successful, received tokens');
         
-        // If we have a user and we're on the login page, redirect to dashboard
-        if (user && window.location.pathname === '/login') {
-          const redirectUrl = localStorage.getItem('redirectUrl') || '/pages/dashboard';
-          localStorage.removeItem('redirectUrl');
-          this.router.navigate([redirectUrl]);
-        }
-      });
+        // Store tokens
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
+        
+        // Now load the user profile and wait for it to complete
+        return this.loadUserProfileAsync();
+      }),
+      map(user => {
+        console.log('User profile loaded:', user);
+        return !!user;  // Return true if user was loaded successfully
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        this.clearAuth();
+        return of(false);
+      })
+    );
   }
 
-  private mapAzureUserToUser(response: any): User | null {
-    const principal = response.clientPrincipal;
-    if (!principal || !principal.userId) return null;
+  /**
+   * Load user profile from backend - Returns Observable
+   */
+  private loadUserProfileAsync(): Observable<User | null> {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.log('No token found');
+      return of(null);
+    }
 
-    console.log('Mapping principal:', principal);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
-    // Find email from claims
-    const emailClaim = principal.claims?.find(
-      (c: any) => c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress' ||
-                  c.typ === 'emails' ||
-                  c.typ === 'email'
-    );
+    console.log('Loading user profile...');
+    
+    return this.http.get<UserResponse>(`${this.apiUrl}/users/me`, { headers })
+      .pipe(
+        map(response => this.mapUserResponse(response)),
+        tap(user => {
+          console.log('Setting current user:', user);
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        }),
+        catchError(error => {
+          console.error('Failed to load user profile:', error);
+          // If token is invalid, clear everything
+          if (error.status === 401) {
+            this.clearAuth();
+          }
+          return of(null);
+        })
+      );
+  }
 
-    const nameClaim = principal.claims?.find(
-      (c: any) => c.typ === 'name' ||
-                  c.typ === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
-    );
+  /**
+   * Load user profile - fire and forget version (for initialization)
+   */
+  loadUserProfile(): void {
+    this.loadUserProfileAsync().subscribe();
+  }
 
+  /**
+   * Map backend user response to our User interface
+   */
+  private mapUserResponse(response: UserResponse): User {
+    const firstName = response.first_name || '';
+    const lastName = response.last_name || '';
+    const fullName = `${firstName} ${lastName}`.trim() || response.username || response.email;
+    
     return {
-      email: emailClaim?.val || principal.userDetails || 'user@example.com',
-      name: nameClaim?.val || principal.userDetails || 'User',
-      role: principal.userRoles?.[0] || 'authenticated',
-      provider: principal.identityProvider
+      id: response.id,
+      email: response.email,
+      username: response.username,
+      first_name: firstName,
+      last_name: lastName,
+      name: fullName,
+      role: response.role
     };
   }
 
-  login(provider: 'github' | 'aad' | 'google' | 'twitter' = 'aad'): void {
-    if (this.isDevelopment()) {
-      const mockUser: User = {
-        email: 'admin@identitypulse.com',
-        name: 'Admin User',
-        role: 'authenticated'
-      };
-      localStorage.setItem('currentUser', JSON.stringify(mockUser));
-      this.currentUserSubject.next(mockUser);
-      this.router.navigate(['/pages/dashboard']);
-    } else {
-      // Store current location for redirect after login
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/login') {
-        localStorage.setItem('redirectUrl', currentPath);
-      }
-      
-      // Azure SWA login
-      window.location.href = `/.auth/login/${provider}`;
-    }
-  }
+  /**
+   * Verify stored token is still valid
+   */
+  private verifyToken(): void {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
 
-  devLogin(email: string, password: string): Observable<boolean> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        const allowedUsers = [
-          { email: 'admin@identitypulse.com', password: 'admin123', name: 'Admin User' },
-          { email: 'test@identitypulse.com', password: 'test123', name: 'Test User' },
-          { email: 'earl@data-direct.com.au', password: 'earl2024!', name: 'Earl' },
-          { email: 'jedwards@buzzsaw.media', password: 'sEj4-tGcCUcdhH9KjUaf', name: 'J Edwards' },
-          { email: 'jedwards@pulseai.com.au', password: 'm_4dXd35YOiX', name: 'J Edwards Pulse' }
-        ];
-        
-        const user = allowedUsers.find(u => 
-          u.email.toLowerCase() === email.toLowerCase() && u.password === password
-        );
-        
-        if (user) {
-          const authUser: User = {
-            email: user.email,
-            name: user.name,
-            role: 'authenticated'
-          };
-          localStorage.setItem('currentUser', JSON.stringify(authUser));
-          this.currentUserSubject.next(authUser);
-          observer.next(true);
-        } else {
-          observer.next(false);
-        }
-        observer.complete();
-      }, 1000);
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
     });
+
+    this.http.get<UserResponse>(`${this.apiUrl}/users/me`, { headers })
+      .pipe(
+        map(response => this.mapUserResponse(response)),
+        tap(user => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        }),
+        catchError(error => {
+          console.error('Token verification failed:', error);
+          // If token is invalid, try to refresh
+          if (error.status === 401) {
+            return this.refreshToken();
+          }
+          this.clearAuth();
+          return of(null);
+        })
+      ).subscribe();
   }
 
+  /**
+   * Refresh access token using refresh token
+   */
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      this.clearAuth();
+      return of(null);
+    }
+
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/refresh`, {
+      refresh_token: refreshToken
+    }).pipe(
+      switchMap(response => {
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
+        // Return the user profile loading
+        return this.loadUserProfileAsync();
+      }),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        this.clearAuth();
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Logout user
+   */
   logout(): void {
+    console.log('Logging out user');
+    const token = localStorage.getItem('access_token');
+    
+    // Call backend logout endpoint if token exists
+    if (token) {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+      
+      this.http.post(`${this.apiUrl}/auth/sign-out`, {}, { headers })
+        .pipe(catchError(() => of(null)))
+        .subscribe();
+    }
+    
+    // Clear local storage and redirect
+    this.clearAuth();
+    this.router.navigate(['/login']);
+  }
+
+  /**
+   * Clear authentication data
+   */
+  private clearAuth(): void {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('redirectUrl');
     this.currentUserSubject.next(null);
-    
-    if (this.isDevelopment()) {
-      this.router.navigate(['/login']);
-    } else {
-      window.location.href = '/.auth/logout';
-    }
   }
 
+  /**
+   * Check if user is authenticated
+   */
   isAuthenticated(): boolean {
     const user = this.currentUserValue;
-    if (!user) return false;
-    
-    // Check if email is from identitypulse domain OR is in allowed external list
-    const email = user.email.toLowerCase();
-    const isIdentityPulseEmail = email.endsWith('@identitypulse.com') || email.endsWith('@identitypulse.ai');
-    const isAllowedExternal = this.allowedExternalEmails.some(allowed => 
-      allowed.toLowerCase() === email
-    );
-    
-    // Log for debugging
-    console.log('Auth check:', {
-      email,
-      isIdentityPulseEmail,
-      isAllowedExternal,
-      isAuthenticated: isIdentityPulseEmail || isAllowedExternal
-    });
-    
-    return isIdentityPulseEmail || isAllowedExternal;
+    const token = localStorage.getItem('access_token');
+    return !!user && !!token;
   }
 
+  /**
+   * Get current access token
+   */
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  /**
+   * Check if user has admin role
+   */
+  isAdmin(): boolean {
+    const user = this.currentUserValue;
+    return user?.role === 'admin';
+  }
+
+  /**
+   * Development mode check
+   */
   public isDevelopment(): boolean {
-    return window.location.hostname === 'localhost' || 
-           window.location.hostname === '127.0.0.1';
+    return !environment.production;
   }
 
-  // Method to get allowed domains and emails for display
-  public getAllowedDomains(): string[] {
-    return [
-      '@identitypulse.com',
-      '@identitypulse.ai',
-      ...this.allowedExternalEmails
-    ];
+  /**
+   * Dev login for backwards compatibility
+   */
+  devLogin(email: string, password: string): Observable<boolean> {
+    return this.login(email, password);
   }
 
-  // Method to check if an email is allowed
+  /**
+   * For compatibility with old code
+   */
   public isEmailAllowed(email: string): boolean {
-    const emailLower = email.toLowerCase();
-    const isIdentityPulseEmail = emailLower.endsWith('@identitypulse.com') || emailLower.endsWith('@identitypulse.ai');
-    const isAllowedExternal = this.allowedExternalEmails.some(allowed => 
-      allowed.toLowerCase() === emailLower
-    );
-    return isIdentityPulseEmail || isAllowedExternal;
+    return true;
+  }
+
+  public getAllowedDomains(): string[] {
+    return ['All registered users'];
+  }
+
+  loginWithProvider(provider: string): void {
+    console.log('Social login not implemented for backend auth');
   }
 }

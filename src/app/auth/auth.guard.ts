@@ -9,6 +9,7 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AzureAuthService } from '../@core/services/azure-auth.service';
+import { map, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -22,34 +23,51 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> {
-    // Check authentication status using our custom service
-    const isAuthenticated = this.azureAuthService.isAuthenticated();
+  ): Observable<boolean | UrlTree> | boolean | UrlTree {
+    
+    // Check if we have a token and user
+    const token = localStorage.getItem('access_token');
+    const user = this.azureAuthService.currentUserValue;
     
     console.log('AuthGuard check:', {
-      isAuthenticated,
-      currentUser: this.azureAuthService.currentUserValue,
+      hasToken: !!token,
+      hasUser: !!user,
+      user: user,
       attemptedUrl: state.url
     });
     
-    if (isAuthenticated) {
-      return of(true);
-    } else {
-      // Store the attempted URL for redirecting after login
-      if (state.url !== '/login') {
-        localStorage.setItem('redirectUrl', state.url);
-      }
-      
-      // Check if user is logged in but not authorized (external email)
-      const user = this.azureAuthService.currentUserValue;
-      if (user) {
-        console.error(`User ${user.email} is not authorized. Not an IdentityPulse email or allowed external email.`);
-        // You might want to show a different error page here
-        // For now, we'll redirect to login with an error message
-      }
-      
-      // Redirect to login page
-      return of(this.router.createUrlTree(['/login']));
+    // If we have both token and user, allow access
+    if (token && user) {
+      return true;
     }
+    
+    // If we have a token but no user yet, the service might still be loading the user
+    // Give it a moment to load
+    if (token && !user) {
+      console.log('Token exists but user not loaded yet, waiting...');
+      
+      return this.azureAuthService.currentUser.pipe(
+        take(1),
+        map(currentUser => {
+          console.log('User loaded:', currentUser);
+          if (currentUser) {
+            return true;
+          } else {
+            // Token might be invalid
+            console.log('Failed to load user with token, redirecting to login');
+            localStorage.setItem('redirectUrl', state.url);
+            return this.router.createUrlTree(['/login']);
+          }
+        })
+      );
+    }
+    
+    // No token, redirect to login
+    console.log('No token, redirecting to login');
+    if (state.url !== '/login') {
+      localStorage.setItem('redirectUrl', state.url);
+    }
+    
+    return this.router.createUrlTree(['/login']);
   }
 }

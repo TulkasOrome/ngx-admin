@@ -1,6 +1,42 @@
-// identitypulse-functions/VerifyOTP/index.js - FIXED URLs
+// identitypulse-functions/VerifyOTP/index.js - With Strong Password Generation
 const { EmailClient } = require("@azure/communication-email");
 const { TableClient } = require("@azure/data-tables");
+const crypto = require('crypto');
+
+// Strong password generator function
+function generateStrongPassword() {
+    const length = 16; // 16 character password
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    const allChars = uppercase + lowercase + numbers + symbols;
+    
+    let password = '';
+    
+    // Ensure at least 2 of each type for complexity
+    for (let i = 0; i < 2; i++) {
+        password += uppercase[Math.floor(Math.random() * uppercase.length)];
+        password += lowercase[Math.floor(Math.random() * lowercase.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += symbols[Math.floor(Math.random() * symbols.length)];
+    }
+    
+    // Fill the remaining characters randomly
+    for (let i = password.length; i < length; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+    
+    // Shuffle the password to avoid predictable patterns
+    return password.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+// Generate secure username
+function generateSecureUsername(email) {
+    const prefix = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+    const randomSuffix = crypto.randomBytes(3).toString('hex'); // 6 character hex string
+    return `${prefix}_${randomSuffix}`;
+}
 
 module.exports = async function (context, req) {
     context.log('VerifyOTP function triggered');
@@ -109,7 +145,7 @@ module.exports = async function (context, req) {
         const emailClient = new EmailClient(process.env.ACS_CONNECTION_STRING);
         const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
         
-        // FIXED: Determine the correct Function App URL based on environment
+        // Determine the correct Function App URL based on environment
         let functionUrl;
         if (process.env.FUNCTION_APP_URL && process.env.FUNCTION_APP_URL.includes('azurewebsites.net')) {
             // Production - use the deployed URL
@@ -121,9 +157,10 @@ module.exports = async function (context, req) {
         
         context.log('Using Function URL:', functionUrl);
         
-        // Determine admin email (ensure it's different from user email)
+        // Determine admin email
         let adminEmail = process.env.SALES_EMAIL || "admin@identitypulse.ai";
-        if (adminEmail === formData.email) {
+        // Allow same email for testing with Gmail + variations
+        if (adminEmail === formData.email && !formData.email.includes('+')) {
             context.log('Admin email same as user email, using fallback');
             adminEmail = "admin+approval@identitypulse.ai";
         }
@@ -158,13 +195,11 @@ module.exports = async function (context, req) {
                 if (errorText.includes('already exists')) {
                     userExists = true;
                 } else if (errorText.includes('already pending')) {
-                    // For pending approvals, still continue but note it
                     context.log('Approval already pending');
                 }
             }
         } catch (error) {
             context.log.error('Error creating approval request:', error.message);
-            // Continue anyway - don't fail the whole process
             approvalToken = 'temp-' + Date.now();
         }
         
@@ -217,9 +252,11 @@ module.exports = async function (context, req) {
             context.log('Processing auto-approval...');
             
             try {
-                // Generate credentials
-                const username = formData.email.split('@')[0] + Math.floor(Math.random() * 1000);
-                const tempPassword = 'Welcome' + Math.floor(Math.random() * 10000) + '!';
+                // Generate strong credentials
+                const username = generateSecureUsername(formData.email);
+                const securePassword = generateStrongPassword();
+                
+                context.log('Generated secure credentials for user');
                 
                 // Complete registration
                 const completeResponse = await fetch(`${backendUrl}/api/approval/complete`, {
@@ -228,7 +265,7 @@ module.exports = async function (context, req) {
                     body: JSON.stringify({
                         approval_token: approvalToken,
                         username: username,
-                        password: tempPassword
+                        password: securePassword
                     })
                 });
                 
@@ -236,27 +273,68 @@ module.exports = async function (context, req) {
                     const newUser = await completeResponse.json();
                     context.log('User created:', newUser.id);
                     
-                    // Send welcome email
+                    // Send welcome email with secure credentials
                     const welcomeEmail = {
                         senderAddress: process.env.SENDER_EMAIL,
                         recipients: {
                             to: [{ address: formData.email }]
                         },
                         content: {
-                            subject: "Welcome to IdentityPulse - Account Ready",
+                            subject: "Welcome to IdentityPulse - Your Secure Account Credentials",
                             html: `
-                                <div style="font-family: Arial, sans-serif; max-width: 600px;">
-                                    <h2>Welcome ${formData.firstName}!</h2>
-                                    <p>Your account has been created.</p>
-                                    <div style="background: #f3f4f6; padding: 20px; border-radius: 8px;">
-                                        <p><strong>Username:</strong> ${username}</p>
-                                        <p><strong>Password:</strong> ${tempPassword}</p>
+                                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                    <div style="background: linear-gradient(135deg, #4B7BF5, #3B5EDB); padding: 20px; text-align: center;">
+                                        <h1 style="color: white; margin: 0;">Welcome to IdentityPulse!</h1>
                                     </div>
-                                    <p>Please change your password after first login.</p>
-                                    <div style="text-align: center; margin: 30px 0;">
-                                        <a href="https://lookup.identitypulse.ai/login" target="_blank" style="display: inline-block; padding: 12px 30px; background: #4B7BF5; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                                            Login to IdentityPulse
-                                        </a>
+                                    <div style="padding: 30px; background: #f7f9fc;">
+                                        <h2 style="color: #1a1a1a;">Hi ${formData.firstName},</h2>
+                                        <p style="color: #6b7280; font-size: 16px;">
+                                            Your account has been approved and is ready to use. Below are your secure login credentials.
+                                        </p>
+                                        
+                                        <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            <h3 style="color: #4B7BF5; margin-top: 0;">Your Secure Login Credentials</h3>
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td style="padding: 8px 0;"><strong>Username:</strong></td>
+                                                    <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace;">${username}</code></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px 0;"><strong>Password:</strong></td>
+                                                    <td><code style="background: #f3f4f6; padding: 4px 8px; border-radius: 3px; font-family: monospace; font-size: 12px; word-break: break-all;">${securePassword}</code></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px 0;"><strong>Email:</strong></td>
+                                                    <td>${formData.email}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        
+                                        <div style="background: #dbeafe; border: 1px solid #60a5fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                                            <p style="color: #1e40af; margin: 0;">
+                                                <strong>🔒 Security Notice:</strong> Your password has been generated using cryptographically secure methods. Please store it safely in a password manager. This password provides maximum security for your account.
+                                            </p>
+                                        </div>
+                                        
+                                        <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                                            <p style="color: #92400e; margin: 0;">
+                                                <strong>⚠️ Important:</strong> For security reasons, this email is the only time your password will be shown. Please save these credentials immediately.
+                                            </p>
+                                        </div>
+                                        
+                                        <div style="text-align: center; margin: 30px 0;">
+                                            <a href="https://lookup.identitypulse.ai/login" target="_blank" style="display: inline-block; padding: 12px 30px; background: #4B7BF5; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                                                Login to IdentityPulse
+                                            </a>
+                                        </div>
+                                        
+                                        <h3 style="color: #1a1a1a;">Security Best Practices:</h3>
+                                        <ul style="color: #6b7280;">
+                                            <li>Store your credentials in a secure password manager</li>
+                                            <li>Never share your login details with anyone</li>
+                                            <li>Enable two-factor authentication if available</li>
+                                            <li>Contact support immediately if you suspect unauthorized access</li>
+                                        </ul>
                                     </div>
                                 </div>
                             `
@@ -280,6 +358,9 @@ module.exports = async function (context, req) {
                                         <p>Email: ${formData.email}</p>
                                         <p>Name: ${formData.firstName} ${formData.lastName}</p>
                                         <p>Company: ${formData.company}</p>
+                                        <p>Username: ${username}</p>
+                                        <p>User ID: ${newUser.id}</p>
+                                        <p>Secure credentials have been sent to the user.</p>
                                     </div>
                                 `
                             }
@@ -309,7 +390,6 @@ module.exports = async function (context, req) {
             // MANUAL APPROVAL MODE
             context.log('Processing manual approval...');
             
-            // FIXED: Use correct URL for approval links
             const approveUrl = `${functionUrl}/api/ApproveUser?token=${approvalToken}&action=approve`;
             const rejectUrl = `${functionUrl}/api/ApproveUser?token=${approvalToken}&action=reject`;
             

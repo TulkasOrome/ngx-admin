@@ -1,0 +1,57 @@
+
+  {
+    "/api/auth/*": {
+    "target": "https://identitypulse-backend.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "timeout": 120000,
+    "headers": {
+      "Origin": "https://identitypulse-backend.azurewebsites.net"
+    },
+    "onProxyRes": {
+      "comment": "Handle CORS if needed"
+    }
+  },
+  "/api/users/*": {
+    "target": "https://identitypulse-backend.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "timeout": 120000,
+    "headers": {
+      "Origin": "https://identitypulse-backend.azurewebsites.net"
+    }
+  },
+  "/api/approval/*": {
+    "target": "https://identitypulse-backend.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "timeout": 120000,
+    "headers": {
+      "Origin": "https://identitypulse-backend.azurewebsites.net"
+    }
+  },
+  "/api/identity_match": {
+    "target": "https://identitypulse-api-v3.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "headers": {
+      "Origin": "https://identitypulse-api-v3.azurewebsites.net"
+    }
+  },
+  "/azure-storage/*": {
+    "target": "https://stidentitypulsebulk.blob.core.windows.net",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/azure-storage": ""
+    },
+    "headers": {
+      "Origin": "https://stidentitypulsebulk.blob.core.windows.net"
+    }
+  }
+}

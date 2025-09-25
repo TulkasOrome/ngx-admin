@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AzureAuthService } from '../@core/services/azure-auth.service';
 import { NbToastrService } from '@nebular/theme';
 import { environment } from '../../environments/environment';
+import { finalize, delay } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-login',
@@ -28,19 +29,13 @@ export class LoginComponent implements OnInit {
   ) {
     console.log('LoginComponent constructor called');
     
-    // Check environment and hostname
-    this.isProduction = environment.production || this.isProductionDomain();
+    // Check environment
+    this.isProduction = environment.production;
     this.isDevelopment = !this.isProduction;
-    
-    console.log('Environment check:', {
-      environmentProduction: environment.production,
-      hostname: window.location.hostname,
-      isProduction: this.isProduction,
-      isDevelopment: this.isDevelopment
-    });
     
     // Check if already authenticated
     if (this.authService.isAuthenticated()) {
+      console.log('User already authenticated, redirecting to dashboard');
       this.router.navigate(['/pages/dashboard']);
     }
   }
@@ -56,13 +51,10 @@ export class LoginComponent implements OnInit {
       }
     }, 0);
     
-    // Initialize form with empty values in production
-    const defaultEmail = this.isDevelopment ? 'admin@identitypulse.com' : '';
-    const defaultPassword = this.isDevelopment ? 'admin123' : '';
-    
+    // Initialize form
     this.loginForm = this.formBuilder.group({
-      email: [defaultEmail, [Validators.required, Validators.email]],
-      password: [defaultPassword, Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
       rememberMe: [true]
     });
 
@@ -74,14 +66,6 @@ export class LoginComponent implements OnInit {
     if (storedRedirectUrl) {
       this.returnUrl = storedRedirectUrl;
     }
-  }
-
-  private isProductionDomain(): boolean {
-    const hostname = window.location.hostname;
-    return hostname.includes('identitypulse.ai') || 
-           hostname.includes('identitypulse.com') ||
-           hostname.includes('azurestaticapps.net') ||
-           hostname.includes('azurewebsites.net');
   }
 
   get email() { return this.loginForm.get('email'); }
@@ -103,27 +87,38 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
+    const email = this.email.value;
+    const password = this.password.value;
     
-    // In production, we still allow email/password login for special accounts
-    // but don't show the demo message
-    this.authService.devLogin(this.email.value, this.password.value)
+    console.log('Attempting login for:', email);
+    
+    // Use the backend authentication service
+    this.authService.login(email, password)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe(
         success => {
+          console.log('Login result:', success);
+          
           if (success) {
             this.toastr.success('Welcome to IdentityPulse!', 'Login Successful');
             
             // Clear any stored redirect URL
             localStorage.removeItem('redirectUrl');
             
-            // Navigate to return URL
-            this.router.navigate([this.returnUrl]);
+            // Small delay to ensure everything is set up
+            setTimeout(() => {
+              console.log('Navigating to:', this.returnUrl);
+              this.router.navigate([this.returnUrl]).then(
+                () => console.log('Navigation successful'),
+                (err) => console.error('Navigation failed:', err)
+              );
+            }, 100);
           } else {
-            if (this.isProduction) {
-              this.toastr.danger('Invalid credentials or access not granted', 'Login Failed');
-            } else {
-              this.toastr.danger('Invalid email or password', 'Login Failed');
-            }
-            this.loading = false;
+            this.toastr.danger('Invalid email or password', 'Login Failed');
           }
         },
         error => {
@@ -134,14 +129,8 @@ export class LoginComponent implements OnInit {
       );
   }
 
-  loginWithProvider(provider: 'github' | 'aad' | 'google' | 'twitter') {
-    console.log(`Login with ${provider} clicked`);
-    
-    // Store the return URL before redirecting
-    if (this.returnUrl && this.returnUrl !== '/pages/dashboard') {
-      localStorage.setItem('redirectUrl', this.returnUrl);
-    }
-    
-    this.authService.login(provider);
+  // Remove or disable social login methods since we're using database auth
+  loginWithProvider(provider: string) {
+    this.toastr.info('Social login is not available. Please use email and password.', 'Information');
   }
 }

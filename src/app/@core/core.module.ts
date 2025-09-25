@@ -55,7 +55,7 @@ import { MockDataModule } from './mock/mock-data.module';
 
 // Import the services
 import { IdentityPulseService } from './services/identitypulse.service';
-import { AzureAuthService } from '../auth/azure-auth.service';
+import { AzureAuthService } from './services/azure-auth.service';
 
 const DATA_SERVICES = [
   { provide: UserData, useClass: UserService },

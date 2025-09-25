@@ -1,9 +1,38 @@
+// src/environments/environment.ts
+// LOCAL DEVELOPMENT ENVIRONMENT - Non-Production
 export const environment = {
   production: false,
+  
+  // Backend API Configuration for Local Development
+  backendApi: {
+    baseUrl: 'http://localhost:8000',  // Local backend server
+    endpoints: {
+      auth: {
+        signin: '/api/auth/signin',
+        refresh: '/api/auth/refresh',
+        signout: '/api/auth/sign-out'
+      },
+      users: {
+        me: '/api/users/me',
+        list: '/api/users',
+        detail: '/api/users/:id',
+        update: '/api/users/:id',
+        delete: '/api/users/:id'
+      },
+      approval: {
+        request: '/api/approval/request',
+        verify: '/api/approval/verify/:token',
+        complete: '/api/approval/complete',
+        pending: '/api/approval/pending'
+      }
+    }
+  },
+
+  // IdentityPulse API Configuration (for identity verification)
   identityPulseApi: {
     baseUrl: 'https://identitypulse-api-v3.azurewebsites.net',
     endpoint: '/api/identity_match',
-    azureFunctionKey:'6oZPyjpfsc1eWigFjgPrPDAYCiQyL-QYdSKaMYNH8xjLAzFuRO847w==',
+    azureFunctionKey: '6oZPyjpfsc1eWigFjgPrPDAYCiQyL-QYdSKaMYNH8xjLAzFuRO847w==',
     apiKeys: {
       // Single country keys
       australia: 'datazoo-o8KaftfnHMOdLTEmQHB82Q',
@@ -36,11 +65,33 @@ export const environment = {
       americasHub: 'datazoo-americas-hub-Qw7eR4tY9uI2oP5aS8dF3gH'
     }
   },
-  azure: {
-    clientId: '23c5ab21-6d6d-47a2-abed-87dc774329b6',
-    tenantId: '8bdc18c6-bf77-4267-adea-209af623f4fb',
-    redirectUri: 'http://localhost:4200',
-    postLogoutRedirectUri: 'http://localhost:4200',
-    scopes: ['user.read', 'User.ReadBasic.All', 'Directory.Read.All']
+
+  // Azure Storage Configuration (if needed)
+  azureStorage: {
+    connectionString: '',  // Add if needed for local testing
+    containerName: 'bulk-uploads'
+  },
+
+  // Elasticsearch servers (if you need direct access)
+  elasticsearchServers: {
+    australia: 'http://localhost:9201',  // SSH tunnel ports for local dev
+    indonesia: 'http://localhost:9202',
+    japan: 'http://localhost:9203',
+    malaysia: 'http://localhost:9204'
+  },
+
+  // Feature flags
+  features: {
+    enableDebugMode: true,
+    enableMockData: false,
+    enableAnalytics: false,
+    enableErrorReporting: false
+  },
+
+  // URLs for external services
+  externalUrls: {
+    accessRequest: 'https://access.identitypulse.ai',
+    documentation: 'https://docs.identitypulse.ai',
+    support: 'https://support.identitypulse.ai'
   }
 };

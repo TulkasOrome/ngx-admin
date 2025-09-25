@@ -70,41 +70,15 @@
             </button>
           </form>
 
-          <!-- Social login buttons - show in production only -->
-          <div class="social-login" *ngIf="isProduction">
-            <div class="divider">
-              <span>OR</span>
-            </div>
-            
-            <div class="social-buttons">
-              <p class="auth-note">If you have been granted access via IdentityPulse access form, use the Microsoft link below</p>              
-              <button nbButton fullWidth status="basic" size="medium" (click)="loginWithProvider('aad')">
-                <nb-icon icon="briefcase-outline"></nb-icon>
-                Continue with Microsoft
-              </button>              
-            </div>
-          </div>
-
-          <!-- Demo info only in development -->
-          <div class="demo-info" *ngIf="isDevelopment">
-            <nb-alert status="info" closable="false">
-              <strong>Demo Credentials:</strong><br>
-              Email: admin@identitypulse.com<br>
-              Password: admin123
-            </nb-alert>
-          </div>
-
-          <!-- Optional: Production warning message (currently hidden with && false) -->
-          <div class="production-info" *ngIf="isProduction && false">
-            <nb-alert status="warning" closable="false">
-              <strong>Authorized Access Only</strong><br>
-              Please use your assigned credentials or Microsoft login.
-            </nb-alert>
-          </div>
-
           <div class="links">
             <p class="text-center">
-              Don't have an account? <a href="https://stidentitypulse8565.z8.web.core.windows.net/" target="_blank"><strong>Click here</strong></a>
+              Don't have an account? 
+              <a href="https://access.identitypulse.ai" target="_blank">
+                <strong>Request Access</strong>
+              </a>
+            </p>
+            <p class="text-center text-hint">
+              <small>Your request will be reviewed and approved by an administrator</small>
             </p>
           </div>
         </nb-card-body>

@@ -1,3 +1,4 @@
+// tsconfig.json (in project root)
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -21,6 +22,21 @@
         "name": "tslint-language-service"
       }
     ],
-    "useDefineForClassFields": false
-  }
+    "useDefineForClassFields": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@core/*": ["app/@core/*"],
+      "@theme/*": ["app/@theme/*"],
+      "@env/*": ["environments/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

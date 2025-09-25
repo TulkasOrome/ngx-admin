@@ -1,3 +1,4 @@
+// src/app/app.module.ts
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -7,6 +8,9 @@ import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginModule } from './login/login.module';
+import { AuthInterceptor } from './@core/interceptors/auth.interceptor';
+// REMOVED: import { AzureAuthService } from './services/azure-auth.service';
+// Note: AzureAuthService is already provided in CoreModule, so we don't need to import it here
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -16,79 +20,6 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
-
-// MSAL imports
-import { 
-  MsalModule, 
-  MsalService, 
-  MsalGuard, 
-  MsalInterceptor, 
-  MsalBroadcastService,
-  MSAL_INSTANCE,
-  MSAL_GUARD_CONFIG,
-  MSAL_INTERCEPTOR_CONFIG,
-  MsalInterceptorConfiguration,
-  MsalGuardConfiguration
-} from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication, Configuration } from '@azure/msal-browser';
-import { environment } from '../environments/environment';
-
-// MSAL Configuration
-const msalConfig: Configuration = {
-  auth: {
-    clientId: environment.azure.clientId,
-    authority: `https://login.microsoftonline.com/${environment.azure.tenantId}`,
-    redirectUri: environment.azure.redirectUri,
-    postLogoutRedirectUri: environment.azure.postLogoutRedirectUri,
-    navigateToLoginRequestUrl: true
-  },
-  cache: {
-    cacheLocation: 'localStorage',
-    storeAuthStateInCookie: false
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback: (level, message, containsPii) => {
-        if (containsPii) {
-          return;
-        }
-        // Only log errors in production
-        if (environment.production && level > 0) {
-          return;
-        }
-        console.log('[MSAL]', message);
-      },
-      logLevel: environment.production ? 0 : 3 // Error only in prod, Verbose in dev
-    }
-  }
-};
-
-// MSAL Instance Factory
-export function MSALInstanceFactory(): PublicClientApplication {
-  return new PublicClientApplication(msalConfig);
-}
-
-// MSAL Guard Configuration
-export function MSALGuardConfigFactory(): MsalGuardConfiguration {
-  return {
-    interactionType: InteractionType.Redirect,
-    authRequest: {
-      scopes: environment.azure.scopes
-    }
-  };
-}
-
-// MSAL Interceptor Configuration
-export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
-  const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', environment.azure.scopes);
-  protectedResourceMap.set(environment.identityPulseApi.baseUrl + '/*', environment.azure.scopes);
-  
-  return {
-    interactionType: InteractionType.Redirect,
-    protectedResourceMap
-  };
-}
 
 @NgModule({
   declarations: [AppComponent],
@@ -109,31 +40,15 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
-    MsalModule
   ],
   providers: [
+    // Add the auth interceptor to handle token management
     {
-      provide: MSAL_INSTANCE,
-      useFactory: MSALInstanceFactory
-    },
-    {
-      provide: MSAL_GUARD_CONFIG,
-      useFactory: MSALGuardConfigFactory
-    },
-    {
-      provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory
-    },
-    // Only add MSAL interceptor in development or when properly configured
-    // Commenting out for now to prevent issues in production
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: MsalInterceptor,
-    //   multi: true
-    // },
-    MsalService,
-    MsalGuard,
-    MsalBroadcastService
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+    // Note: AzureAuthService is already provided in CoreModule, no need to add it here
   ],
   bootstrap: [AppComponent],
 })
