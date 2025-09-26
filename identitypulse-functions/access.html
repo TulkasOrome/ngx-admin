@@ -19,7 +19,6 @@
             --primary-bg: #010A26;
             --text-white: #FFFFFF;
             --text-light: rgba(255, 255, 255, 0.7);
-            --input-bg: rgba(255, 255, 255, 0.1);
             --input-border: rgba(255, 255, 255, 0.2);
             --button-bg: #4B7BF5;
             --button-hover: #3B5EDB;
@@ -36,43 +35,32 @@
 
         /* Header */
         .header {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            padding: 20px 40px;
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
+            display: block;
         }
 
-        .logo-icon {
-            width: 40px;
+        .logo img {
             height: 40px;
-            background: linear-gradient(135deg, #4B7BF5, #3B5EDB);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-white);
+            width: auto;
         }
 
         /* Hero Background Image */
@@ -102,31 +90,25 @@
         /* Main Container */
         .main-container {
             position: relative;
-            padding: 100px 40px 40px;
+            padding: 120px 40px 40px; /* Increased top padding for fixed header */
             max-width: 1440px;
             margin: 0 auto;
             z-index: 1;
         }
 
-        /* Two Column Grid */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 550px;
-            gap: 80px;
-            align-items: flex-start;
-        }
-
-        /* Left Column */
-        .left-column {
-            position: relative;
-        }
-
-        /* Hero Text - Positioned high over hero image */
+        /* Hero Content - Above left column only */
         .hero-content {
             position: relative;
             z-index: 10;
             margin-bottom: 60px;
             padding-top: 20px;
+            max-width: calc(100% - 630px); /* Limit to left column width */
+        }
+
+        @media (max-width: 1200px) {
+            .hero-content {
+                max-width: 100%;
+            }
         }
 
         .hero-title {
@@ -139,33 +121,51 @@
         }
 
         .hero-subtitle {
-            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300; /* Reduced from 400 to make it less bold */
+            font-style: normal;
             font-size: 26px;
             line-height: 32px;
-            letter-spacing: 0.02em;
-            color: var(--text-light);
+            letter-spacing: 0.02em; /* 2% converted to em */
+            color: var(--text-white);
             max-width: 90%;
         }
 
-        /* Globe Section - Aligned with form top */
+        /* Two Column Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 550px;
+            gap: 80px;
+            align-items: start;
+            position: relative;
+        }
+
+        /* Left Column */
+        .left-column {
+            position: relative;
+        }
+
+        /* Globe Section Container */
         .globe-section {
             position: relative;
         }
 
-        .globe-label {
-            font-weight: 700;
+        /* Globe Label */
+        .section-label {
+            font-weight: 400;
             font-size: 14px;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.2em;
             color: var(--text-white);
-            margin-bottom: 40px; /* Space between label and map */
+            margin-bottom: 40px;
             display: block;
+            height: 20px; /* Fixed height for alignment */
         }
 
-        /* Globe Container with right margin */
+        /* Globe Container */
         .globe-container-wrapper {
             position: relative;
-            margin-right: 60px; /* Space to the right of globe */
+            margin-right: 60px;
         }
 
         .globe-container {
@@ -184,10 +184,10 @@
             display: block;
         }
 
-        /* Stats Card - Centered below globe */
+        /* Stats Card */
         .stats-card {
-            background: var(--primary-bg); /* Same as page background */
-            border: 1px solid rgba(255, 255, 255, 0.3); /* Thin white border */
+            background: var(--primary-bg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             padding: 24px;
             margin: 30px auto 0;
@@ -216,37 +216,37 @@
             text-transform: capitalize;
         }
 
-        /* Right Column - Form aligned with globe */
+        /* Right Column - Form Section */
         .right-column {
             position: relative;
-            padding-top: 158px; /* Aligns with GLOBAL COVERAGE label */
         }
 
-        /* Form Card - No background or border per Figma */
-        .form-card {
-            background: transparent; /* No background */
-            border: none; /* No border */
-            padding: 0; /* Remove extra padding since no card */
+        /* Form Container aligned with globe section */
+        .form-section {
             position: relative;
         }
 
-        .form-header {
-            margin-bottom: 32px;
-        }
-
-        .form-header h2 {
+        /* Form Title - Aligned with GLOBAL COVERAGE */
+        .form-title {
+            font-family: 'Inter', sans-serif;
             font-weight: 800;
-            font-size: 40px;
+            font-size: 40px; /* Reduced from 44px */
             line-height: 100%;
+            letter-spacing: 0.02em; /* Slightly reduced */
             color: var(--text-white);
-            margin-bottom: 12px;
+            margin-bottom: 40px;
+            margin-top: -5px; /* Fine-tune alignment */
+            display: block;
+            height: 20px; /* Match section-label height */
+            text-transform: none;
         }
 
-        .form-header p {
-            color: var(--text-light);
-            font-size: 16px;
+        /* Form Content */
+        .form-content {
+            margin-top: 60px; /* Increased space between title and form */
         }
 
+        /* Form Groups */
         .form-group {
             margin-bottom: 24px;
         }
@@ -267,7 +267,7 @@
         .form-group textarea {
             width: 100%;
             padding: 14px 16px;
-            background: var(--input-bg);
+            background: transparent;
             border: 1px solid var(--input-border);
             border-radius: 8px;
             font-size: 16px;
@@ -286,7 +286,7 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--button-bg);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .form-group select option {
@@ -332,8 +332,8 @@
         .submit-btn {
             width: 100%;
             padding: 16px 32px;
-            background: var(--button-bg);
-            color: white;
+            background: white;
+            color: black;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -345,7 +345,7 @@
         }
 
         .submit-btn:hover {
-            background: var(--button-hover);
+            background: #f0f0f0;
             transform: translateY(-2px);
         }
 
@@ -360,7 +360,7 @@
             width: 16px;
             height: 16px;
             margin-left: 8px;
-            border: 2px solid white;
+            border: 2px solid black;
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 0.8s linear infinite;
@@ -368,6 +368,39 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            position: relative;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-title {
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            height: 20px;
+        }
+
+        .success-content {
+            margin-top: 40px;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #FF6B6B;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
         }
 
         /* OTP Modal */
@@ -424,7 +457,7 @@
             text-align: center;
             font-size: 24px;
             font-weight: 700;
-            background: var(--input-bg);
+            background: transparent;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             color: var(--text-white);
@@ -448,38 +481,14 @@
             font-weight: 600;
         }
 
-        /* Success Message */
-        .success-message {
-            display: none;
-            padding: 40px;
-            background: transparent;
-            border-radius: 12px;
-        }
-
-        .success-message.active {
-            display: block;
-        }
-
-        .error-message {
-            color: #FF6B6B;
-            font-size: 14px;
-            margin-top: 8px;
-            display: none;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
         /* Responsive */
         @media (max-width: 1200px) {
-            .content-grid {
+            .content-wrapper {
                 grid-template-columns: 1fr;
                 gap: 60px;
             }
 
             .right-column {
-                padding-top: 40px;
                 max-width: 550px;
                 margin: 0 auto;
             }
@@ -489,9 +498,9 @@
             }
         }
 
-        @media (max-width: 768px) {
+            @media (max-width: 768px) {
             .main-container {
-                padding: 80px 20px 40px;
+                padding: 100px 20px 40px;
             }
 
             .hero-title {
@@ -517,6 +526,10 @@
                 padding: 20px;
                 gap: 40px;
             }
+
+            .form-title {
+                font-size: 36px;
+            }
         }
     </style>
 </head>
@@ -526,26 +539,27 @@
 
     <!-- Header -->
     <header class="header">
-        <a href="#" class="logo">
-            <div class="logo-icon"></div>
-            <span class="logo-text">IdentityPulse</span>
-        </a>
+        <div class="header-content">
+            <a href="#" class="logo">
+                <img src="identitypulselogodark.png" alt="IdentityPulse">
+            </a>
+        </div>
     </header>
 
     <!-- Main Content -->
     <div class="main-container">
-        <div class="content-grid">
-            <!-- Left Column -->
-            <div class="left-column">
-                <!-- Hero Text - High up over hero image -->
-                <div class="hero-content">
-                    <h1 class="hero-title">Transform Your Identity Verification Process</h1>
-                    <p class="hero-subtitle">Experience our cutting-edge identity verification platform with access to hundreds of millions of records globally.</p>
-                </div>
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1 class="hero-title">Transform Your Identity Verification Process</h1>
+            <p class="hero-subtitle">Experience our cutting-edge identity verification platform with access to hundreds of millions of records globally.</p>
+        </div>
 
-                <!-- Globe Section - Aligned with form -->
+        <!-- Two Column Content -->
+        <div class="content-wrapper">
+            <!-- Left Column - Globe -->
+            <div class="left-column">
                 <div class="globe-section">
-                    <div class="globe-label">GLOBAL COVERAGE</div>
+                    <div class="section-label">GLOBAL COVERAGE</div>
                     
                     <div class="globe-container-wrapper">
                         <div class="globe-container">
@@ -557,7 +571,7 @@
                         </div>
                     </div>
                     
-                    <!-- Stats Card - Centered with primary bg and white border -->
+                    <!-- Stats Card -->
                     <div class="stats-card">
                         <div class="stat-item">
                             <span class="stat-value">75%</span>
@@ -573,91 +587,93 @@
 
             <!-- Right Column - Form -->
             <div class="right-column">
-                <div class="form-card" id="accessForm">
-                    <div class="form-header">
-                        <h2>Request Access</h2>
-                        <p>Get started with IdentityPulse in minutes</p>
+                <div class="form-section" id="accessForm">
+                    <h2 class="form-title">Request Access</h2>
+                    
+                    <div class="form-content">
+                        <form id="requestForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Work Email *</label>
+                                <input type="email" id="email" name="email" required>
+                                <div class="error-message" id="emailError"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="company">Company *</label>
+                                <input type="text" id="company" name="company" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country *</label>
+                                    <select id="country" name="country" required>
+                                        <option value="">Select Country</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Bangladesh">Bangladesh</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Czech Republic">Czech Republic</option>
+                                        <option value="Egypt">Egypt</option>
+                                        <option value="France">France</option>
+                                        <option value="Hong Kong">Hong Kong</option>
+                                        <option value="Indonesia">Indonesia</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="Malaysia">Malaysia</option>
+                                        <option value="Mexico">Mexico</option>
+                                        <option value="New Zealand">New Zealand</option>
+                                        <option value="Philippines">Philippines</option>
+                                        <option value="Saudi Arabia">Saudi Arabia</option>
+                                        <option value="Singapore">Singapore</option>
+                                        <option value="South Africa">South Africa</option>
+                                        <option value="South Korea">South Korea</option>
+                                        <option value="Sri Lanka">Sri Lanka</option>
+                                        <option value="Thailand">Thailand</option>
+                                        <option value="Turkey">Turkey</option>
+                                        <option value="UAE">UAE</option>
+                                        <option value="Vietnam">Vietnam</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="useCase">Use Case</label>
+                                <textarea id="useCase" name="useCase" placeholder="Tell us about your identity verification needs..."></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <label for="terms">I agree to receive communications about IdentityPulse products and services</label>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                Request Access
+                            </button>
+                        </form>
                     </div>
-
-                    <form id="requestForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstName">First Name *</label>
-                                <input type="text" id="firstName" name="firstName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name *</label>
-                                <input type="text" id="lastName" name="lastName" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Work Email *</label>
-                            <input type="email" id="email" name="email" required>
-                            <div class="error-message" id="emailError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="company">Company *</label>
-                            <input type="text" id="company" name="company" required>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="phone">Phone Number</label>
-                                <input type="tel" id="phone" name="phone">
-                            </div>
-                            <div class="form-group">
-                                <label for="country">Country *</label>
-                                <select id="country" name="country" required>
-                                    <option value="">Select Country</option>
-                                    <option value="Australia">Australia</option>
-                                    <option value="Bangladesh">Bangladesh</option>
-                                    <option value="Canada">Canada</option>
-                                    <option value="Czech Republic">Czech Republic</option>
-                                    <option value="Egypt">Egypt</option>
-                                    <option value="France">France</option>
-                                    <option value="Hong Kong">Hong Kong</option>
-                                    <option value="Indonesia">Indonesia</option>
-                                    <option value="Japan">Japan</option>
-                                    <option value="Malaysia">Malaysia</option>
-                                    <option value="Mexico">Mexico</option>
-                                    <option value="New Zealand">New Zealand</option>
-                                    <option value="Philippines">Philippines</option>
-                                    <option value="Saudi Arabia">Saudi Arabia</option>
-                                    <option value="Singapore">Singapore</option>
-                                    <option value="South Africa">South Africa</option>
-                                    <option value="South Korea">South Korea</option>
-                                    <option value="Sri Lanka">Sri Lanka</option>
-                                    <option value="Thailand">Thailand</option>
-                                    <option value="Turkey">Turkey</option>
-                                    <option value="UAE">UAE</option>
-                                    <option value="Vietnam">Vietnam</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="useCase">Use Case</label>
-                            <textarea id="useCase" name="useCase" placeholder="Tell us about your identity verification needs..."></textarea>
-                        </div>
-
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">I agree to receive communications about IdentityPulse products and services</label>
-                        </div>
-
-                        <button type="submit" class="submit-btn" id="submitBtn">
-                            Request Access
-                        </button>
-                    </form>
                 </div>
 
                 <!-- Success Message -->
                 <div class="success-message" id="successMessage">
-                    <h2 style="font-size: 28px; margin-bottom: 16px;">Welcome to IdentityPulse!</h2>
-                    <p style="margin-bottom: 24px;">Your access request has been successfully verified. Check your email for further instructions.</p>
+                    <h2 class="success-title">Welcome</h2>
+                    <div class="success-content">
+                        <p style="font-size: 18px; margin-bottom: 16px;">Welcome to IdentityPulse!</p>
+                        <p style="margin-bottom: 24px;">Your access request has been successfully verified. Check your email for further instructions.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -691,7 +707,7 @@
     </div>
 
     <script>
-        // Configuration - Update this after Azure deployment
+        // Configuration
         const API_BASE_URL = 'https://identitypulse-access.azurewebsites.net/api/proxy';
         
         // Form handling
