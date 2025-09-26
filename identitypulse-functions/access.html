@@ -6,7 +6,7 @@
     <title>IdentityPulse - Request Access</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;700;800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -16,228 +16,185 @@
         }
 
         :root {
-            --primary-color: #4B7BF5;
-            --primary-dark: #3B5EDB;
-            --primary-light: #EBF0FF;
-            --primary-lighter: #F5F8FF;
-            --text-color: #1a1a1a;
-            --text-light: #6b7280;
-            --bg-color: #ffffff;
-            --bg-secondary: #f9fafb;
-            --bg-tertiary: #f3f4f6;
-            --border-color: #e5e7eb;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --warning-color: #f59e0b;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --primary-bg: #010A26;
+            --text-white: #FFFFFF;
+            --text-light: rgba(255, 255, 255, 0.7);
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --input-border: rgba(255, 255, 255, 0.2);
+            --button-bg: #4B7BF5;
+            --button-hover: #3B5EDB;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-secondary);
-            color: var(--text-color);
+            background: var(--primary-bg);
+            color: var(--text-white);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Animated Background */
-        .background-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.02;
-            background-image: 
-                radial-gradient(circle at 20% 80%, var(--primary-color) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, var(--primary-color) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, var(--primary-color) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(1deg); }
-            66% { transform: translate(-20px, 20px) rotate(-1deg); }
-        }
-
-        /* Floating Data Points */
-        .data-point {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: floatUp 15s linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-10vh) translateX(100px);
-                opacity: 0;
-            }
-        }
-
         /* Header */
         .header {
-            background: var(--bg-color);
-            padding: 1.5rem 0;
-            box-shadow: var(--card-shadow);
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            padding: 20px 40px;
         }
 
         .logo {
             display: inline-flex;
             align-items: center;
+            gap: 12px;
             text-decoration: none;
-            gap: 0.75rem;
         }
 
-        .logo svg {
+        .logo-icon {
+            width: 40px;
             height: 40px;
-            width: auto;
-        }
-
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-        }
-
-        /* Main Content */
-        .main-content {
-            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, #4B7BF5, #3B5EDB);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 3rem 0;
         }
 
-        .content-wrapper {
+        .logo-icon::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        /* Hero Background Image */
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 450px;
+            background-image: url('hero-background.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .hero-background::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, var(--primary-bg));
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            padding: 100px 40px 40px;
+            max-width: 1440px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        /* Two Column Grid */
+        .content-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            max-width: 1200px;
-            width: 100%;
+            grid-template-columns: 1fr 550px;
+            gap: 80px;
+            align-items: flex-start;
         }
 
-        /* Hero Section */
-        .hero-section {
-            animation: fadeInLeft 0.8s ease-out;
+        /* Left Column */
+        .left-column {
+            position: relative;
         }
 
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        /* Hero Text - Positioned high over hero image */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 60px;
+            padding-top: 20px;
         }
 
         .hero-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--text-color), var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.2;
+            font-weight: 200;
+            font-size: 40px;
+            line-height: 100%;
+            letter-spacing: 0;
+            margin-bottom: 24px;
+            color: var(--text-white);
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
+            font-weight: 400;
+            font-size: 26px;
+            line-height: 32px;
+            letter-spacing: 0.02em;
             color: var(--text-light);
-            margin-bottom: 2rem;
-            line-height: 1.6;
+            max-width: 90%;
         }
 
-        /* Regional Coverage */
-        .regional-coverage {
-            margin-bottom: 2rem;
+        /* Globe Section - Aligned with form top */
+        .globe-section {
+            position: relative;
         }
 
-        .coverage-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-color);
+        .globe-label {
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            color: var(--text-white);
+            margin-bottom: 40px; /* Space between label and map */
+            display: block;
         }
 
-        .region-grid {
-            display: grid;
-            gap: 1rem;
+        /* Globe Container with right margin */
+        .globe-container-wrapper {
+            position: relative;
+            margin-right: 60px; /* Space to the right of globe */
         }
 
-        .region-card {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+        .globe-container {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            background: transparent;
         }
 
-        .region-card:hover {
-            box-shadow: var(--card-shadow-hover);
-            transform: translateY(-2px);
+        .globe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
-        .region-header {
-            padding: 1.25rem;
-            cursor: pointer;
+        /* Stats Card - Centered below globe */
+        .stats-card {
+            background: var(--primary-bg); /* Same as page background */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Thin white border */
+            border-radius: 8px;
+            padding: 24px;
+            margin: 30px auto 0;
+            width: 320px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-color);
-            transition: background 0.3s ease;
-        }
-
-        .region-header:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .region-info {
-            flex: 1;
-        }
-
-        .region-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.25rem;
-        }
-
-        .region-summary {
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .region-stats {
-            display: flex;
-            gap: 1.5rem;
+            gap: 50px;
+            justify-content: center;
             align-items: center;
         }
 
@@ -245,243 +202,164 @@
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 1.5rem;
+        .stat-value {
+            font-size: 32px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--text-white);
             display: block;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 12px;
             color: var(--text-light);
+            text-transform: capitalize;
         }
 
-        .expand-icon {
-            width: 24px;
-            height: 24px;
-            color: var(--text-light);
-            transition: transform 0.3s ease;
-        }
-
-        .region-card.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-
-        .region-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .region-card.expanded .region-content {
-            max-height: 500px;
-        }
-
-        .country-list {
-            padding: 0 1.25rem 1.25rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .country-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            font-size: 0.875rem;
-        }
-
-        .country-flag {
-            font-size: 1.25rem;
-        }
-
-        .country-name {
-            flex: 1;
-            color: var(--text-color);
-        }
-
-        .status-badge {
-            font-size: 0.625rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-badge.online {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .status-badge.coming-soon {
-            background: var(--warning-color);
-            color: white;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .stat {
-            text-align: center;
-            padding: 1rem;
-            background: var(--bg-color);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: block;
-        }
-
-        /* Form Section */
-        .form-section {
-            animation: fadeInRight 0.8s ease-out;
-        }
-
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .form-card {
-            background: var(--bg-color);
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            padding: 2.5rem;
+        /* Right Column - Form aligned with globe */
+        .right-column {
             position: relative;
-            overflow: hidden;
+            padding-top: 158px; /* Aligns with GLOBAL COVERAGE label */
+        }
+
+        /* Form Card - No background or border per Figma */
+        .form-card {
+            background: transparent; /* No background */
+            border: none; /* No border */
+            padding: 0; /* Remove extra padding since no card */
+            position: relative;
         }
 
         .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 32px;
         }
 
         .form-header h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
+            font-weight: 800;
+            font-size: 40px;
+            line-height: 100%;
+            color: var(--text-white);
+            margin-bottom: 12px;
         }
 
         .form-header p {
             color: var(--text-light);
+            font-size: 16px;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 24px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 0.875rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 19px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--text-white);
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 16px;
             font-family: 'Inter', sans-serif;
+            color: var(--text-white);
             transition: all 0.3s ease;
-            background: var(--bg-color);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(75, 123, 245, 0.1);
+            border-color: var(--button-bg);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group select option {
+            background: var(--primary-bg);
+            color: var(--text-white);
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 20px;
         }
 
         .checkbox-group {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 1.5rem 0;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 24px 0;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: 20px;
             height: 20px;
+            margin-top: 2px;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .checkbox-group label {
-            font-size: 0.875rem;
+            font-size: 14px;
             color: var(--text-light);
             cursor: pointer;
-            margin: 0;
+            text-transform: none;
+            font-weight: 400;
+            line-height: 1.4;
         }
 
         .submit-btn {
             width: 100%;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 16px 32px;
+            background: var(--button-bg);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .submit-btn:hover {
+            background: var(--button-hover);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(75, 123, 245, 0.3);
         }
 
         .submit-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
 
         .submit-btn.loading::after {
             content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
             border: 2px solid white;
             border-radius: 50%;
             border-top-color: transparent;
@@ -500,9 +378,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(1, 10, 38, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
         }
 
         .modal.active {
@@ -511,246 +389,81 @@
             justify-content: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .modal-content {
-            background: var(--bg-color);
+            background: rgba(30, 41, 82, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
             border-radius: 12px;
-            padding: 2.5rem;
+            padding: 40px;
             max-width: 450px;
             width: 90%;
-            position: relative;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
 
         .modal-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 32px;
         }
 
         .modal-header h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-white);
         }
 
         .otp-inputs {
             display: flex;
-            gap: 0.5rem;
+            gap: 12px;
             justify-content: center;
-            margin: 2rem 0;
+            margin: 32px 0;
         }
 
         .otp-input {
             width: 50px;
             height: 50px;
             text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            border: 2px solid var(--border-color);
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
             border-radius: 8px;
-            transition: all 0.3s ease;
+            color: var(--text-white);
         }
 
         .otp-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(75, 123, 245, 0.1);
+            border-color: var(--button-bg);
+            outline: none;
         }
 
         .resend-link {
             text-align: center;
-            margin-top: 1rem;
-            font-size: 0.875rem;
+            margin-top: 24px;
+            font-size: 14px;
             color: var(--text-light);
         }
 
         .resend-link a {
-            color: var(--primary-color);
+            color: var(--button-bg);
             text-decoration: none;
             font-weight: 600;
         }
 
-        .resend-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* Success State */
+        /* Success Message */
         .success-message {
             display: none;
-            text-align: center;
-            padding: 3rem;
-            background: var(--bg-color);
+            padding: 40px;
+            background: transparent;
             border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            animation: scaleIn 0.5s ease-out;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .success-message.active {
             display: block;
         }
 
-        @keyframes scaleIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--success-color);
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: checkmark 0.5s ease-out 0.3s both;
-        }
-
-        @keyframes checkmark {
-            0% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .success-icon svg {
-            width: 40px;
-            height: 40px;
-            stroke: white;
-            stroke-width: 3;
-        }
-
-        .success-timeline {
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 2rem 0;
-            text-align: left;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .timeline-icon.completed {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .timeline-icon.pending {
-            background: var(--bg-color);
-            border: 2px solid var(--border-color);
-            color: var(--text-light);
-        }
-
-        .timeline-content h4 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-            color: var(--text-color);
-        }
-
-        .timeline-content p {
-            font-size: 0.875rem;
-            color: var(--text-light);
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 20px;
-            top: 40px;
-            bottom: -20px;
-            width: 2px;
-            background: var(--border-color);
-            z-index: 0;
-        }
-
-        .timeline-item:last-child .timeline-line {
-            display: none;
-        }
-
-        .access-details {
-            background: linear-gradient(135deg, var(--primary-lighter), var(--bg-secondary));
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .access-details h4 {
-            color: var(--primary-dark);
-            margin-bottom: 1rem;
-        }
-
-        .access-details ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .access-details li {
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-color);
-        }
-
-        .access-details li::before {
-            content: '✓';
-            color: var(--success-color);
-            font-weight: 700;
-        }
-
         .error-message {
-            color: var(--error-color);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            color: #FF6B6B;
+            font-size: 14px;
+            margin-top: 8px;
             display: none;
         }
 
@@ -758,483 +471,197 @@
             display: block;
         }
 
-        /* Footer */
-        .footer {
-            background: var(--bg-color);
-            padding: 2rem 0;
-            text-align: center;
-            color: var(--text-light);
-            border-top: 1px solid var(--border-color);
-            margin-top: 4rem;
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .right-column {
+                padding-top: 40px;
+                max-width: 550px;
+                margin: 0 auto;
+            }
+
+            .globe-container-wrapper {
+                margin-right: 0;
+            }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .content-wrapper {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+            .main-container {
+                padding: 80px 20px 40px;
             }
 
             .hero-title {
-                font-size: 2rem;
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 20px;
+                line-height: 28px;
+                max-width: 100%;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .stats {
-                grid-template-columns: 1fr;
+            .globe-container {
+                height: 300px;
             }
 
-            .otp-inputs {
-                gap: 0.25rem;
-            }
-
-            .otp-input {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-
-            .country-list {
-                grid-template-columns: 1fr;
-            }
-
-            .region-stats {
-                flex-direction: column;
-                gap: 0.5rem;
+            .stats-card {
+                width: 280px;
+                padding: 20px;
+                gap: 40px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="background-pattern"></div>
-    
-    <!-- Floating Data Points -->
-    <script>
-        // Create floating data points
-        for (let i = 0; i < 20; i++) {
-            const point = document.createElement('div');
-            point.className = 'data-point';
-            point.style.left = Math.random() * 100 + '%';
-            point.style.animationDelay = Math.random() * 15 + 's';
-            point.style.animationDuration = (15 + Math.random() * 10) + 's';
-            document.body.appendChild(point);
-        }
-    </script>
+    <!-- Hero Background -->
+    <div class="hero-background"></div>
 
     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <a href="#" class="logo">
-                <svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Logo Circle -->
-                    <defs>
-                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4B7BF5;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#3B5EDB;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="25" cy="25" r="20" fill="url(#logoGradient)"/>
-                    <circle cx="25" cy="25" r="10" fill="white"/>
-                    
-                    <!-- Logo Text -->
-                    <text x="55" y="32" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">IdentityPulse</text>
-                </svg>
-            </a>
-        </div>
+        <a href="#" class="logo">
+            <div class="logo-icon"></div>
+            <span class="logo-text">IdentityPulse</span>
+        </a>
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <div class="content-wrapper">
-                <!-- Hero Section -->
-                <div class="hero-section">
+    <div class="main-container">
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Hero Text - High up over hero image -->
+                <div class="hero-content">
                     <h1 class="hero-title">Transform Your Identity Verification Process</h1>
                     <p class="hero-subtitle">Experience our cutting-edge identity verification platform with access to hundreds of millions of records globally.</p>
-                    
-                    <!-- Regional Coverage -->
-                    <div class="regional-coverage">
-                        <h3 class="coverage-title">Global Coverage</h3>
-                        <div class="region-grid">
-                            <!-- Asia-Pacific Region -->
-                            <div class="region-card" data-region="apac">
-                                <div class="region-header">
-                                    <div class="region-info">
-                                        <h4 class="region-name">Asia-Pacific</h4>
-                                        <p class="region-summary">13 countries • 500M+ records</p>
-                                    </div>
-                                    <div class="region-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">95%</span>
-                                            <span class="stat-label">Coverage</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">350ms</span>
-                                            <span class="stat-label">Avg Response</span>
-                                        </div>
-                                    </div>
-                                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div class="region-content">
-                                    <div class="country-list">
-                                        <div class="country-item">
-                                            <span class="country-flag">🇦🇺</span>
-                                            <span class="country-name">Australia</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇧🇩</span>
-                                            <span class="country-name">Bangladesh</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇭🇰</span>
-                                            <span class="country-name">Hong Kong</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇮🇩</span>
-                                            <span class="country-name">Indonesia</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇯🇵</span>
-                                            <span class="country-name">Japan</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇲🇾</span>
-                                            <span class="country-name">Malaysia</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇳🇿</span>
-                                            <span class="country-name">New Zealand</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇵🇭</span>
-                                            <span class="country-name">Philippines</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇸🇬</span>
-                                            <span class="country-name">Singapore</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇰🇷</span>
-                                            <span class="country-name">South Korea</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇱🇰</span>
-                                            <span class="country-name">Sri Lanka</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇹🇭</span>
-                                            <span class="country-name">Thailand</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇻🇳</span>
-                                            <span class="country-name">Vietnam</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Middle East & Africa Region -->
-                            <div class="region-card" data-region="mea">
-                                <div class="region-header">
-                                    <div class="region-info">
-                                        <h4 class="region-name">Middle East & Africa</h4>
-                                        <p class="region-summary">5 countries • 180M+ records</p>
-                                    </div>
-                                    <div class="region-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">92%</span>
-                                            <span class="stat-label">Coverage</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">400ms</span>
-                                            <span class="stat-label">Avg Response</span>
-                                        </div>
-                                    </div>
-                                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div class="region-content">
-                                    <div class="country-list">
-                                        <div class="country-item">
-                                            <span class="country-flag">🇪🇬</span>
-                                            <span class="country-name">Egypt</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇸🇦</span>
-                                            <span class="country-name">Saudi Arabia</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇿🇦</span>
-                                            <span class="country-name">South Africa</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇹🇷</span>
-                                            <span class="country-name">Turkey</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇦🇪</span>
-                                            <span class="country-name">UAE</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Americas Region -->
-                            <div class="region-card" data-region="americas">
-                                <div class="region-header">
-                                    <div class="region-info">
-                                        <h4 class="region-name">Americas</h4>
-                                        <p class="region-summary">2 countries • 85M+ records</p>
-                                    </div>
-                                    <div class="region-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">90%</span>
-                                            <span class="stat-label">Coverage</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">300ms</span>
-                                            <span class="stat-label">Avg Response</span>
-                                        </div>
-                                    </div>
-                                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div class="region-content">
-                                    <div class="country-list">
-                                        <div class="country-item">
-                                            <span class="country-flag">🇨🇦</span>
-                                            <span class="country-name">Canada</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇲🇽</span>
-                                            <span class="country-name">Mexico</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Europe Region -->
-                            <div class="region-card" data-region="europe">
-                                <div class="region-header">
-                                    <div class="region-info">
-                                        <h4 class="region-name">Europe</h4>
-                                        <p class="region-summary">2 countries • 35M+ records</p>
-                                    </div>
-                                    <div class="region-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">88%</span>
-                                            <span class="stat-label">Coverage</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">250ms</span>
-                                            <span class="stat-label">Avg Response</span>
-                                        </div>
-                                    </div>
-                                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div class="region-content">
-                                    <div class="country-list">
-                                        <div class="country-item">
-                                            <span class="country-flag">🇨🇿</span>
-                                            <span class="country-name">Czech Republic</span>
-                                            <span class="status-badge coming-soon">Coming Soon</span>
-                                        </div>
-                                        <div class="country-item">
-                                            <span class="country-flag">🇫🇷</span>
-                                            <span class="country-name">France</span>
-                                            <span class="status-badge online">Online</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stats">
-                        <div class="stat">
-                            <span class="stat-value">99.9%</span>
-                            <span class="stat-label">Uptime SLA</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">450ms</span>
-                            <span class="stat-label">Avg Response</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">800M+</span>
-                            <span class="stat-label">Records</span>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Form Section -->
-                <div class="form-section">
-                    <div class="form-card" id="accessForm">
-                        <div class="form-header">
-                            <h2>Request Access</h2>
-                            <p>Get started with IdentityPulse in minutes</p>
+                <!-- Globe Section - Aligned with form -->
+                <div class="globe-section">
+                    <div class="globe-label">GLOBAL COVERAGE</div>
+                    
+                    <div class="globe-container-wrapper">
+                        <div class="globe-container">
+                            <iframe src="globe.html" 
+                                    frameborder="0"
+                                    scrolling="no"
+                                    allowfullscreen>
+                            </iframe>
                         </div>
-
-                        <form id="requestForm">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName">First Name *</label>
-                                    <input type="text" id="firstName" name="firstName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Last Name *</label>
-                                    <input type="text" id="lastName" name="lastName" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Work Email *</label>
-                                <input type="email" id="email" name="email" required>
-                                <div class="error-message" id="emailError"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="company">Company *</label>
-                                <input type="text" id="company" name="company" required>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" id="phone" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label for="country">Country *</label>
-                                    <select id="country" name="country" required>
-                                        <option value="">Select Country</option>
-                                        <option value="Australia">Australia</option>
-                                        <option value="Bangladesh">Bangladesh</option>
-                                        <option value="Canada">Canada</option>
-                                        <option value="Czech Republic">Czech Republic</option>
-                                        <option value="Egypt">Egypt</option>
-                                        <option value="France">France</option>
-                                        <option value="Hong Kong">Hong Kong</option>
-                                        <option value="Indonesia">Indonesia</option>
-                                        <option value="Japan">Japan</option>
-                                        <option value="Malaysia">Malaysia</option>
-                                        <option value="Mexico">Mexico</option>
-                                        <option value="New Zealand">New Zealand</option>
-                                        <option value="Philippines">Philippines</option>
-                                        <option value="Saudi Arabia">Saudi Arabia</option>
-                                        <option value="Singapore">Singapore</option>
-                                        <option value="South Africa">South Africa</option>
-                                        <option value="South Korea">South Korea</option>
-                                        <option value="Sri Lanka">Sri Lanka</option>
-                                        <option value="Thailand">Thailand</option>
-                                        <option value="Turkey">Turkey</option>
-                                        <option value="UAE">UAE</option>
-                                        <option value="Vietnam">Vietnam</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="useCase">Use Case</label>
-                                <textarea id="useCase" name="useCase" placeholder="Tell us about your identity verification needs..."></textarea>
-                            </div>
-
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="terms" name="terms" required>
-                                <label for="terms">I agree to receive communications about IdentityPulse products and services</label>
-                            </div>
-
-                            <button type="submit" class="submit-btn" id="submitBtn">
-                                Request Access
-                            </button>
-                        </form>
                     </div>
-
-                    <!-- Success Message -->
-                    <div class="success-message" id="successMessage">
-                        <div class="success-icon">
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                    
+                    <!-- Stats Card - Centered with primary bg and white border -->
+                    <div class="stats-card">
+                        <div class="stat-item">
+                            <span class="stat-value">75%</span>
+                            <span class="stat-label">Coverage</span>
                         </div>
-                        <h2>Welcome to IdentityPulse!</h2>
-                        <p style="font-size: 1.1rem; color: var(--text-color); margin: 1rem 0;">Your access request has been successfully verified.</p>
-                        
-                        <div class="success-timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-icon completed">✓</div>
-                                <div class="timeline-line"></div>
-                                <div class="timeline-content">
-                                    <h4>Request Submitted</h4>
-                                    <p>Your information has been received and verified</p>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-icon pending">2</div>
-                                <div class="timeline-line"></div>
-                                <div class="timeline-content">
-                                    <h4>Account Review</h4>
-                                    <p>Our team will review your request within 24 hours</p>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-icon pending">3</div>
-                                <div class="timeline-content">
-                                    <h4>Access Granted</h4>
-                                    <p>You'll receive login credentials and API documentation</p>
-                                </div>
-                            </div>
+                        <div class="stat-item">
+                            <span class="stat-value">220ms</span>
+                            <span class="stat-label">Avg Response</span>
                         </div>
-                        
-                        <div class="access-details">
-                            <h4>What happens next?</h4>
-                            <ul>
-                                <li>A sales representative will contact you within 24 hours</li>
-                                <li>We'll schedule a personalized demo of the platform</li>
-                                <li>You'll receive sandbox API credentials for testing</li>
-                                <li>Our integration team will assist with your setup</li>
-                            </ul>
-                        </div>
-                        
-                        <p style="margin-top: 2rem; color: var(--text-light); font-size: 0.875rem;">
-                            Check your email for confirmation and further details. If you have any questions, contact us at <strong>support@identitypulse.com</strong>
-                        </p>
                     </div>
                 </div>
             </div>
+
+            <!-- Right Column - Form -->
+            <div class="right-column">
+                <div class="form-card" id="accessForm">
+                    <div class="form-header">
+                        <h2>Request Access</h2>
+                        <p>Get started with IdentityPulse in minutes</p>
+                    </div>
+
+                    <form id="requestForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Work Email *</label>
+                            <input type="email" id="email" name="email" required>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="company">Company *</label>
+                            <input type="text" id="company" name="company" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country *</label>
+                                <select id="country" name="country" required>
+                                    <option value="">Select Country</option>
+                                    <option value="Australia">Australia</option>
+                                    <option value="Bangladesh">Bangladesh</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="Czech Republic">Czech Republic</option>
+                                    <option value="Egypt">Egypt</option>
+                                    <option value="France">France</option>
+                                    <option value="Hong Kong">Hong Kong</option>
+                                    <option value="Indonesia">Indonesia</option>
+                                    <option value="Japan">Japan</option>
+                                    <option value="Malaysia">Malaysia</option>
+                                    <option value="Mexico">Mexico</option>
+                                    <option value="New Zealand">New Zealand</option>
+                                    <option value="Philippines">Philippines</option>
+                                    <option value="Saudi Arabia">Saudi Arabia</option>
+                                    <option value="Singapore">Singapore</option>
+                                    <option value="South Africa">South Africa</option>
+                                    <option value="South Korea">South Korea</option>
+                                    <option value="Sri Lanka">Sri Lanka</option>
+                                    <option value="Thailand">Thailand</option>
+                                    <option value="Turkey">Turkey</option>
+                                    <option value="UAE">UAE</option>
+                                    <option value="Vietnam">Vietnam</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="useCase">Use Case</label>
+                            <textarea id="useCase" name="useCase" placeholder="Tell us about your identity verification needs..."></textarea>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to receive communications about IdentityPulse products and services</label>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            Request Access
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Success Message -->
+                <div class="success-message" id="successMessage">
+                    <h2 style="font-size: 28px; margin-bottom: 16px;">Welcome to IdentityPulse!</h2>
+                    <p style="margin-bottom: 24px;">Your access request has been successfully verified. Check your email for further instructions.</p>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
 
     <!-- OTP Modal -->
     <div class="modal" id="otpModal">
@@ -1263,24 +690,9 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>© 2025 IdentityPulse. All rights reserved.</p>
-        </div>
-    </footer>
-
     <script>
         // Configuration - Update this after Azure deployment
         const API_BASE_URL = 'https://identitypulse-access.azurewebsites.net/api/proxy';
-        
-        // Region card expansion
-        document.querySelectorAll('.region-card').forEach(card => {
-            const header = card.querySelector('.region-header');
-            header.addEventListener('click', () => {
-                card.classList.toggle('expanded');
-            });
-        });
         
         // Form handling
         const form = document.getElementById('requestForm');
@@ -1339,7 +751,7 @@
             // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending verification code...';
+            submitBtn.textContent = 'Sending...';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/SendOTP`, {

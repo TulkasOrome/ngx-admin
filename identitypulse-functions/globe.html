@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Nandor</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+<script src="./countries.js"></script>
+
+<style>
+body { 
+    margin: 0; 
+    padding: 0;
+    background: transparent; /* Make background transparent */
+}
+#map { 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    width: 100%; 
+}
+
+.mapboxgl-popup {
+    opacity: 0.8!important;
+}
+.mapboxgl-popup-content {
+    border-radius:5px!important;
+}
+
+/* FORCE HIDE ALL MAPBOX CONTROLS AND BRANDING */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-attrib-inner,
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Hide navigation controls */
+.mapboxgl-ctrl-top-right,
+.mapboxgl-ctrl-group {
+    display: none !important;
+}
+
+/* Remove any link styling that might show */
+a.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib a {
+    display: none !important;
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoianJvYmVydHMyOCIsImEiOiJjbTVyNGZ4NjEwNzFiMnJwc3k5YWtoMzFkIn0.kPDkLTvPmA5wctZTq2zhDA';
+    const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/jroberts28/cmfl1tpvz007x01s6b8a8f3em',
+    zoom: 2,
+    center: [9.5439, 27.0189],
+    minZoom: 1,
+    maxZoom: 6,
+    attributionControl: false, // Remove attribution
+    logoPosition: 'top-left'  // Move logo if it still appears
+});
+
+    map.on('load', () => {
+    const logo = document.querySelector('.mapboxgl-ctrl-logo');
+    const attrib = document.querySelector('.mapboxgl-ctrl-attrib');
+    if (logo) logo.remove();
+    if (attrib) attrib.remove();
+        map.addSource('city_light', {
+            'type': 'raster',
+            'tiles': [
+                'https://gitc.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default//GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'
+            ],
+            'tileSize': 128
+        });
+
+        map.addLayer({
+            'id': 'city_light-layer',
+            'type': 'raster',
+            'source': 'city_light',
+            'paint': {}
+        });
+
+        // Add countries GeoJSON data as a source
+        map.addSource('countries', {
+            'type': 'geojson',
+            'data': countries
+        });
+
+        // Add countries layer with fill (hidden by default)
+        map.addLayer({
+            'id': 'countries-fill',
+            'type': 'fill',
+            'source': 'countries',
+            'layout': {
+                'visibility': 'none'
+            },
+            'paint': {
+                'fill-color': '#ffffff',
+                'fill-opacity': 0.4
+            }
+        });
+
+        // Add countries layer with outline (hidden by default)
+        map.addLayer({
+            'id': 'countries-outline',
+            'type': 'line',
+            'source': 'countries',
+            'layout': {
+                'visibility': 'none'
+            },
+            'paint': {
+                'line-color': '#000',
+                'line-width': 1
+            }
+        });
+
+        // Create a popup, but don't add it to the map yet
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+        // Add event listeners to popup to prevent closing when hovering over it
+        popup.on('open', () => {
+            const popupElement = popup.getElement();
+
+            // Make popup not interfere with mouse events on the map
+            popupElement.style.pointerEvents = 'auto';
+            popupElement.style.position = 'absolute';
+
+            popupElement.addEventListener('mouseenter', () => {
+                // Clear any pending popup removal when mouse enters popup
+                if (popupTimeout) {
+                    clearTimeout(popupTimeout);
+                    popupTimeout = null;
+                }
+                // Ensure outline stays highlighted
+                if (currentPopupCountry) {
+                    map.setPaintProperty('countries-outline', 'line-color', [
+                        'case',
+                        ['==', ['get', 'name'], currentPopupCountry],
+                        '#FEEBBB',
+                        '#000'
+                    ]);
+                }
+            });
+
+            popupElement.addEventListener('mouseleave', () => {
+                // Close popup when mouse leaves popup
+                popupTimeout = setTimeout(() => {
+                    popup.remove();
+                    popupTimeout = null;
+                    currentPopupCountry = null;
+                    // Reset outline when popup closes
+                    map.setPaintProperty('countries-outline', 'line-color', '#000');
+                }, 200);
+            });
+        });
+
+        let hoveredCountryName = null;
+        let popupTimeout = null;
+        let currentPopupCountry = null;
+
+        // Add hover events for countries-fill layer
+        map.on('mousemove', 'countries-fill', (e) => {
+            // Clear any pending popup removal
+            if (popupTimeout) {
+                clearTimeout(popupTimeout);
+                popupTimeout = null;
+            }
+
+            // Change the cursor to a pointer when the mouse is over the layer
+            map.getCanvas().style.cursor = 'pointer';
+
+            // Get the feature properties
+            const feature = e.features[0];
+            const countryName = feature.properties.name;
+            const coverage = feature.properties.Coverage;
+
+            // Only update if it's a different country
+            if (hoveredCountryName !== countryName) {
+                hoveredCountryName = countryName;
+                currentPopupCountry = countryName;
+
+                // Calculate polygon centroid using Turf.js
+                const centroid = turf.centroid(feature);
+                const [centerLng, centerLat] = centroid.geometry.coordinates;
+
+                // Remove existing popup first, then add new one
+                popup.remove();
+                popup.setLngLat([centerLng, centerLat])
+                    .setHTML(`<span style="font-size:18px; margin-right: 10px;">${countryName}</span> <strong style="font-size:18px">${coverage}</strong><br>Coverage of Adult Population`)
+                    .addTo(map);
+
+                // Update outline color after showing popup
+                map.setPaintProperty('countries-outline', 'line-color', [
+                    'case',
+                    ['==', ['get', 'name'], countryName],
+                    '#FEEBBB',
+                    '#000'
+                ]);
+            }
+        });
+
+        map.on('mouseleave', 'countries-fill', () => {
+            map.getCanvas().style.cursor = '';
+            hoveredCountryName = null;
+
+            // Don't reset outline immediately - let popup handle it
+            // Delay popup removal to prevent flickering when mouse moves over popup
+            popupTimeout = setTimeout(() => {
+                popup.remove();
+                popupTimeout = null;
+                currentPopupCountry = null;
+                // Reset outline when popup closes
+                map.setPaintProperty('countries-outline', 'line-color', '#000');
+            }, 200);
+        });
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Add globe rotation
+    let isUserInteracting = false;
+
+    // Track user interaction to pause rotation
+    map.on('mousedown', () => { isUserInteracting = true; });
+    map.on('mouseup', () => { isUserInteracting = false; });
+    map.on('dragstart', () => { isUserInteracting = true; });
+    map.on('dragend', () => { isUserInteracting = false; });
+    map.on('zoomstart', () => { isUserInteracting = true; });
+    map.on('zoomend', () => { isUserInteracting = false; });
+
+    // Handle wheel zoom with timeout
+    let wheelTimeout;
+    map.on('wheel', () => {
+        isUserInteracting = true;
+        clearTimeout(wheelTimeout);
+        wheelTimeout = setTimeout(() => {
+            isUserInteracting = false;
+        }, 300);
+    });
+
+    // Simple rotation function
+    function rotateGlobe() {
+        if (!isUserInteracting) {
+            const center = map.getCenter();
+            map.setCenter([center.lng + 0.1, center.lat]);
+        }
+    }
+
+    // Start rotation
+    setInterval(rotateGlobe, 30);
+
+    // Fetch data from Google Sheets
+    fetch('https://gsx2json.com/api?id=1ocP3_fYDrjVBNAkeh-qcKzvh4N65iTZuWPFNcxUq7Z8&sheet=Sheet1')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Google Sheets data:', data);
+
+            // Extract country names from the sheet data
+            const sheetCountries = data.rows
+                .filter(row => row["Region & Country"])
+                .map(row => row["Region & Country"].toLowerCase());
+            console.log('Countries from sheet:', sheetCountries);
+
+            // Filter and enhance countries GeoJSON with sheet data
+            const filteredCountries = {
+                ...countries,
+                features: countries.features.filter(feature => {
+                    const countryName = feature.properties.name.toLowerCase();
+                    const countryNameLong = feature.properties.name_long.toLowerCase();
+
+                    // Find matching country in sheet data
+                    const matchingSheetCountry = data.rows.find(row => {
+                        const regionCountry = row["Region & Country"];
+                        if (!regionCountry) return false;
+
+                        const sheetCountry = regionCountry.toLowerCase().trim();
+                        const normalizedCountryName = countryName.trim();
+                        const normalizedCountryNameLong = countryNameLong.trim();
+
+                        // Only do exact matches
+                        return sheetCountry === normalizedCountryName || sheetCountry === normalizedCountryNameLong;
+                    });
+
+                    // If country matches, add sheet data to properties
+                    if (matchingSheetCountry) {
+                        feature.properties.Coverage = matchingSheetCountry["Market Coverage Adult Population"] || null;
+                        feature.properties.Status = matchingSheetCountry.Status || null;
+                        feature.properties.Region = matchingSheetCountry.Region || null;
+                        console.log(`Matched: ${countryName} -> ${matchingSheetCountry["Region & Country"]}`);
+                        return true;
+                    } else {
+                        // Debug: log countries that don't match
+                        if (countryName === 'south africa' || countryNameLong === 'south africa') {
+                            console.log(`No match found for: ${countryName} / ${countryNameLong}`);
+                            console.log('Available countries in sheet:', data.rows.filter(row => row["Region & Country"]).map(row => row["Region & Country"]));
+                        }
+                    }
+
+                    return false;
+                })
+            };
+
+            console.log('Filtered countries:', filteredCountries);
+
+            // Update the map source with filtered data
+            if (map.getSource('countries')) {
+                map.getSource('countries').setData(filteredCountries);
+
+                // Show the countries layers
+                map.setLayoutProperty('countries-fill', 'visibility', 'visible');
+                map.setLayoutProperty('countries-outline', 'visibility', 'visible');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+</script>
+
+</body>
+</html>
