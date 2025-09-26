@@ -34,7 +34,10 @@ export const environment = {
     endpoint: '/api/identity_match',
     azureFunctionKey: '6oZPyjpfsc1eWigFjgPrPDAYCiQyL-QYdSKaMYNH8xjLAzFuRO847w==',
     apiKeys: {
-      // Single country keys
+      // UPDATED: Using the portal key for all API requests
+      portalKey: 'portal-Ht8nK5jR2wY9xL3mQ7aE4vS6d',
+      
+      // Legacy keys (kept for reference but not used)
       australia: 'datazoo-o8KaftfnHMOdLTEmQHB82Q',
       indonesia: 'datazoo-indonesia-bb060cFuWCPOoL18kBMTza',
       malaysia: 'datazoo-malaysia-KmN8pQr4TvX2wY6hBzL9sE',
@@ -54,15 +57,8 @@ export const environment = {
       vietnam: 'datazoo-vietnam-Hj7kR3mN9wT2vE5xQ8aL4pY',
       qatar: 'datazoo-qatar-Kp8nT4mQ2wX9vE3zR7hL5sY',
       pakistan: 'datazoo-pakistan-Wt5vR7wE3aQ9xL2nK8mJ4hY',
-      
-      // Multi-region keys
       multiRegion: 'datazoo-multi-all-regions-Zn9kX3mR7wT5vE2xQ8aL4pY',
-      masterKey: 'datazoo-master-key-Yx8wK5nT3mR9vE2aQ7hL4pJ',
-      seAsiaHub: 'datazoo-seasia-hub-Xt9pL5aY7wQ3mK8nR2vE4hT',
-      middleEastHub: 'datazoo-middle-east-hub-Kn8mR4wT7vE2xQ9aL5pY3hJ',
-      europeHub: 'datazoo-europe-hub-Qx8wE5rT2yU9iO3pA7sD4fG',
-      apacHub: 'datazoo-apac-hub-Bx9wE3rT5yU2iO8pA4sD7fG',
-      americasHub: 'datazoo-americas-hub-Qw7eR4tY9uI2oP5aS8dF3gH'
+      masterKey: 'datazoo-master-key-Yx8wK5nT3mR9vE2aQ7hL4pJ'
     }
   },
 

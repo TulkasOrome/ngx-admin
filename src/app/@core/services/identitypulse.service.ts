@@ -100,8 +100,8 @@ export class IdentityPulseService {
     const baseUrl = isDevelopment ? '' : this.apiConfig.baseUrl;
     const url = `${baseUrl}${this.apiConfig.endpoint}?code=${this.apiConfig.azureFunctionKey}`;
     
-    // Select appropriate API key based on country
-    const apiKey = this.getApiKeyForCountry(request.Country);
+    // UPDATED: Always use the portal key for all countries
+    const apiKey = this.apiConfig.apiKeys.portalKey;
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -226,38 +226,6 @@ export class IdentityPulseService {
     if (formData.arabicLastName) request.ArabicLastName = formData.arabicLastName;
 
     return request;
-  }
-
-  /**
-   * Get API key for specific country
-   */
-  private getApiKeyForCountry(countryCode: string): string {
-    const countryKeyMap = {
-      'AU': this.apiConfig.apiKeys.australia,
-      'NZ': this.apiConfig.apiKeys.newZealand,
-      'CA': this.apiConfig.apiKeys.canada,
-      'ID': this.apiConfig.apiKeys.indonesia,
-      'MY': this.apiConfig.apiKeys.malaysia,
-      'JP': this.apiConfig.apiKeys.japan,
-      'PH': this.apiConfig.apiKeys.philippines,
-      'TH': this.apiConfig.apiKeys.thailand,
-      'VN': this.apiConfig.apiKeys.vietnam,
-      'SA': this.apiConfig.apiKeys.saudiArabia,
-      'TR': this.apiConfig.apiKeys.turkey,
-      'AE': this.apiConfig.apiKeys.middleEastHub,
-      'UAE': this.apiConfig.apiKeys.middleEastHub,
-      'EG': this.apiConfig.apiKeys.egypt,
-      'QA': this.apiConfig.apiKeys.qatar,
-      'PK': this.apiConfig.apiKeys.pakistan,
-      'MX': this.apiConfig.apiKeys.mexico,
-      'ZA': this.apiConfig.apiKeys.southAfrica,
-      'CZ': this.apiConfig.apiKeys.czech,
-      'FR': this.apiConfig.apiKeys.france,
-      'MA': this.apiConfig.apiKeys.morocco
-    };
-
-    // Use specific key if available, otherwise use master key
-    return countryKeyMap[countryCode] || this.apiConfig.apiKeys.masterKey;
   }
 
   /**
