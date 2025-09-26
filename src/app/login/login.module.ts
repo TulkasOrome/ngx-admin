@@ -1,3 +1,4 @@
+// src/app/login/login.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -10,8 +11,8 @@ import {
   NbAlertModule,
   NbIconModule,
   NbSpinnerModule,
-  NbLayoutModule,  // Add this
-  NbToastrModule   // Add this
+  NbLayoutModule,  // Required for nb-layout
+  NbToastrModule   // For toast notifications
 } from '@nebular/theme';
 import { LoginComponent } from './login.component';
 
@@ -32,8 +33,8 @@ import { LoginComponent } from './login.component';
     NbAlertModule,
     NbIconModule,
     NbSpinnerModule,
-    NbLayoutModule,  // Add this
-    NbToastrModule   // Add this
+    NbLayoutModule,  // Required for nb-layout wrapper
+    NbToastrModule   // For toast notifications
   ],
   declarations: [LoginComponent],
 })

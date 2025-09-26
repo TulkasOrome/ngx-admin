@@ -1,86 +1,90 @@
 <!-- src/app/login/login.component.html -->
-<div class="login-page">
-  <div class="login-container">
-    <div class="login-card">
-      <!-- Logo Section with White Background -->
-      <div class="logo-section">
-        <img src="assets/images/identitypulse-logo.png" alt="IdentityPulse" class="logo">
-      </div>
-      
-      <!-- Form Section with Dark Background -->
-      <div class="form-section">
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <!-- Email Input -->
-          <div class="form-group">
-            <label for="email" class="form-label">Email address</label>
-            <input 
-              type="email" 
-              id="email" 
-              class="form-input"
-              placeholder="Enter your email"
-              formControlName="email"
-              [class.error]="email.invalid && email.touched"
-              autocomplete="email">
-            <div class="error-message" *ngIf="email.invalid && email.touched">
-              <span *ngIf="email.errors?.['required']">Email is required</span>
-              <span *ngIf="email.errors?.['email']">Please enter a valid email address</span>
-            </div>
+<nb-layout>
+  <nb-layout-column class="login-layout-column">
+    <div class="login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <!-- Logo Section with White Background -->
+          <div class="logo-section">
+            <img src="assets/images/identitypulse-logo.png" alt="IdentityPulse" class="logo">
           </div>
+          
+          <!-- Form Section with Dark Background -->
+          <div class="form-section">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <!-- Email Input -->
+              <div class="form-group">
+                <label for="email" class="form-label">Email address</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  class="form-input"
+                  placeholder="Enter your email"
+                  formControlName="email"
+                  [class.error]="email.invalid && email.touched"
+                  autocomplete="email">
+                <div class="error-message" *ngIf="email.invalid && email.touched">
+                  <span *ngIf="email.errors?.['required']">Email is required</span>
+                  <span *ngIf="email.errors?.['email']">Please enter a valid email address</span>
+                </div>
+              </div>
 
-          <!-- Password Input -->
-          <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <div class="password-wrapper">
-              <input 
-                [type]="showPassword ? 'text' : 'password'" 
-                id="password" 
-                class="form-input"
-                placeholder="Enter your password"
-                formControlName="password"
-                [class.error]="password.invalid && password.touched"
-                autocomplete="current-password">
+              <!-- Password Input -->
+              <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-wrapper">
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    id="password" 
+                    class="form-input"
+                    placeholder="Enter your password"
+                    formControlName="password"
+                    [class.error]="password.invalid && password.touched"
+                    autocomplete="current-password">
+                  <button 
+                    type="button"
+                    class="password-toggle"
+                    (click)="toggleShowPassword()"
+                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                    <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'" pack="eva"></nb-icon>
+                  </button>
+                </div>
+                <div class="error-message" *ngIf="password.invalid && password.touched">
+                  Password is required
+                </div>
+              </div>
+
+              <!-- Remember Me and Forgot Password -->
+              <div class="form-options">
+                <label class="checkbox-wrapper">
+                  <input type="checkbox" formControlName="rememberMe" class="checkbox-input">
+                  <span class="checkbox-label">Remember me</span>
+                </label>
+                <a href="#" class="forgot-password" (click)="forgotPassword($event)">Forgot Password?</a>
+              </div>
+
+              <!-- Sign In Button -->
               <button 
-                type="button"
-                class="password-toggle"
-                (click)="toggleShowPassword()"
-                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                <nb-icon [icon]="showPassword ? 'eye-off-outline' : 'eye-outline'" pack="eva"></nb-icon>
+                type="submit"
+                class="sign-in-button"
+                [disabled]="loading || loginForm.invalid"
+                [class.loading]="loading">
+                <span *ngIf="!loading">SIGN IN</span>
+                <span *ngIf="loading" class="loading-text">
+                  <nb-icon icon="loader-outline" pack="eva" class="spin"></nb-icon>
+                  Signing in...
+                </span>
               </button>
-            </div>
-            <div class="error-message" *ngIf="password.invalid && password.touched">
-              Password is required
+            </form>
+
+            <!-- Request Access Section -->
+            <div class="request-access">
+              <p>Don't have an account? <a href="https://access.identitypulse.ai" target="_blank">Request Access</a></p>
+              <p class="access-note">Your request will be reviewed and approved by an administrator</p>
             </div>
           </div>
-
-          <!-- Remember Me and Forgot Password -->
-          <div class="form-options">
-            <label class="checkbox-wrapper">
-              <input type="checkbox" formControlName="rememberMe" class="checkbox-input">
-              <span class="checkbox-label">Remember me</span>
-            </label>
-            <a href="#" class="forgot-password" (click)="forgotPassword($event)">Forgot Password?</a>
-          </div>
-
-          <!-- Sign In Button -->
-          <button 
-            type="submit"
-            class="sign-in-button"
-            [disabled]="loading || loginForm.invalid"
-            [class.loading]="loading">
-            <span *ngIf="!loading">SIGN IN</span>
-            <span *ngIf="loading" class="loading-text">
-              <nb-icon icon="loader-outline" pack="eva" class="spin"></nb-icon>
-              Signing in...
-            </span>
-          </button>
-        </form>
-
-        <!-- Request Access Section -->
-        <div class="request-access">
-          <p>Don't have an account? <a href="https://access.identitypulse.ai" target="_blank">Request Access</a></p>
-          <p class="access-note">Your request will be reviewed and approved by an administrator</p>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </nb-layout-column>
+</nb-layout>

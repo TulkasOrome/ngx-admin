@@ -5,6 +5,68 @@
 @import 'bootstrap/scss/mixins/breakpoints';
 @import '@nebular/theme/styles/global/breakpoints';
 
+// Override nb-layout for login page
+:host ::ng-deep {
+  nb-layout {
+    background: #010A26 !important;
+    min-height: 100vh;
+    
+    .layout {
+      min-height: 100vh;
+      background: #010A26 !important;
+    }
+    
+    .layout-container {
+      background: #010A26 !important;
+      min-height: 100vh;
+    }
+    
+    nb-layout-column {
+      padding: 0 !important;
+      background: #010A26 !important;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  // Style the toast notifications for dark theme
+  nb-toast {
+    .toast {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      color: #FFFFFF !important;
+      
+      &.status-success {
+        border-color: #00D68F !important;
+        background: rgba(0, 214, 143, 0.1) !important;
+        
+        .title {
+          color: #00D68F !important;
+        }
+      }
+      
+      &.status-danger {
+        border-color: #FF3D71 !important;
+        background: rgba(255, 61, 113, 0.1) !important;
+        
+        .title {
+          color: #FF3D71 !important;
+        }
+      }
+      
+      .message {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+  }
+}
+
+.login-layout-column {
+  background: #010A26 !important;
+}
+
 .login-page {
   min-height: 100vh;
   background: #010A26;
@@ -13,6 +75,7 @@
   justify-content: center;
   padding: 2rem;
   font-family: 'Inter', sans-serif;
+  width: 100%;
 }
 
 .login-container {
