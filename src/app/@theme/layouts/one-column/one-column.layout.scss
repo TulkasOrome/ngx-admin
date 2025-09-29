@@ -4,6 +4,38 @@
 @import '@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
+  // Override Nebular's layout constraints for full width
+  nb-layout {
+    &.windowMode {
+      .scrollable-container {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      
+      .layout-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        
+        .content {
+          max-width: 100% !important;
+          width: 100% !important;
+          
+          .columns {
+            max-width: 100% !important;
+            width: 100% !important;
+            
+            nb-layout-column {
+              max-width: 100% !important;
+              width: 100% !important;
+              padding: 0 !important; // Remove default padding
+            }
+          }
+        }
+      }
+    }
+  }
+  
   // Override ALL Nebular sidebar defaults
   nb-sidebar.menu-sidebar {
     background: #010A26 !important;
@@ -15,9 +47,9 @@
     z-index: 999;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-    padding: 0 !important; // NO PADDING
+    padding: 0 !important;
     margin: 0 !important;
-    overflow: hidden !important; // Prevent any overflow
+    overflow: hidden !important;
     
     // Remove ALL padding from Nebular containers
     ::ng-deep {
@@ -55,9 +87,9 @@
     }
   }
   
-  // Logo Section - White Background FULL WIDTH - NO MARGINS
+  // Logo Section - White Background FULL WIDTH
   .sidebar-logo-section {
-    position: absolute; // Position absolutely to ensure full width
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -81,10 +113,10 @@
     }
   }
   
-  // Menu Section - Dark Background - Positioned below logo
+  // Menu Section - Dark Background
   .sidebar-menu-section {
     position: absolute;
-    top: 80px; // Start after logo
+    top: 80px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -120,6 +152,8 @@
       .content .columns nb-layout-column {
         transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         padding-left: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
       }
     }
     
@@ -127,6 +161,10 @@
     nb-sidebar.expanded ~ .layout-container {
       .content .columns nb-layout-column {
         padding-left: 280px !important;
+        
+        @include media-breakpoint-down(md) {
+          padding-left: 0 !important;
+        }
       }
     }
   }
@@ -137,6 +175,8 @@
     
     &.with-scroll .scrollable-container {
       background: #010A26 !important;
+      max-width: 100% !important;
+      width: 100% !important;
     }
   }
   
@@ -144,31 +184,71 @@
     background: #010A26 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1001;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    
+    nav {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+    }
+    
+    .header-container {
+      max-width: 100% !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      
+      ngx-header {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+      }
+    }
+  }
+  
+  // Adjust content for fixed header
+  nb-layout.with-scroll .scrollable-container {
+    padding-top: 64px !important; // Height of header
   }
   
   nb-layout-column {
     background: #010A26 !important;
     min-height: 100vh;
+    max-width: 100% !important;
+    width: 100% !important;
   }
   
-   nb-layout-footer {
+  nb-layout-footer {
     background: #010A26 !important;
     border: none !important;
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     
     nav {
       background: #010A26 !important;
       border: none !important;
       margin: 0 !important;
       padding: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
     }
     
     ::ng-deep {
       .footer-container {
         background: #010A26 !important;
         border: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
       }
     }
   }

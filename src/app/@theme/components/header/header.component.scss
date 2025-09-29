@@ -9,7 +9,8 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 0 1rem;
+  padding: 0 60px; // Match the dashboard section padding
+  box-sizing: border-box;
   background: transparent;
 }
 
@@ -29,6 +30,7 @@
     justify-content: center;
     border-radius: 4px;
     transition: all 0.3s ease;
+    margin-left: -8px; // Compensate for padding to align with edge
     
     nb-icon {
       font-size: 1.75rem;
@@ -86,6 +88,7 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
+  margin-right: -8px; // Compensate to align with edge
   
   nb-actions {
     display: block;
@@ -120,6 +123,10 @@
 
 // Responsive adjustments
 @include media-breakpoint-down(xl) {
+  :host {
+    padding: 0 40px;
+  }
+  
   .header-center {
     .header-metrics {
       gap: 36px;
@@ -128,6 +135,10 @@
 }
 
 @include media-breakpoint-down(lg) {
+  :host {
+    padding: 0 30px;
+  }
+  
   .header-center {
     padding: 0 1rem;
     
@@ -151,7 +162,7 @@
 
 @include media-breakpoint-down(md) {
   :host {
-    padding: 0 0.5rem;
+    padding: 0 20px;
   }
   
   .header-center {
@@ -174,6 +185,10 @@
 }
 
 @include media-breakpoint-down(sm) {
+  :host {
+    padding: 0 20px;
+  }
+  
   .header-center {
     display: none;
   }

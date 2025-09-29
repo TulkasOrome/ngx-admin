@@ -17,27 +17,6 @@
 // loading progress bar theme
 @import './pace.theme';
 
-// Cross-browser compatibility CSS variables
-:root {
-  --container-padding: 60px;
-  
-  @media (max-width: 1200px) {
-    --container-padding: 40px;
-  }
-  
-  @media (max-width: 992px) {
-    --container-padding: 30px;
-  }
-  
-  @media (max-width: 768px) {
-    --container-padding: 20px;
-  }
-  
-  @media (max-width: 576px) {
-    --container-padding: 20px;
-  }
-}
-
 // install the framework and custom global styles
 @include nb-install() {
 
@@ -56,10 +35,40 @@
   .nb-theme-identitypulse {
     background: #010A26;
     
+    // CRITICAL: Override Nebular's max-width constraint
+    nb-layout.with-scroll .scrollable-container {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    
+    nb-layout .layout-container {
+      max-width: 100% !important;
+      width: 100% !important;
+      min-width: 100% !important;
+    }
+    
+    nb-layout .layout-container .content {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    
+    nb-layout .layout-container .content .columns {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+    
     nb-layout-column {
       background: #010A26;
-      // Remove global padding override that was causing issues
-      // padding: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      padding: 0 !important; // Remove default padding
+    }
+    
+    // Ensure dashboard container uses full width
+    .dashboard-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 100% !important;
     }
     
     nb-card {
@@ -284,27 +293,49 @@ nb-layout-footer {
 html {
   overflow-x: hidden;
   scroll-behavior: smooth;
+  width: 100%;
 }
 
 body {
   overflow-x: hidden;
   width: 100%;
   position: relative;
+  margin: 0;
+  padding: 0;
 }
 
-// Prevent horizontal scroll
-.nb-theme-identitypulse nb-layout {
+// Prevent horizontal scroll on Nebular layout
+nb-layout {
   overflow-x: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
-// Layout column specific padding for dashboard
-nb-layout-column {
-  // Default padding for content
-  .dashboard-container {
-    // The hero-wrapper will handle its own negative margins
-    // Regular content sections have normal padding
-    .content-wrapper {
-      padding: 0;
-    }
+// Microsoft Edge specific fixes
+@supports (-ms-ime-align: auto) {
+  .hero-wrapper {
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+  }
+  
+  nb-layout .layout-container {
+    width: 100vw !important;
+  }
+}
+
+// Safari specific fixes  
+@supports (-webkit-appearance: none) and (stroke-color: transparent) {
+  .hero-wrapper {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+}
+
+// Firefox specific fixes
+@-moz-document url-prefix() {
+  .hero-wrapper {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
   }
 }

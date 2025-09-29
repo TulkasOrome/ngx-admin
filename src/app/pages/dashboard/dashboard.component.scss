@@ -11,6 +11,8 @@
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  width: 100%;
+  overflow: hidden; // Prevent any overflow from host
 }
 
 .dashboard-container {
@@ -20,7 +22,20 @@
   padding: 0;
   margin: 0;
   width: 100%;
+  min-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto; // Allow vertical scroll only
+  position: relative;
+  
+  // Hide scrollbar but keep functionality
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge legacy
   
   &:first-child {
     margin-top: 0;
@@ -38,23 +53,35 @@
   margin: 0 0 2rem 0;
 }
 
-// Hero Wrapper - Key to cross-browser compatibility
+// Hero Wrapper - Full viewport width technique
 .hero-wrapper {
-  // This creates a full-width container without using viewport units
-  margin-left: calc(-1 * var(--container-padding, 0px));
-  margin-right: calc(-1 * var(--container-padding, 0px));
+  // This technique works consistently across all browsers
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  
+  // Break out of any container constraints
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   margin-top: -2rem; // Pull up to header
-  width: calc(100% + 2 * var(--container-padding, 0px));
-  overflow: visible;
+  
+  // Fallback for browsers that handle vw differently
+  @supports not (width: calc(-50vw + 50%)) {
+    margin-left: -60px;
+    margin-right: -60px;
+    width: calc(100% + 120px);
+  }
 }
 
-// Hero Section - Simplified without viewport units
+// Hero Section
 .hero-section {
   position: relative;
   width: 100%;
+  min-width: 100vw;
   height: 450px;
   background: #010A26;
-  overflow: visible;
+  overflow: hidden; // Changed from visible to prevent any overflow issues
   
   .hero-background-image {
     position: absolute;
@@ -85,7 +112,7 @@
     }
   }
   
-  // Content container for proper alignment
+  // Content container - ensure it spans full width
   .hero-content-container {
     position: absolute;
     top: 0;
@@ -94,16 +121,22 @@
     bottom: 0;
     width: 100%;
     height: 100%;
-    padding: 0 60px; // Same padding as other sections
+    padding: 0 max(60px, calc((100vw - 1920px) / 2 + 60px)); // Dynamic padding that scales
     display: flex;
     align-items: center;
     justify-content: flex-end;
     z-index: 2;
     box-sizing: border-box;
+    
+    // For smaller screens, use simpler padding
+    @media (max-width: 1920px) {
+      padding: 0 60px;
+    }
   }
   
   .hero-content {
     text-align: right;
+    max-width: 800px; // Prevent text from being too wide on large screens
     
     .main-title {
       margin-bottom: 30px;
@@ -147,6 +180,9 @@
 // Content wrapper for regular sections
 .content-wrapper {
   width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 
 // Status Section
@@ -155,11 +191,15 @@
   padding: 2rem 60px 0 80px;
   z-index: 10;
   margin-bottom: -10px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
   .status-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     
     .status-indicators {
       width: 409px;
@@ -204,6 +244,9 @@
 // Map Section
 .map-section {
   padding: 0 60px 20px 60px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
   .map-container {
     background: rgba(255, 255, 255, 0.02);
@@ -230,6 +273,9 @@
   display: flex;
   gap: 3rem;
   padding: 60px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
   // Left Column - Global Coverage
   .left-column {
@@ -499,8 +545,10 @@
 
 // Responsive Design
 @include media-breakpoint-down(xl) {
-  .hero-content-container {
-    padding: 0 40px;
+  .hero-section {
+    .hero-content-container {
+      padding: 0 40px;
+    }
   }
   
   .content-wrapper {
@@ -555,8 +603,15 @@
 }
 
 @include media-breakpoint-down(md) {
+  .hero-wrapper {
+    margin-left: -20px;
+    margin-right: -20px;
+    width: calc(100% + 40px);
+  }
+  
   .hero-section {
     height: 350px;
+    min-width: 100%;
     
     .hero-content-container {
       padding: 0 20px;
@@ -594,6 +649,10 @@
           width: 100%;
         }
       }
+    }
+    
+    .map-section {
+      padding: 20px;
     }
     
     .two-column-section {
