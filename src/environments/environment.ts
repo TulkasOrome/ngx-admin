@@ -5,7 +5,7 @@ export const environment = {
   
   // Backend API Configuration for Local Development
   backendApi: {
-    baseUrl: 'http://localhost:8000',  // Local backend server
+    baseUrl: 'https://identitypulse-backend.azurewebsites.net',  // Local backend server
     endpoints: {
       auth: {
         signin: '/api/auth/signin',

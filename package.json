@@ -12,7 +12,7 @@
   "scripts": {
     "ng": "ng",
     "conventional-changelog": "conventional-changelog",
-    "start": "ng serve --proxy-config proxy.conf.local.json",
+    "start": "ng serve --proxy-config proxy.conf.prod.json",
     "start:local": "ng serve --proxy-config proxy.conf.local.json --port 4200",
     "start:prod-backend": "ng serve --proxy-config proxy.conf.prod.json --port 4200",
     "start:no-proxy": "ng serve --port 4200",

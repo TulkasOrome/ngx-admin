@@ -17,6 +17,27 @@
 // loading progress bar theme
 @import './pace.theme';
 
+// Cross-browser compatibility CSS variables
+:root {
+  --container-padding: 60px;
+  
+  @media (max-width: 1200px) {
+    --container-padding: 40px;
+  }
+  
+  @media (max-width: 992px) {
+    --container-padding: 30px;
+  }
+  
+  @media (max-width: 768px) {
+    --container-padding: 20px;
+  }
+  
+  @media (max-width: 576px) {
+    --container-padding: 20px;
+  }
+}
+
 // install the framework and custom global styles
 @include nb-install() {
 
@@ -37,6 +58,8 @@
     
     nb-layout-column {
       background: #010A26;
+      // Remove global padding override that was causing issues
+      // padding: 0 !important;
     }
     
     nb-card {
@@ -195,7 +218,7 @@
   }
 };
 
-/* Force footer dark theme - ADD THIS SECTION */
+// Force footer dark theme
 nb-layout-footer {
   background: #010A26 !important;
   border: none !important;
@@ -225,7 +248,7 @@ nb-layout-footer {
   }
 }
 
-/* Override any Nebular default footer styling */
+// Override any Nebular default footer styling
 .nb-theme-identitypulse {
   nb-layout-footer {
     background: #010A26 !important;
@@ -238,7 +261,7 @@ nb-layout-footer {
   }
 }
 
-/* Additional footer overrides to ensure dark background */
+// Additional footer overrides to ensure dark background
 .nb-theme-default nb-layout-footer,
 .nb-theme-corporate nb-layout-footer,
 .nb-theme-cosmic nb-layout-footer,
@@ -251,30 +274,37 @@ nb-layout-footer {
   }
 }
 
-nb-layout-column {
-  padding: 0 !important;
-  
-  .dashboard-container {
-    padding: 0 !important;
-    
-    // Restore padding for non-hero sections
-    .status-wrapper,
-    .map-section,
-    .two-column-section {
-      padding-left: 60px;
-      padding-right: 60px;
-    }
-  }
+// Cross-browser fixes
+// Ensure consistent box-sizing
+* {
+  box-sizing: border-box;
 }
 
-/* Ensure hero section extends full width */
-.hero-section {
-  width: 100vw !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+// Fix for Safari/Edge scrollbar issues
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+}
+
+// Prevent horizontal scroll
+.nb-theme-identitypulse nb-layout {
+  overflow-x: hidden;
+}
+
+// Layout column specific padding for dashboard
+nb-layout-column {
+  // Default padding for content
+  .dashboard-container {
+    // The hero-wrapper will handle its own negative margins
+    // Regular content sections have normal padding
+    .content-wrapper {
+      padding: 0;
+    }
+  }
 }

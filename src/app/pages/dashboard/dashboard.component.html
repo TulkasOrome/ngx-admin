@@ -1,259 +1,266 @@
 <!-- src/app/pages/dashboard/dashboard.component.html -->
 <div class="dashboard-container">
-  <!-- Hero Section with Full Width Background -->
-  <div class="hero-section">
-    <!-- Background Image that fills the space -->
-    <div class="hero-background-image"></div>
-    
-    <!-- Main Title and CTA - Right Aligned -->
-    <div class="hero-content">
-      <div class="main-title">
-        <div class="title-line-1">Reliable identity intelligence, built</div>
-        <div class="title-line-2">to strengthen trust at scale.</div>
-      </div>
+  <!-- Hero Section with Full Width Background - Modified Structure -->
+  <div class="hero-wrapper">
+    <div class="hero-section">
+      <!-- Background Image that fills the space -->
+      <div class="hero-background-image"></div>
       
-      <!-- CTA Button -->
-      <button class="cta-button" (click)="contactUs()">
-        Contact us for a full demo →
-      </button>
-    </div>
-  </div>
-  
-  <!-- Status Section -->
-  <div class="status-wrapper">
-    <div class="status-header">
-      <h2 class="section-heading">Status</h2>
-      <div class="status-indicators">
-        <div class="indicator">
-          <span class="dot online"></span>
-          <span class="text">ONLINE</span>
-        </div>
-        <div class="indicator">
-          <span class="dot coming-soon"></span>
-          <span class="text">COMING SOON</span>
-        </div>
-        <div class="indicator">
-          <span class="dot offline"></span>
-          <span class="text">OFFLINE</span>
+      <!-- Main Title and CTA - Right Aligned -->
+      <div class="hero-content-container">
+        <div class="hero-content">
+          <div class="main-title">
+            <div class="title-line-1">Reliable identity intelligence, built</div>
+            <div class="title-line-2">to strengthen trust at scale.</div>
+          </div>
+          
+          <!-- CTA Button -->
+          <button class="cta-button" (click)="contactUs()">
+            Contact us for a full demo →
+          </button>
         </div>
       </div>
     </div>
   </div>
   
-  <!-- Map Section -->
-  <div class="map-section">
-    <div class="map-container">
-      <div id="world-map" class="world-map"></div>
-    </div>
-  </div>
-  
-  <!-- Two Column Content Section -->
-  <div class="two-column-section">
-    <!-- Left Column: Global Coverage -->
-    <div class="left-column">
-      <h2 class="section-heading">Global Coverage</h2>
-      
-      <div class="coverage-cards">
-        <!-- Asia Pacific Card with Blue Border -->
-        <div class="coverage-card asia-pacific">
-          <div class="card-content">
-            <div class="region-header">
-              <h3 class="region-name">Asia Pacific</h3>
-              <div class="region-stats">
-                <div class="stat-group">
-                  <span class="stat-value">95%</span>
-                  <span class="stat-label">Coverage</span>
-                </div>
-                <div class="stat-group">
-                  <span class="stat-value">350ms</span>
-                  <span class="stat-label">Avg Response</span>
-                </div>
-              </div>
-            </div>
-            <div class="region-details">
-              <span class="detail-text">13 COUNTRIES | 500M+ RECORDS</span>
-            </div>
-            <button class="expand-btn">
-              <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
-            </button>
+  <!-- Regular Content Container -->
+  <div class="content-wrapper">
+    <!-- Status Section -->
+    <div class="status-wrapper">
+      <div class="status-header">
+        <h2 class="section-heading">Status</h2>
+        <div class="status-indicators">
+          <div class="indicator">
+            <span class="dot online"></span>
+            <span class="text">ONLINE</span>
           </div>
-        </div>
-
-        <!-- Middle East & Africa Card -->
-        <div class="coverage-card middle-east">
-          <div class="card-content">
-            <div class="region-header">
-              <h3 class="region-name">Middle East & Africa</h3>
-              <div class="region-stats">
-                <div class="stat-group">
-                  <span class="stat-value">92%</span>
-                  <span class="stat-label">Coverage</span>
-                </div>
-                <div class="stat-group">
-                  <span class="stat-value">400ms</span>
-                  <span class="stat-label">Avg Response</span>
-                </div>
-              </div>
-            </div>
-            <div class="region-details">
-              <span class="detail-text">5 COUNTRIES | 180M+ RECORDS</span>
-            </div>
-            <button class="expand-btn">
-              <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
-            </button>
+          <div class="indicator">
+            <span class="dot coming-soon"></span>
+            <span class="text">COMING SOON</span>
           </div>
-        </div>
-
-        <!-- Americas Card with Country Pills -->
-        <div class="coverage-card americas expanded">
-          <div class="card-content">
-            <div class="region-header">
-              <h3 class="region-name">Americas</h3>
-              <div class="region-stats">
-                <div class="stat-group">
-                  <span class="stat-value">90%</span>
-                  <span class="stat-label">Coverage</span>
-                </div>
-                <div class="stat-group">
-                  <span class="stat-value">300ms</span>
-                  <span class="stat-label">Avg Response</span>
-                </div>
-              </div>
-            </div>
-            <div class="region-details">
-              <span class="detail-text">2 COUNTRIES | 100M+ RECORDS</span>
-            </div>
-            <div class="country-pills">
-              <div class="country-pill">
-                <img src="assets/images/flags/canada.png" alt="Canada" class="flag-icon">
-                <span>Canada</span>
-                <span class="status-badge online">ONLINE</span>
-              </div>
-              <div class="country-pill">
-                <img src="assets/images/flags/mexico.png" alt="Mexico" class="flag-icon">
-                <span>Mexico</span>
-                <span class="status-badge offline">OFFLINE</span>
-              </div>
-            </div>
-            <button class="expand-btn rotated">
-              <nb-icon icon="chevron-up-outline" pack="eva"></nb-icon>
-            </button>
-          </div>
-        </div>
-
-        <!-- Europe Card -->
-        <div class="coverage-card europe">
-          <div class="card-content">
-            <div class="region-header">
-              <h3 class="region-name">Europe</h3>
-              <div class="region-stats">
-                <div class="stat-group">
-                  <span class="stat-value">88%</span>
-                  <span class="stat-label">Coverage</span>
-                </div>
-                <div class="stat-group">
-                  <span class="stat-value">250ms</span>
-                  <span class="stat-label">Avg Response</span>
-                </div>
-              </div>
-            </div>
-            <div class="region-details">
-              <span class="detail-text">2 COUNTRIES | 50M+ RECORDS</span>
-            </div>
-            <button class="expand-btn">
-              <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
-            </button>
+          <div class="indicator">
+            <span class="dot offline"></span>
+            <span class="text">OFFLINE</span>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- Right Column: Why Choose Identity Pulse -->
-    <div class="right-column">
-      <h2 class="section-heading">Why choose Identity Pulse?</h2>
+    <!-- Map Section -->
+    <div class="map-section">
+      <div class="map-container">
+        <div id="world-map" class="world-map"></div>
+      </div>
+    </div>
+    
+    <!-- Two Column Content Section -->
+    <div class="two-column-section">
+      <!-- Left Column: Global Coverage -->
+      <div class="left-column">
+        <h2 class="section-heading">Global Coverage</h2>
+        
+        <div class="coverage-cards">
+          <!-- Asia Pacific Card with Blue Border -->
+          <div class="coverage-card asia-pacific">
+            <div class="card-content">
+              <div class="region-header">
+                <h3 class="region-name">Asia Pacific</h3>
+                <div class="region-stats">
+                  <div class="stat-group">
+                    <span class="stat-value">95%</span>
+                    <span class="stat-label">Coverage</span>
+                  </div>
+                  <div class="stat-group">
+                    <span class="stat-value">350ms</span>
+                    <span class="stat-label">Avg Response</span>
+                  </div>
+                </div>
+              </div>
+              <div class="region-details">
+                <span class="detail-text">13 COUNTRIES | 500M+ RECORDS</span>
+              </div>
+              <button class="expand-btn">
+                <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Middle East & Africa Card -->
+          <div class="coverage-card middle-east">
+            <div class="card-content">
+              <div class="region-header">
+                <h3 class="region-name">Middle East & Africa</h3>
+                <div class="region-stats">
+                  <div class="stat-group">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Coverage</span>
+                  </div>
+                  <div class="stat-group">
+                    <span class="stat-value">400ms</span>
+                    <span class="stat-label">Avg Response</span>
+                  </div>
+                </div>
+              </div>
+              <div class="region-details">
+                <span class="detail-text">5 COUNTRIES | 180M+ RECORDS</span>
+              </div>
+              <button class="expand-btn">
+                <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Americas Card with Country Pills -->
+          <div class="coverage-card americas expanded">
+            <div class="card-content">
+              <div class="region-header">
+                <h3 class="region-name">Americas</h3>
+                <div class="region-stats">
+                  <div class="stat-group">
+                    <span class="stat-value">90%</span>
+                    <span class="stat-label">Coverage</span>
+                  </div>
+                  <div class="stat-group">
+                    <span class="stat-value">300ms</span>
+                    <span class="stat-label">Avg Response</span>
+                  </div>
+                </div>
+              </div>
+              <div class="region-details">
+                <span class="detail-text">2 COUNTRIES | 100M+ RECORDS</span>
+              </div>
+              <div class="country-pills">
+                <div class="country-pill">
+                  <img src="assets/images/flags/canada.png" alt="Canada" class="flag-icon">
+                  <span>Canada</span>
+                  <span class="status-badge online">ONLINE</span>
+                </div>
+                <div class="country-pill">
+                  <img src="assets/images/flags/mexico.png" alt="Mexico" class="flag-icon">
+                  <span>Mexico</span>
+                  <span class="status-badge offline">OFFLINE</span>
+                </div>
+              </div>
+              <button class="expand-btn rotated">
+                <nb-icon icon="chevron-up-outline" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Europe Card -->
+          <div class="coverage-card europe">
+            <div class="card-content">
+              <div class="region-header">
+                <h3 class="region-name">Europe</h3>
+                <div class="region-stats">
+                  <div class="stat-group">
+                    <span class="stat-value">88%</span>
+                    <span class="stat-label">Coverage</span>
+                  </div>
+                  <div class="stat-group">
+                    <span class="stat-value">250ms</span>
+                    <span class="stat-label">Avg Response</span>
+                  </div>
+                </div>
+              </div>
+              <div class="region-details">
+                <span class="detail-text">2 COUNTRIES | 50M+ RECORDS</span>
+              </div>
+              <button class="expand-btn">
+                <nb-icon icon="chevron-down-outline" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       
-      <div class="feature-grid">
-        <!-- Row 1 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">Daily</span>
-            <span class="metric-label">Updates</span>
+      <!-- Right Column: Why Choose Identity Pulse -->
+      <div class="right-column">
+        <h2 class="section-heading">Why choose Identity Pulse?</h2>
+        
+        <div class="feature-grid">
+          <!-- Row 1 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">Daily</span>
+              <span class="metric-label">Updates</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">REAL-TIME UPDATES</h4>
+              <p class="feature-description">
+                Direct integration with government and trusted sources enables instant updates and continuous accuracy.
+              </p>
+            </div>
           </div>
-          <div class="feature-content">
-            <h4 class="feature-title">REAL-TIME UPDATES</h4>
-            <p class="feature-description">
-              Direct integration with government and trusted sources enables instant updates and continuous accuracy.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 2 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">15+</span>
-            <span class="metric-label">sources</span>
+          <!-- Row 2 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">15+</span>
+              <span class="metric-label">sources</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">MULTI-SOURCE VALIDATION</h4>
+              <p class="feature-description">
+                Data is cross-referenced from multiple authoritative sources to ensure thorough and reliable verification.
+              </p>
+            </div>
           </div>
-          <div class="feature-content">
-            <h4 class="feature-title">MULTI-SOURCE VALIDATION</h4>
-            <p class="feature-description">
-              Data is cross-referenced from multiple authoritative sources to ensure thorough and reliable verification.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 3 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">99.2%</span>
-            <span class="metric-label">accuracy</span>
+          <!-- Row 3 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">99.2%</span>
+              <span class="metric-label">accuracy</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">AI-POWERED MATCHING</h4>
+              <p class="feature-description">
+                Advanced fuzzy matching algorithms seamlessly resolve name variations, spelling errors, and typos for superior matching accuracy.
+              </p>
+            </div>
           </div>
-          <div class="feature-content">
-            <h4 class="feature-title">AI-POWERED MATCHING</h4>
-            <p class="feature-description">
-              Advanced fuzzy matching algorithms seamlessly resolve name variations, spelling errors, and typos for superior matching accuracy.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 4 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">4 global</span>
-            <span class="metric-label">regions</span>
+          <!-- Row 4 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">4 global</span>
+              <span class="metric-label">regions</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">REGIONAL EXPERTISE</h4>
+              <p class="feature-description">
+                Includes deep knowledge of local naming conventions and data formats, delivering more precise verification across regions.
+              </p>
+            </div>
           </div>
-          <div class="feature-content">
-            <h4 class="feature-title">REGIONAL EXPERTISE</h4>
-            <p class="feature-description">
-              Includes deep knowledge of local naming conventions and data formats, delivering more precise verification across regions.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 5 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">&lt;250ms</span>
-            <span class="metric-label">response</span>
+          <!-- Row 5 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">&lt;250ms</span>
+              <span class="metric-label">response</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">ELASTIC INFRASTRUCTURE</h4>
+              <p class="feature-description">
+                Built on ElasticSearch for rapid, scalable querying—regardless of volume or demand.
+              </p>
+            </div>
           </div>
-          <div class="feature-content">
-            <h4 class="feature-title">ELASTIC INFRASTRUCTURE</h4>
-            <p class="feature-description">
-              Built on ElasticSearch for rapid, scalable querying—regardless of volume or demand.
-            </p>
-          </div>
-        </div>
 
-        <!-- Row 6 -->
-        <div class="feature-row">
-          <div class="feature-metric">
-            <span class="metric-value">ISO</span>
-            <span class="metric-value-second">27001</span>
-          </div>
-          <div class="feature-content">
-            <h4 class="feature-title">PRIVACY BY DESIGN</h4>
-            <p class="feature-description">
-              Zero data retention and end-to-end encryption are fundamental, supporting full compliance with global privacy standards.
-            </p>
+          <!-- Row 6 -->
+          <div class="feature-row">
+            <div class="feature-metric">
+              <span class="metric-value">ISO</span>
+              <span class="metric-value-second">27001</span>
+            </div>
+            <div class="feature-content">
+              <h4 class="feature-title">PRIVACY BY DESIGN</h4>
+              <p class="feature-description">
+                Zero data retention and end-to-end encryption are fundamental, supporting full compliance with global privacy standards.
+              </p>
+            </div>
           </div>
         </div>
       </div>
